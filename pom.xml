@@ -15,10 +15,10 @@
     </parent>
 
     <groupId>com.backbase.productled</groupId>
-    <artifactId>cards-service</artifactId>
+    <artifactId>cards-presentation-service</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>Backbase :: cards-service</name>
+    <name>Backbase :: cards presentation service</name>
 
     <properties>
         <product-summary-presentation-spec.version>1.36.9.2</product-summary-presentation-spec.version>
@@ -147,7 +147,7 @@
                 <artifactId>raml-api-maven-plugin-1-0</artifactId>
                 <executions>
                     <execution>
-                        <id>account-statement-integration-spec</id>
+                        <id>cards-presentation-spec</id>
                         <goals>
                             <goal>raml-api-generator</goal>
                         </goals>
@@ -161,7 +161,7 @@
                                 </inputFiles>
                             </inputSpec>
                             <outputFile>target/generated-sources/</outputFile>
-                            <serviceId>cards-service</serviceId>
+                            <serviceId>cards-presenation-service</serviceId>
                             <packageName>presentation.card</packageName>
                             <basePackageName>com.backbase</basePackageName>
                             <includeBindingResult>true</includeBindingResult>

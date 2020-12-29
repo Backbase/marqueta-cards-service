@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    discovery:
+      enabled: false
+logging:
+  level:
+    com.backbase: INFO
+    org.springframework: INFO
+backbase:
+  communication:
+    logRequests: true
+    logReplies: true
+    logEventEmit: true
+    logEventReceive: true
+  security:
+    csrf:
+      enabled: false
+mambu:
+  username: integrations-client
+  baseUrl: https://projectmoustache.sandbox.mambu.com/api
+  password: 7xaSLt^UE1lD
+
+marqeta:
+  username: ede3b3c0-791e-42c8-99d9-2709b3f2b0df
+  baseUrl: https://sandbox-api.marqeta.com/v3
+  password: 92e2471b-6310-4706-9ff1-f7331ffb2533

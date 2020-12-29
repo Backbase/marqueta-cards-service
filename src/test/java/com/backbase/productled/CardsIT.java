@@ -69,7 +69,7 @@ public class CardsIT {
             .getArrangementsByBusinessFunction(Mockito.any(GetArrangementsByBusinessFunctionQueryParameters.class)))
             .thenAnswer(invocationOnMock -> ResponseEntity.ok(Collections
                 .singletonList(
-                    new ArrangementsByBusinessFunctionGetResponseBody().withExternalArrangementId("091000021"))));
+                    new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("091000021"))));
 
         MockHttpServletRequestBuilder requestBuilder = get("/client-api/v2/cards")
             .header("Authorization", TEST_JWT);

@@ -4,11 +4,13 @@ import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardResponse.StateEnum;
 import com.backbase.marqeta.clients.model.CardTransitionRequest;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.ChannelEnum;
+import com.backbase.marqeta.clients.model.CardUpdateRequest;
 import com.backbase.presentation.card.rest.spec.v2.cards.IdlockstatusPostRequestBody;
 import com.backbase.presentation.card.spec.v2.cards.CardHolder;
 import com.backbase.presentation.card.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.spec.v2.cards.CardItem.LockStatus;
 import com.backbase.presentation.card.spec.v2.cards.YearMonth;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,7 @@ public class CardMapper {
     private static final String INACTIVE = "Inactive";
     private static final String REPLACEMENT_STATUS = "replacementStatus";
     private static final String CURRENCY = "currency";
+    private static final String LOCK_STATUS = "lockStatus";
 
     public CardItem mapCard(CardResponse cardResponse) {
 
@@ -36,7 +39,7 @@ public class CardMapper {
             .withHolder(new CardHolder().withName(cardResponse.getMetadata().get(CARD_HOLDER_NAME)))
             .withName(cardResponse.getMetadata().get(NAME))
             .withStatus(cardResponse.getState() == StateEnum.ACTIVE ? ACTIVE : INACTIVE)
-            .withLockStatus(cardResponse.getState() == StateEnum.ACTIVE ? LockStatus.UNLOCKED : LockStatus.LOCKED)
+            .withLockStatus(LockStatus.fromValue(cardResponse.getMetadata().get(LOCK_STATUS)))
             .withReplacementStatus(cardResponse.getMetadata().get(REPLACEMENT_STATUS))
             .withExpiryDate(new YearMonth().withYear(String.valueOf(cardResponse.getExpirationTime().getYear()))
                 .withMonth(String.valueOf(cardResponse.getExpirationTime().getMonthValue())))
@@ -45,13 +48,18 @@ public class CardMapper {
 
     }
 
-    public CardTransitionRequest mapCardTransitionRequest(String id,
-        IdlockstatusPostRequestBody idlockstatusPostRequestBody) {
+    public CardTransitionRequest mapCardTransitionRequest(String id) {
         return new CardTransitionRequest()
             .token(UUID.randomUUID().toString())
             .cardToken(id)
             .channel(ChannelEnum.API)
-            .state(idlockstatusPostRequestBody.getLockStatus() == IdlockstatusPostRequestBody.LockStatus.LOCKED
-                ? CardTransitionRequest.StateEnum.SUSPENDED : CardTransitionRequest.StateEnum.ACTIVE);
+            .state(CardTransitionRequest.StateEnum.ACTIVE);
+    }
+
+    public CardUpdateRequest mapCardLockStatusRequest(String token,
+        IdlockstatusPostRequestBody idlockstatusPostRequestBody) {
+
+        return new CardUpdateRequest().token(token)
+            .metadata(Collections.singletonMap(LOCK_STATUS, idlockstatusPostRequestBody.getLockStatus().toString()));
     }
 }

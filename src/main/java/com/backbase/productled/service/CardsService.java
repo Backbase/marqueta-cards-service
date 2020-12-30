@@ -41,9 +41,17 @@ public class CardsService {
             .collect(Collectors.toList());
     }
 
-    public CardItem postLockStatus(String id, IdlockstatusPostRequestBody idlockstatusPostRequestBody) {
-        marqetaRepository.postCardTransitions(cardMapper
-            .mapCardTransitionRequest(id, idlockstatusPostRequestBody));
+    public CardItem getCard(String id) {
         return cardMapper.mapCard(marqetaRepository.getCardDetails(id));
+    }
+
+    public CardItem postLockStatus(String id, IdlockstatusPostRequestBody idlockstatusPostRequestBody) {
+        marqetaRepository.updateCard(id, cardMapper.mapCardLockStatusRequest(id, idlockstatusPostRequestBody));
+        return getCard(id);
+    }
+
+    public CardItem activateCard(String id) {
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id));
+        return getCard(id);
     }
 }

@@ -31,7 +31,7 @@ public class CardsApiController implements CardsApi {
 
     @Override
     public CardItem getId(String id, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return cardsService.getCards(new String[]{id}, null, null).get(0);
+        return cardsService.getCard(id);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class CardsApiController implements CardsApi {
     public CardItem postIdactivation(@Valid IdactivationPostRequestBody idactivationPostRequestBody,
         BindingResult bindingResult, String id, HttpServletRequest httpServletRequest,
         HttpServletResponse httpServletResponse) {
-        return null;
+        return cardsService.activateCard(id);
     }
 
     @Override

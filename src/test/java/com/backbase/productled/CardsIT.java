@@ -111,7 +111,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.type", is("Debit")))
             .andExpect(jsonPath("$.subType", is("ATM")))
             .andExpect(jsonPath("$.name", is("Blue Card")))
-            .andExpect(jsonPath("$.status", is("Inactive")))
+            .andExpect(jsonPath("$.status", is("Active")))
             .andExpect(jsonPath("$.lockStatus", is("LOCKED")))
             .andExpect(jsonPath("$.expiryDate.year", is("2024")))
             .andExpect(jsonPath("$.expiryDate.month", is("12")))

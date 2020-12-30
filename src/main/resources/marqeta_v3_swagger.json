@@ -74,6 +74,56 @@
             "basic": []
           }
         ]
+      },
+      "put": {
+        "tags": [
+          "cards"
+        ],
+        "summary": "Updates a specific card",
+        "description": "",
+        "operationId": "putCardsToken",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Card token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/card_update_request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/card_response"
+            }
+          },
+          "400": {
+            "description": "User input error/Bad request"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
       }
     },
     "/cardtransitions": {
@@ -412,339 +462,499 @@
         }
       }
     },
-    "card_transition_request" : {
-      "type" : "object",
-      "required" : [ "card_token", "channel", "state" ],
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+    "card_transition_request": {
+      "type": "object",
+      "required": [
+        "card_token",
+        "channel",
+        "state"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "card_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "card_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "reason" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "reason": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "reason_code" : {
-          "type" : "string",
-          "enum" : [ "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" ]
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "00",
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+            "06",
+            "07",
+            "08",
+            "09",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23"
+          ]
         },
-        "validations" : {
-          "$ref" : "#/definitions/ValidationsRequest"
+        "validations": {
+          "$ref": "#/definitions/ValidationsRequest"
         },
-        "channel" : {
-          "type" : "string",
-          "enum" : [ "API", "IVR", "FRAUD", "ADMIN", "SYSTEM" ]
+        "channel": {
+          "type": "string",
+          "enum": [
+            "API",
+            "IVR",
+            "FRAUD",
+            "ADMIN",
+            "SYSTEM"
+          ]
         },
-        "state" : {
-          "type" : "string",
-          "enum" : [ "ACTIVE", "SUSPENDED", "TERMINATED" ]
+        "state": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "SUSPENDED",
+            "TERMINATED"
+          ]
         }
       }
     },
-    "ValidationsRequest" : {
-      "type" : "object",
-      "properties" : {
-        "user" : {
-          "$ref" : "#/definitions/UserValidationRequest"
+    "ValidationsRequest": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/UserValidationRequest"
         }
       }
     },
-    "UserValidationRequest" : {
-      "type" : "object",
-      "properties" : {
-        "birth_date" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "yyyy-MM-dd"
+    "UserValidationRequest": {
+      "type": "object",
+      "properties": {
+        "birth_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "yyyy-MM-dd"
         },
-        "phone" : {
-          "type" : "string",
-          "description" : "Phone #",
-          "minLength" : 0,
-          "maxLength" : 255
+        "phone": {
+          "type": "string",
+          "description": "Phone #",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "ssn" : {
-          "type" : "string",
-          "description" : "Last four digits of SSN",
-          "minLength" : 0,
-          "maxLength" : 255
+        "ssn": {
+          "type": "string",
+          "description": "Last four digits of SSN",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "random_name_line1_postfix" : {
-          "type" : "string",
-          "description" : "Six-char random name postfix",
-          "minLength" : 6,
-          "maxLength" : 6
+        "random_name_line1_postfix": {
+          "type": "string",
+          "description": "Six-char random name postfix",
+          "minLength": 6,
+          "maxLength": 6
         }
       }
     },
-    "card_transition_response" : {
-      "type" : "object",
-      "required" : [ "barcode", "card_product_token", "card_token", "channel", "expiration", "expiration_time", "fulfillment_status", "last_four", "pan", "pin_is_set", "state", "token", "type", "user_token" ],
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+    "card_transition_response": {
+      "type": "object",
+      "required": [
+        "barcode",
+        "card_product_token",
+        "card_token",
+        "channel",
+        "expiration",
+        "expiration_time",
+        "fulfillment_status",
+        "last_four",
+        "pan",
+        "pin_is_set",
+        "state",
+        "token",
+        "type",
+        "user_token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "card_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "card_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "user_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "user_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "state" : {
-          "type" : "string",
-          "enum" : [ "ACTIVE", "SUSPENDED", "TERMINATED", "UNACTIVATED" ]
+        "state": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "SUSPENDED",
+            "TERMINATED",
+            "UNACTIVATED"
+          ]
         },
-        "reason" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "reason": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "reason_code" : {
-          "type" : "string",
-          "enum" : [ "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" ]
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "00",
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+            "06",
+            "07",
+            "08",
+            "09",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23"
+          ]
         },
-        "channel" : {
-          "type" : "string",
-          "enum" : [ "API", "IVR", "FRAUD", "ADMIN", "SYSTEM" ]
+        "channel": {
+          "type": "string",
+          "enum": [
+            "API",
+            "IVR",
+            "FRAUD",
+            "ADMIN",
+            "SYSTEM"
+          ]
         },
-        "fulfillment_status" : {
-          "type" : "string",
-          "enum" : [ "ISSUED", "ORDERED", "REJECTED", "SHIPPED", "DELIVERED", "DIGITALLY_PRESENTED" ]
+        "fulfillment_status": {
+          "type": "string",
+          "enum": [
+            "ISSUED",
+            "ORDERED",
+            "REJECTED",
+            "SHIPPED",
+            "DELIVERED",
+            "DIGITALLY_PRESENTED"
+          ]
         },
-        "validations" : {
-          "$ref" : "#/definitions/ValidationsResponse"
+        "validations": {
+          "$ref": "#/definitions/ValidationsResponse"
         },
-        "type" : {
-          "type" : "string",
-          "enum" : [ "fulfillment.issued", "state.activated", "state.suspended", "state.reinstated", "state.terminated", "fulfillment.ordered", "fulfillment.rejected", "fulfillment.shipped", "fulfillment.delivered", "fulfillment.digitally_presented" ]
+        "type": {
+          "type": "string",
+          "enum": [
+            "fulfillment.issued",
+            "state.activated",
+            "state.suspended",
+            "state.reinstated",
+            "state.terminated",
+            "fulfillment.ordered",
+            "fulfillment.rejected",
+            "fulfillment.shipped",
+            "fulfillment.delivered",
+            "fulfillment.digitally_presented"
+          ]
         },
-        "created_time" : {
-          "type" : "string",
-          "format" : "date-time"
+        "created_time": {
+          "type": "string",
+          "format": "date-time"
         },
-        "card_product_token" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 36
+        "card_product_token": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 36
         },
-        "last_four" : {
-          "type" : "string"
+        "last_four": {
+          "type": "string"
         },
-        "pan" : {
-          "type" : "string"
+        "pan": {
+          "type": "string"
         },
-        "expiration" : {
-          "type" : "string"
+        "expiration": {
+          "type": "string"
         },
-        "expiration_time" : {
-          "type" : "string"
+        "expiration_time": {
+          "type": "string"
         },
-        "barcode" : {
-          "type" : "string"
+        "barcode": {
+          "type": "string"
         },
-        "pin_is_set" : {
-          "type" : "boolean",
-          "default" : false
+        "pin_is_set": {
+          "type": "boolean",
+          "default": false
         },
-        "fulfillment" : {
-          "$ref" : "#/definitions/fulfillment"
+        "fulfillment": {
+          "$ref": "#/definitions/fulfillment"
         },
-        "bulk_issuance_token" : {
-          "type" : "string"
+        "bulk_issuance_token": {
+          "type": "string"
         },
-        "reissue_pan_from_card_token" : {
-          "type" : "string"
+        "reissue_pan_from_card_token": {
+          "type": "string"
         },
-        "user" : {
-          "$ref" : "#/definitions/cardholder_metadata"
+        "user": {
+          "$ref": "#/definitions/cardholder_metadata"
         },
-        "card" : {
-          "$ref" : "#/definitions/card_metadata"
+        "card": {
+          "$ref": "#/definitions/card_metadata"
         },
-        "expedite" : {
-          "type" : "boolean",
-          "default" : false
+        "expedite": {
+          "type": "boolean",
+          "default": false
         }
       },
-      "xml" : {
-        "name" : "card_transition_response"
+      "xml": {
+        "name": "card_transition_response"
       }
     },
-    "cardholder_metadata" : {
-      "type" : "object",
-      "properties" : {
-        "metadata" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "string"
+    "cardholder_metadata": {
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       },
-      "xml" : {
-        "name" : "cardholder_metadata"
+      "xml": {
+        "name": "cardholder_metadata"
       }
     },
-    "card_metadata" : {
-      "type" : "object",
-      "properties" : {
-        "metadata" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "string"
+    "card_metadata": {
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       },
-      "xml" : {
-        "name" : "card_metadata"
+      "xml": {
+        "name": "card_metadata"
       }
     },
-    "fulfillment" : {
-      "type" : "object",
-      "required" : [ "card_personalization" ],
-      "properties" : {
-        "shipping" : {
-          "$ref" : "#/definitions/shipping"
+    "fulfillment": {
+      "type": "object",
+      "required": [
+        "card_personalization"
+      ],
+      "properties": {
+        "shipping": {
+          "$ref": "#/definitions/shipping"
         },
-        "card_personalization" : {
-          "$ref" : "#/definitions/card_personalization"
+        "card_personalization": {
+          "$ref": "#/definitions/card_personalization"
         },
-        "card_fulfillment_reason" : {
-          "type" : "string",
-          "enum" : [ "NEW", "LOST_STOLEN", "EXPIRED" ]
+        "card_fulfillment_reason": {
+          "type": "string",
+          "enum": [
+            "NEW",
+            "LOST_STOLEN",
+            "EXPIRED"
+          ]
         }
       }
     },
-    "ValidationsResponse" : {
-      "type" : "object",
-      "required" : [ "user" ],
-      "properties" : {
-        "user" : {
-          "$ref" : "#/definitions/UserValidationResponse"
+    "ValidationsResponse": {
+      "type": "object",
+      "required": [
+        "user"
+      ],
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/UserValidationResponse"
         }
       }
     },
-    "UserValidationResponse" : {
-      "type" : "object",
-      "required" : [ "birth_date", "phone", "random_name_line1_postfix", "ssn" ],
-      "properties" : {
-        "birth_date" : {
-          "type" : "boolean",
-          "description" : "yyyy-MM-dd",
-          "default" : false
+    "UserValidationResponse": {
+      "type": "object",
+      "required": [
+        "birth_date",
+        "phone",
+        "random_name_line1_postfix",
+        "ssn"
+      ],
+      "properties": {
+        "birth_date": {
+          "type": "boolean",
+          "description": "yyyy-MM-dd",
+          "default": false
         },
-        "phone" : {
-          "type" : "boolean",
-          "description" : "10 char max, phone number",
-          "default" : false
+        "phone": {
+          "type": "boolean",
+          "description": "10 char max, phone number",
+          "default": false
         },
-        "ssn" : {
-          "type" : "boolean",
-          "description" : "Last four digits of SSN",
-          "default" : false
+        "ssn": {
+          "type": "boolean",
+          "description": "Last four digits of SSN",
+          "default": false
         },
-        "random_name_line1_postfix" : {
-          "type" : "boolean",
-          "description" : "Six-char random name postfix",
-          "default" : false
+        "random_name_line1_postfix": {
+          "type": "boolean",
+          "description": "Six-char random name postfix",
+          "default": false
         }
       }
     },
-    "shipping" : {
-      "type" : "object",
-      "properties" : {
-        "method" : {
-          "type" : "string",
-          "enum" : [ "LOCAL_MAIL", "GROUND", "TWO_DAY", "OVERNIGHT", "INTERNATIONAL", "FEDEX_EXPEDITED", "FEDEX_REGULAR", "UPS_EXPEDITED", "UPS_REGULAR", "USPS_EXPEDITED", "USPS_REGULAR" ]
+    "shipping": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "LOCAL_MAIL",
+            "GROUND",
+            "TWO_DAY",
+            "OVERNIGHT",
+            "INTERNATIONAL",
+            "FEDEX_EXPEDITED",
+            "FEDEX_REGULAR",
+            "UPS_EXPEDITED",
+            "UPS_REGULAR",
+            "USPS_EXPEDITED",
+            "USPS_REGULAR"
+          ]
         },
-        "return_address" : {
-          "$ref" : "#/definitions/fulfillment_address_request"
+        "return_address": {
+          "$ref": "#/definitions/fulfillment_address_request"
         },
-        "recipient_address" : {
-          "$ref" : "#/definitions/fulfillment_address_request"
+        "recipient_address": {
+          "$ref": "#/definitions/fulfillment_address_request"
         },
-        "care_of_line" : {
-          "type" : "string",
-          "description" : "255 char max"
-        }
-      },
-      "xml" : {
-        "name" : "shipping"
-      }
-    },
-    "fulfillment_address_request" : {
-      "type" : "object",
-      "properties" : {
-        "first_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
-        },
-        "middle_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
-        },
-        "last_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
-        },
-        "address1" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
-        },
-        "address2" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
-        },
-        "city" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
-        },
-        "state" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 32
-        },
-        "zip" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
-        },
-        "country" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
-        },
-        "phone" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 20
-        },
-        "postal_code" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "care_of_line": {
+          "type": "string",
+          "description": "255 char max"
         }
       },
-      "xml" : {
-        "name" : "fulfillment_address_request"
+      "xml": {
+        "name": "shipping"
+      }
+    },
+    "card_update_request": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "user_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "fulfillment": {
+          "$ref": "#/definitions/fulfillment"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fulfillment_address_request": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
+        },
+        "middle_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
+        },
+        "last_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
+        },
+        "address1": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
+        },
+        "address2": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
+        },
+        "city": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
+        },
+        "state": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 32
+        },
+        "zip": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
+        },
+        "country": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 20
+        },
+        "postal_code": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
+        }
+      },
+      "xml": {
+        "name": "fulfillment_address_request"
       }
     },
     "card_response": {

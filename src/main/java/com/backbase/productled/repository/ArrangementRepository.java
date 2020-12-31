@@ -26,7 +26,7 @@ public class ArrangementRepository {
                 .withBusinessFunction(BUSINESS_FUNCTION)
                 .withResourceName(RESOURCE_NAME)
                 .withPrivilege(PRIVILEGE)).getBody()).stream()
-            .map(ArrangementsByBusinessFunctionGetResponseBody::getExternalArrangementId)
+            .map(ArrangementsByBusinessFunctionGetResponseBody::getBBAN)
             .collect(Collectors.toList());
     }
 

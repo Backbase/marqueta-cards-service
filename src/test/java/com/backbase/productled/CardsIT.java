@@ -9,11 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.backbase.presentation.card.rest.spec.v2.cards.IdlockstatusPostRequestBody;
-import com.backbase.presentation.card.rest.spec.v2.cards.IdlockstatusPostRequestBody.LockStatus;
-import com.backbase.productled.productsummary.listener.client.v2.productsummary.GetArrangementsByBusinessFunctionQueryParameters;
-import com.backbase.productled.productsummary.listener.client.v2.productsummary.ProductsummaryProductSummaryClient;
-import com.backbase.productled.productsummary.rest.spec.v2.productsummary.ArrangementsByBusinessFunctionGetResponseBody;
+import com.backbase.dbs.arrangement.api.service.v2.ProductSummaryApi;
+import com.backbase.dbs.arrangement.api.service.v2.model.ProductSummaryItem;
+import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
+import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import org.junit.FixMethodOrder;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -54,7 +52,7 @@ public class CardsIT {
             + "SJ9.O9TE28ygrHmDjItYK6wRis6wELD5Wtpi6ekeYfR1WqM";
 
     @MockBean
-    private ProductsummaryProductSummaryClient productsummaryProductSummaryClient;
+    private ProductSummaryApi productSummaryApi;
 
     @Autowired
     private MockMvc mvc;
@@ -65,11 +63,14 @@ public class CardsIT {
     @Test
     public void testGetCards() throws Exception {
 
-        Mockito.when(productsummaryProductSummaryClient
-            .getArrangementsByBusinessFunction(Mockito.any(GetArrangementsByBusinessFunctionQueryParameters.class)))
-            .thenAnswer(invocationOnMock -> ResponseEntity.ok(Collections
+        Mockito.when(productSummaryApi
+            .getArrangementsByBusinessFunction(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any()))
+            .thenAnswer(invocationOnMock -> Collections
                 .singletonList(
-                    new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("091000021"))));
+                    new ProductSummaryItem().BBAN("091000021")));
 
         MockHttpServletRequestBuilder requestBuilder = get("/client-api/v2/cards")
             .header("Authorization", TEST_JWT);
@@ -89,8 +90,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.[0].expiryDate.month", is("12")))
             .andExpect(jsonPath("$.[0].currency", is("USD")))
             .andExpect(jsonPath("$.[0].maskedNumber", is("8155")))
-            .andExpect(jsonPath("$.[0].replacementStatus", is("NotUnderReplacement")));
-
+            .andExpect(jsonPath("$.[0].replacement.status", is("NotUnderReplacement")));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class CardsIT {
         MockHttpServletRequestBuilder requestBuilder = post("/client-api/v2/cards/{id}/lock-status",
             "5bf15f0d-36f5-40f2-8cf1-931bd5a8d7d9")
             .content(
-                objectMapper.writeValueAsString(new IdlockstatusPostRequestBody().withLockStatus(LockStatus.LOCKED)))
+                objectMapper.writeValueAsString(new LockStatusPost().lockStatus(LockStatus.LOCKED)))
             .contentType("application/json")
             .header("Authorization", TEST_JWT);
 
@@ -117,8 +117,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.expiryDate.month", is("12")))
             .andExpect(jsonPath("$.currency", is("USD")))
             .andExpect(jsonPath("$.maskedNumber", is("8155")))
-            .andExpect(jsonPath("$.replacementStatus", is("NotUnderReplacement")));
-
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 
     @Test
@@ -127,7 +126,7 @@ public class CardsIT {
         MockHttpServletRequestBuilder requestBuilder = post("/client-api/v2/cards/{id}/lock-status",
             "5bf15f0d-36f5-40f2-8cf1-931bd5a8d7d9")
             .content(
-                objectMapper.writeValueAsString(new IdlockstatusPostRequestBody().withLockStatus(LockStatus.UNLOCKED)))
+                objectMapper.writeValueAsString(new LockStatusPost().lockStatus(LockStatus.UNLOCKED)))
             .contentType("application/json")
             .header("Authorization", TEST_JWT);
 
@@ -145,7 +144,6 @@ public class CardsIT {
             .andExpect(jsonPath("$.expiryDate.month", is("12")))
             .andExpect(jsonPath("$.currency", is("USD")))
             .andExpect(jsonPath("$.maskedNumber", is("8155")))
-            .andExpect(jsonPath("$.replacementStatus", is("NotUnderReplacement")));
-
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 }

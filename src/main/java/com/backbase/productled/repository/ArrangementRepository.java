@@ -1,8 +1,7 @@
 package com.backbase.productled.repository;
 
-import com.backbase.productled.productsummary.listener.client.v2.productsummary.GetArrangementsByBusinessFunctionQueryParameters;
-import com.backbase.productled.productsummary.listener.client.v2.productsummary.ProductsummaryProductSummaryClient;
-import com.backbase.productled.productsummary.rest.spec.v2.productsummary.ArrangementsByBusinessFunctionGetResponseBody;
+import com.backbase.dbs.arrangement.api.service.v2.ProductSummaryApi;
+import com.backbase.dbs.arrangement.api.service.v2.model.ProductSummaryItem;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,16 +16,14 @@ public class ArrangementRepository {
     private static final String RESOURCE_NAME = "Product Summary";
     private static final String PRIVILEGE = "view";
 
-    private ProductsummaryProductSummaryClient productsummaryProductSummaryClient;
+    private final ProductSummaryApi productSummaryApi;
 
     public List<String> getExternalArrangementIds() {
 
-        return Objects.requireNonNull(productsummaryProductSummaryClient.getArrangementsByBusinessFunction(
-            new GetArrangementsByBusinessFunctionQueryParameters()
-                .withBusinessFunction(BUSINESS_FUNCTION)
-                .withResourceName(RESOURCE_NAME)
-                .withPrivilege(PRIVILEGE)).getBody()).stream()
-            .map(ArrangementsByBusinessFunctionGetResponseBody::getBBAN)
+        return Objects.requireNonNull(productSummaryApi.getArrangementsByBusinessFunction(
+            BUSINESS_FUNCTION, RESOURCE_NAME, PRIVILEGE, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null)).stream()
+            .map(ProductSummaryItem::getBBAN)
             .collect(Collectors.toList());
     }
 

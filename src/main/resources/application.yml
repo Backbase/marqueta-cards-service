@@ -28,6 +28,10 @@ management:
       enabled: false
 
 backbase:
+  productsummary:
+    client:
+      openapi:
+        baseUrl: https://arrangement-manager
   security:
     csrf:
       enabled: false

@@ -17,7 +17,7 @@ public interface CardsMappers {
     String LOCK_STATUS = "lockStatus";
 
     @Mapping(target = "id", source = "cardResponse.token")
-    @Mapping(target = "brand", expression = "java(cardResponse.getMetadata().get(\"Brand\"))")
+    @Mapping(target = "brand", expression = "java(cardResponse.getMetadata().get(\"brand\"))")
     @Mapping(target = "type", expression = "java(cardResponse.getMetadata().get(\"type\"))")
     @Mapping(target = "subType", expression = "java(cardResponse.getMetadata().get(\"subType\"))")
     @Mapping(target = "holder", expression = "java(new com.backbase.presentation.card.rest.spec.v2.cards.CardHolder().name(cardResponse.getMetadata().get(\"cardHolderName\")))")

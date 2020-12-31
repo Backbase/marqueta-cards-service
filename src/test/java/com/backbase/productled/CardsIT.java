@@ -79,7 +79,7 @@ public class CardsIT {
         // Then the request is successful
         result.andExpect(status().isOk())
             .andExpect(jsonPath("$.*", hasSize(1)))
-            .andExpect(jsonPath("$.[0].id", is("5bf15f0d-36f5-40f2-8cf1-931bd5a8d7d9")))
+            .andExpect(jsonPath("$.[0].id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
             .andExpect(jsonPath("$.[0].type", is("Debit")))
             .andExpect(jsonPath("$.[0].subType", is("ATM")))
             .andExpect(jsonPath("$.[0].name", is("Blue Card")))
@@ -88,7 +88,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.[0].expiryDate.year", is("2024")))
             .andExpect(jsonPath("$.[0].expiryDate.month", is("12")))
             .andExpect(jsonPath("$.[0].currency", is("USD")))
-            .andExpect(jsonPath("$.[0].maskedNumber", is("8155")))
+            .andExpect(jsonPath("$.[0].maskedNumber", is("2053")))
             .andExpect(jsonPath("$.[0].replacement.status", is("NotUnderReplacement")));
     }
 
@@ -96,7 +96,7 @@ public class CardsIT {
     public void testLockCard() throws Exception {
 
         MockHttpServletRequestBuilder requestBuilder = post("/client-api/v2/cards/{id}/lock-status",
-            "5bf15f0d-36f5-40f2-8cf1-931bd5a8d7d9")
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
             .content(
                 objectMapper.writeValueAsString(new LockStatusPost().lockStatus(LockStatus.LOCKED)))
             .contentType("application/json")
@@ -106,7 +106,7 @@ public class CardsIT {
 
         // Then the request is successful
         result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is("5bf15f0d-36f5-40f2-8cf1-931bd5a8d7d9")))
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
             .andExpect(jsonPath("$.type", is("Debit")))
             .andExpect(jsonPath("$.subType", is("ATM")))
             .andExpect(jsonPath("$.name", is("Blue Card")))
@@ -115,7 +115,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.expiryDate.year", is("2024")))
             .andExpect(jsonPath("$.expiryDate.month", is("12")))
             .andExpect(jsonPath("$.currency", is("USD")))
-            .andExpect(jsonPath("$.maskedNumber", is("8155")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 
@@ -123,7 +123,7 @@ public class CardsIT {
     public void testUnLockCard() throws Exception {
 
         MockHttpServletRequestBuilder requestBuilder = post("/client-api/v2/cards/{id}/lock-status",
-            "5bf15f0d-36f5-40f2-8cf1-931bd5a8d7d9")
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
             .content(
                 objectMapper.writeValueAsString(new LockStatusPost().lockStatus(LockStatus.UNLOCKED)))
             .contentType("application/json")
@@ -133,7 +133,7 @@ public class CardsIT {
 
         // Then the request is successful
         result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is("5bf15f0d-36f5-40f2-8cf1-931bd5a8d7d9")))
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
             .andExpect(jsonPath("$.type", is("Debit")))
             .andExpect(jsonPath("$.subType", is("ATM")))
             .andExpect(jsonPath("$.name", is("Blue Card")))
@@ -142,7 +142,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.expiryDate.year", is("2024")))
             .andExpect(jsonPath("$.expiryDate.month", is("12")))
             .andExpect(jsonPath("$.currency", is("USD")))
-            .andExpect(jsonPath("$.maskedNumber", is("8155")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 }

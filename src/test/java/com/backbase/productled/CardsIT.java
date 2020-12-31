@@ -8,9 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.backbase.dbs.arrangement.api.service.v2.ProductSummaryApi;
-import com.backbase.dbs.arrangement.api.service.v2.model.ProductSummaryItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,6 +29,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import com.backbase.productled.productsummary.listener.client.v2.productsummary.GetArrangementsByBusinessFunctionQueryParameters;
+import com.backbase.productled.productsummary.listener.client.v2.productsummary.ProductsummaryProductSummaryClient;
+import com.backbase.productled.productsummary.rest.spec.v2.productsummary.ArrangementsByBusinessFunctionGetResponseBody;
 
 @SpringBootTest(classes = Application.class)
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
@@ -51,8 +53,11 @@ public class CardsIT {
             + "ZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXSwiaW51aWQiOiJKaW1te"
             + "SJ9.O9TE28ygrHmDjItYK6wRis6wELD5Wtpi6ekeYfR1WqM";
 
+    /*@MockBean
+    private ProductSummaryApi productSummaryApi;*/
+
     @MockBean
-    private ProductSummaryApi productSummaryApi;
+    private ProductsummaryProductSummaryClient productsummaryProductSummaryClient;
 
     @Autowired
     private MockMvc mvc;
@@ -63,14 +68,20 @@ public class CardsIT {
     @Test
     public void testGetCards() throws Exception {
 
-        Mockito.when(productSummaryApi
+        /*Mockito.when(productSummaryApi
             .getArrangementsByBusinessFunction(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any()))
             .thenAnswer(invocationOnMock -> Collections
                 .singletonList(
-                    new ProductSummaryItem().BBAN("091000021")));
+                    new ProductSummaryItem().BBAN("091000021")));*/
+
+        Mockito.when(productsummaryProductSummaryClient
+            .getArrangementsByBusinessFunction(Mockito.any(GetArrangementsByBusinessFunctionQueryParameters.class)))
+            .thenAnswer(invocationOnMock -> ResponseEntity.ok(Collections
+                .singletonList(
+                    new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("091000021"))));
 
         MockHttpServletRequestBuilder requestBuilder = get("/client-api/v2/cards")
             .header("Authorization", TEST_JWT);

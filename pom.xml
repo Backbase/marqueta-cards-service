@@ -181,7 +181,7 @@
                             </configOptions>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>generate-arrangement-api-code</id>
                         <goals>
                             <goal>generate-rest-template-embedded</goal>
@@ -194,7 +194,7 @@
                             <apiPackage>com.backbase.dbs.arrangement.api.service.v2</apiPackage>
                             <modelPackage>com.backbase.dbs.arrangement.api.service.v2.model</modelPackage>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <execution>
                         <id>generate-marqeta-api-code</id>
                         <goals>
@@ -207,6 +207,35 @@
                             </inputSpec>
                             <apiPackage>com.backbase.marqeta.clients.api</apiPackage>
                             <modelPackage>com.backbase.marqeta.clients.model</modelPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.backbase.codegen</groupId>
+                <artifactId>raml-api-maven-plugin-1-0</artifactId>
+                <executions>
+                    <execution>
+                        <id>product-summary-presentation-spec</id>
+                        <goals>
+                            <goal>raml-api-generator</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>
+                                <groupId>com.backbase.dbs.productsummary</groupId>
+                                <artifactId>product-summary-presentation-spec</artifactId>
+                                <version>${product-summary-presentation-spec.version}</version>
+                                <inputFiles>
+                                    <inputFile>api.raml</inputFile>
+                                    <inputFile>service-api.raml</inputFile>
+                                </inputFiles>
+                            </inputSpec>
+                            <outputFile>target/generated-sources/</outputFile>
+                            <serviceId>arrangement-manager</serviceId>
+                            <packageName>productsummary</packageName>
+                            <basePackageName>com.backbase.productled</basePackageName>
+                            <generateApi>false</generateApi>
+                            <generateClients>true</generateClients>
                         </configuration>
                     </execution>
                 </executions>

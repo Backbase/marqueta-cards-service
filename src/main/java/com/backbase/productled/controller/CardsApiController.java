@@ -42,7 +42,7 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> activate(String id, @Valid ActivatePost activatePost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.activateCard(id));
+        return ResponseEntity.ok(cardsService.activateCard(id, activatePost));
     }
 
     @Override

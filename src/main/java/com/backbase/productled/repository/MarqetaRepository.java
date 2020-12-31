@@ -136,8 +136,7 @@ public class MarqetaRepository {
             switch (e.getStatusCode()) {
                 case PRECONDITION_FAILED:
                     log.error("PRECONDITION_FAILED while resetting pin in Marqeta : {}", e.getMessage(), e);
-                    throw new BadRequestException(
-                        "Bad request while resetting pin in Marqeta: " + e.getMessage(), e);
+                    throw new BadRequestException("Invalid input(s): pin is weak");
                 case NOT_FOUND:
                     log.error("Control token {} not found in Marqeta: {}", pinRequest.getControlToken(),
                         e.getMessage());

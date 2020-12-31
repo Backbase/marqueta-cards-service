@@ -5,6 +5,7 @@ import com.backbase.buildingblocks.presentation.errors.Error;
 import com.backbase.mambu.clients.model.Card;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.PinRequest;
+import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
@@ -56,20 +57,25 @@ public class CardsService {
         return getCard(id);
     }
 
-    public CardItem activateCard(String id) {
+    public CardItem activateCard(String id, ActivatePost activatePost) {
+        validateCvv(id, activatePost.getToken());
         marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id));
         return getCard(id);
     }
 
     public ResponseEntity<CardItem> resetPin(String id, ResetPinPost resetPinPost) {
-        if (!resetPinPost.getToken().equals(marqetaRepository.getCardCvv(id).getCvvNumber())) {
-            throw new BadRequestException()
-                .withErrors(Collections.singletonList(new Error().withMessage("cvv is incorrect")));
-        }
+        validateCvv(resetPinPost.getToken(), resetPinPost.getToken());
         marqetaRepository.updatePin(new PinRequest()
             .controlToken(
                 marqetaRepository.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
             .pin(resetPinPost.getPin()));
         return ResponseEntity.ok(getCard(id));
+    }
+
+    private void validateCvv(String cardToken, String cvv) {
+        if (!cvv.equals(marqetaRepository.getCardCvv(cardToken).getCvvNumber())) {
+            throw new BadRequestException()
+                .withErrors(Collections.singletonList(new Error().withMessage("cvv is incorrect")));
+        }
     }
 }

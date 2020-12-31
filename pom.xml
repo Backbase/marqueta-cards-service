@@ -189,7 +189,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <inputSpec>
-                                ${basedir}/src/main/resources/specs/arrangement-service-api-v${arrangement-service-api.version}.yaml
+                                ${basedir}/src/main/resources/specs/arrangement-client-api-v${arrangement-service-api.version}.yaml
                             </inputSpec>
                             <apiPackage>com.backbase.dbs.arrangement.api.service.v2</apiPackage>
                             <modelPackage>com.backbase.dbs.arrangement.api.service.v2.model</modelPackage>

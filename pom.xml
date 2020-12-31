@@ -33,6 +33,7 @@
         <boat-maven-plugin.version>0.11.4</boat-maven-plugin.version>
         <cards-management-api.version>2.2.0</cards-management-api.version>
         <arrangement-service-api.version>2.0.6</arrangement-service-api.version>
+        <mapstruct.version>1.3.1.Final</mapstruct.version>
 
         <openapi-generator-maven-plugin.library>resttemplate</openapi-generator-maven-plugin.library>
         <openapi-generator-maven-plugin.java8>true</openapi-generator-maven-plugin.java8>
@@ -63,6 +64,11 @@
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
             <artifactId>communication</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
         </dependency>
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
@@ -128,6 +134,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
                         </path>
                         <path>
                             <groupId>com.backbase.buildingblocks</groupId>

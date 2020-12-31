@@ -3,7 +3,7 @@ package com.backbase.productled.service;
 import com.backbase.mambu.clients.model.Card;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
-import com.backbase.productled.mapper.CardMapper;
+import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.ArrangementRepository;
 import com.backbase.productled.repository.MambuRepository;
 import com.backbase.productled.repository.MarqetaRepository;
@@ -22,7 +22,7 @@ public class CardsService {
 
     private final MambuRepository mambuRepository;
 
-    private final CardMapper cardMapper;
+    private final CardsMappers cardMapper;
 
     public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
 

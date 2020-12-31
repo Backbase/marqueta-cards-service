@@ -22,8 +22,6 @@ import org.springframework.web.client.HttpClientErrorException;
 @Slf4j
 public class MarqetaRepository {
 
-    private static final String SHOW_CVV_NUMBER = "show_cvv_number";
-
     private final CardsApi cardsApi;
 
     private final CardTransitionsApi cardTransitionsApi;
@@ -92,7 +90,7 @@ public class MarqetaRepository {
 
     public CardResponse getCardCvv(String token) {
         try {
-            return cardsApi.getCardsTokenShowpan(token, SHOW_CVV_NUMBER, true);
+            return cardsApi.getCardsTokenShowpan(token, null, true);
         } catch (HttpClientErrorException e) {
             switch (e.getStatusCode()) {
                 case NOT_FOUND:

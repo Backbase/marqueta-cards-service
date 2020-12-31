@@ -66,7 +66,7 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> resetPin(String id, @Valid ResetPinPost resetPinPost,
         HttpServletRequest httpServletRequest) {
-        return null;
+        return cardsService.resetPin(id, resetPinPost);
     }
 
 }

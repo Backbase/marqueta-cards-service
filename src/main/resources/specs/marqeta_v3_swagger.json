@@ -176,6 +176,133 @@
           }
         ]
       }
+    },
+    "/cards/{token}/showpan" : {
+      "get" : {
+        "tags" : [ "cards" ],
+        "summary" : "Returns a specific card - PAN visible",
+        "description" : "",
+        "operationId" : "getCardsTokenShowpan",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "description" : "Card token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "show_cvv_number",
+          "in" : "query",
+          "required" : false,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/card_response"
+            }
+          },
+          "400" : {
+            "description" : "User input error/Bad request"
+          },
+          "500" : {
+            "description" : "Server error"
+          },
+          "404" : {
+            "description" : "Card not found"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/pins/controltoken" : {
+      "post" : {
+        "tags" : [ "pins" ],
+        "summary" : "Creates a new control token for a PIN",
+        "description" : "Creates a new control token for a PIN, for the specified card for PIN debit or ATM transactions,or to allow for a pin to be revealed to authorized callers.",
+        "operationId" : "postPinsControltoken",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/control_token_request"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Control token created",
+            "schema" : {
+              "$ref" : "#/definitions/control_token_response"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "500" : {
+            "description" : "Server error"
+          },
+          "403" : {
+            "description" : "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/pins" : {
+      "put" : {
+        "tags" : [ "pins" ],
+        "summary" : "Updates the PIN control token",
+        "description" : "Updates a PIN identified by its control token.",
+        "operationId" : "putPins",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/pin_request"
+          }
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Bad request"
+          },
+          "412" : {
+            "description" : "Weak PIN"
+          },
+          "500" : {
+            "description" : "Server error"
+          },
+          "204" : {
+            "description" : "PIN was successfully set"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -185,6 +312,52 @@
     }
   },
   "definitions": {
+    "control_token_response" : {
+      "type" : "object",
+      "required" : [ "control_token" ],
+      "properties" : {
+        "control_token" : {
+          "type" : "string"
+        }
+      },
+      "xml" : {
+        "name" : "control_token_response"
+      }
+    },
+    "control_token_request" : {
+      "type" : "object",
+      "required" : [ "card_token" ],
+      "properties" : {
+        "card_token" : {
+          "type" : "string",
+          "description" : "Token associated with the card",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "controltoken_type" : {
+          "type" : "string",
+          "description" : "Type of control token required",
+          "enum" : [ "SET_PIN", "SHOW_PIN" ]
+        }
+      }
+    },
+    "pin_request" : {
+      "type" : "object",
+      "required" : [ "control_token", "pin" ],
+      "properties" : {
+        "control_token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "pin" : {
+          "type" : "string"
+        }
+      },
+      "xml" : {
+        "name" : "pin_request"
+      }
+    },
     "CardListResponse": {
       "type": "object",
       "properties": {

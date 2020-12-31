@@ -3,6 +3,7 @@ package com.backbase.productled.config;
 import com.backbase.marqeta.clients.ApiClient;
 import com.backbase.marqeta.clients.api.CardTransitionsApi;
 import com.backbase.marqeta.clients.api.CardsApi;
+import com.backbase.marqeta.clients.api.PinsApi;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,6 +22,11 @@ public class MarqetaRestClientConfiguration {
     @Bean
     public CardsApi cardsApi() {
         return new CardsApi(marqetaApiClient());
+    }
+
+    @Bean
+    public PinsApi pinsApi() {
+        return new PinsApi(marqetaApiClient());
     }
 
     @Bean

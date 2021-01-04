@@ -3,11 +3,13 @@ package com.backbase.productled.service;
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
 import com.backbase.buildingblocks.presentation.errors.Error;
 import com.backbase.mambu.clients.model.Card;
+import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.PinRequest;
 import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.ArrangementRepository;
@@ -17,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,23 +54,24 @@ public class CardsService {
     }
 
     public CardItem postLockStatus(String id, LockStatusPost lockStatusPost) {
-        marqetaRepository.updateCard(id, cardMapper.mapCardLockStatusRequest(id, lockStatusPost));
+        marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForLockStatus(id, lockStatusPost));
         return getCard(id);
     }
 
     public CardItem activateCard(String id, ActivatePost activatePost) {
         validateCvv(id, activatePost.getToken());
-        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id));
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.ACTIVE));
+        marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id));
         return getCard(id);
     }
 
-    public ResponseEntity<CardItem> resetPin(String id, ResetPinPost resetPinPost) {
-        validateCvv(resetPinPost.getToken(), resetPinPost.getToken());
+    public CardItem resetPin(String id, ResetPinPost resetPinPost) {
+        validateCvv(id, resetPinPost.getToken());
         marqetaRepository.updatePin(new PinRequest()
             .controlToken(
                 marqetaRepository.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
             .pin(resetPinPost.getPin()));
-        return ResponseEntity.ok(getCard(id));
+        return getCard(id);
     }
 
     private void validateCvv(String cardToken, String cvv) {
@@ -77,5 +79,11 @@ public class CardsService {
             throw new BadRequestException()
                 .withErrors(Collections.singletonList(new Error().withMessage("cvv is incorrect")));
         }
+    }
+
+    public CardItem requestReplacement(String id, RequestReplacementPost requestReplacementPost) {
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.SUSPENDED));
+        marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForReplacement(id, requestReplacementPost));
+        return getCard(id);
     }
 }

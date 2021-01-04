@@ -60,13 +60,13 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> requestReplacement(String id, @Valid RequestReplacementPost requestReplacementPost,
         HttpServletRequest httpServletRequest) {
-        return null;
+        return ResponseEntity.ok(cardsService.requestReplacement(id, requestReplacementPost));
     }
 
     @Override
     public ResponseEntity<CardItem> resetPin(String id, @Valid ResetPinPost resetPinPost,
         HttpServletRequest httpServletRequest) {
-        return cardsService.resetPin(id, resetPinPost);
+        return ResponseEntity.ok(cardsService.resetPin(id, resetPinPost));
     }
 
 }

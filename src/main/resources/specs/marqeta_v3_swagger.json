@@ -303,6 +303,291 @@
           }
         ]
       }
+    },
+    "/velocitycontrols" : {
+      "get" : {
+        "tags" : [ "velocity controls" ],
+        "summary" : "Queries velocity controls",
+        "description" : "",
+        "operationId" : "getVelocitycontrols",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "card_product",
+          "in" : "query",
+          "description" : "Card product token. Use \"null\" to get velocity controls that are not associated with any card product.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "user",
+          "in" : "query",
+          "description" : "User token. Use \"null\" to get velocity controls that are not associated with any user.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "count",
+          "in" : "query",
+          "description" : "Number of items to retrieve. Count can be between 1 - 10 items.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 5,
+          "format" : "int32"
+        }, {
+          "name" : "start_index",
+          "in" : "query",
+          "description" : "Indicates from what row to start returning data.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 0,
+          "format" : "int32"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "sort_by",
+          "in" : "query",
+          "description" : "Field by which to sort the returned items. Use any field in the model, or system fields lastModifiedTime or createdTime.",
+          "required" : false,
+          "type" : "string",
+          "default" : "-lastModifiedTime"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/VelocityControlListResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      },
+      "post" : {
+        "tags" : [ "velocity controls" ],
+        "summary" : "Creates a velocity control",
+        "description" : "",
+        "operationId" : "postVelocitycontrols",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Velocity control object",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/velocity_control_request"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "schema" : {
+              "$ref" : "#/definitions/velocity_control_response"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "500" : {
+            "description" : "Server error"
+          },
+          "409" : {
+            "description" : "Token already associated with a different payload"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/velocitycontrols/user/{user_token}/available" : {
+      "get" : {
+        "tags" : [ "velocity controls" ],
+        "summary" : "Queries a user's velocity control balances",
+        "description" : "",
+        "operationId" : "getVelocitycontrolsUserUsertokenAvailable",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "user_token",
+          "in" : "path",
+          "description" : "User token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "count",
+          "in" : "query",
+          "description" : "Number of items to retrieve. Count can be between 1 - 10 items.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 5,
+          "format" : "int32"
+        }, {
+          "name" : "start_index",
+          "in" : "query",
+          "description" : "Indicates from what row to start returning data.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 0,
+          "format" : "int32"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "sort_by",
+          "in" : "query",
+          "description" : "Field by which to sort the returned items. Use any field in the model, or system fields lastModifiedTime or createdTime.",
+          "required" : false,
+          "type" : "string",
+          "default" : "-lastModifiedTime"
+        }, {
+          "name" : "force_dto",
+          "in" : "query",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/VelocityControlBalanceListResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
+    "/velocitycontrols/{token}" : {
+      "get": {
+        "tags": [
+          "velocity controls"
+        ],
+        "summary": "Returns a specific velocity control",
+        "description": "",
+        "operationId": "getVelocitycontrolsToken",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Velocity control token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/velocity_control_response"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Server error"
+          },
+          "404": {
+            "description": "Velocity control not found"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "velocity controls"
+        ],
+        "summary": "Updates a specific velocity control",
+        "description": "",
+        "operationId": "putVelocitycontrolsToken",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Velocity control token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Velocity control object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/velocity_control_update_request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/velocity_control_response"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -312,6 +597,402 @@
     }
   },
   "definitions": {
+    "velocity_control_request" : {
+      "type" : "object",
+      "required" : [ "amount_limit", "currency_code", "velocity_window" ],
+      "properties" : {
+        "token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "name" : {
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 255
+        },
+        "association" : {
+          "$ref" : "#/definitions/spend_control_association"
+        },
+        "merchant_scope" : {
+          "$ref" : "#/definitions/merchant_scope"
+        },
+        "usage_limit" : {
+          "type" : "integer",
+          "format" : "int32",
+          "minimum" : -1.0
+        },
+        "approvals_only" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_purchases" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_withdrawals" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_transfers" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_cashback" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_credits" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "currency_code" : {
+          "type" : "string"
+        },
+        "amount_limit" : {
+          "type" : "number",
+          "minimum" : 0.0
+        },
+        "velocity_window" : {
+          "type" : "string",
+          "enum" : [ "DAY", "WEEK", "MONTH", "LIFETIME", "TRANSACTION" ]
+        },
+        "active" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      },
+      "xml" : {
+        "name" : "velocity_control_request"
+      }
+    },
+    "velocity_control_balance_response" : {
+      "type" : "object",
+      "required" : [ "amount_limit", "available", "currency_code", "velocity_window" ],
+      "properties" : {
+        "token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "name" : {
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 255
+        },
+        "association" : {
+          "$ref" : "#/definitions/spend_control_association"
+        },
+        "merchant_scope" : {
+          "$ref" : "#/definitions/merchant_scope"
+        },
+        "usage_limit" : {
+          "type" : "integer",
+          "format" : "int32",
+          "minimum" : -1.0
+        },
+        "approvals_only" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_purchases" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_withdrawals" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_transfers" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_cashback" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_credits" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "currency_code" : {
+          "type" : "string"
+        },
+        "amount_limit" : {
+          "type" : "number",
+          "minimum" : 0.0
+        },
+        "velocity_window" : {
+          "type" : "string",
+          "enum" : [ "DAY", "WEEK", "MONTH", "LIFETIME", "TRANSACTION" ]
+        },
+        "active" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "available" : {
+          "description" : "Available balance",
+          "$ref" : "#/definitions/available"
+        }
+      },
+      "xml" : {
+        "name" : "velocity_control_balance_response"
+      }
+    },
+    "available" : {
+      "type" : "object",
+      "required" : [ "amount", "uses" ],
+      "properties" : {
+        "uses" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "Uses available",
+          "default" : 0
+        },
+        "amount" : {
+          "type" : "number",
+          "minimum" : 0.0
+        },
+        "days_remaining" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "Days remaining"
+        }
+      },
+      "xml" : {
+        "name" : "available"
+      }
+    },
+    "VelocityControlBalanceListResponse" : {
+      "type" : "object",
+      "properties" : {
+        "count" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "start_index" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "end_index" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "is_more" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/velocity_control_balance_response"
+          }
+        }
+      }
+    },
+    "velocity_control_update_request" : {
+      "type" : "object",
+      "required" : [ "token" ],
+      "properties" : {
+        "token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "name" : {
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 255
+        },
+        "association" : {
+          "$ref" : "#/definitions/spend_control_association"
+        },
+        "merchant_scope" : {
+          "$ref" : "#/definitions/merchant_scope"
+        },
+        "usage_limit" : {
+          "type" : "integer",
+          "format" : "int32",
+          "minimum" : -1.0
+        },
+        "approvals_only" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_purchases" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_withdrawals" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_transfers" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_cashback" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_credits" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "currency_code" : {
+          "type" : "string"
+        },
+        "amount_limit" : {
+          "type" : "number",
+          "minimum" : 0.0
+        },
+        "velocity_window" : {
+          "type" : "string",
+          "enum" : [ "DAY", "WEEK", "MONTH", "QUARTER", "YEAR", "LIFETIME", "TRANSACTION" ]
+        },
+        "active" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      },
+      "xml" : {
+        "name" : "velocity_control_update_request"
+      }
+    },
+    "merchant_scope" : {
+      "type" : "object",
+      "properties" : {
+        "mid" : {
+          "type" : "string",
+          "description" : "36 char max"
+        },
+        "mcc" : {
+          "type" : "string",
+          "description" : "4 char max"
+        },
+        "mcc_group" : {
+          "type" : "string",
+          "description" : "36 char max"
+        }
+      },
+      "xml" : {
+        "name" : "merchant_scope"
+      }
+    },
+    "velocity_control_response" : {
+      "type" : "object",
+      "required" : [ "amount_limit", "currency_code", "velocity_window" ],
+      "properties" : {
+        "token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "name" : {
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 255
+        },
+        "association" : {
+          "$ref" : "#/definitions/spend_control_association"
+        },
+        "merchant_scope" : {
+          "$ref" : "#/definitions/merchant_scope"
+        },
+        "usage_limit" : {
+          "type" : "integer",
+          "format" : "int32",
+          "minimum" : -1.0
+        },
+        "approvals_only" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_purchases" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_withdrawals" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_transfers" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_cashback" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "include_credits" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "currency_code" : {
+          "type" : "string"
+        },
+        "amount_limit" : {
+          "type" : "number",
+          "minimum" : 0.0
+        },
+        "velocity_window" : {
+          "type" : "string",
+          "enum" : [ "DAY", "WEEK", "MONTH", "LIFETIME", "TRANSACTION" ]
+        },
+        "active" : {
+          "type" : "boolean",
+          "default" : false
+        }
+      },
+      "xml" : {
+        "name" : "velocity_control_response"
+      }
+    },
+    "spend_control_association" : {
+      "type" : "object",
+      "properties" : {
+        "card_product_token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "user_token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        }
+      },
+      "xml" : {
+        "name" : "spend_control_association"
+      }
+    },
+    "VelocityControlListResponse" : {
+      "type" : "object",
+      "properties" : {
+        "count" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "start_index" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "end_index" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "is_more" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "data" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/velocity_control_response"
+          }
+        }
+      }
+    },
     "control_token_response" : {
       "type" : "object",
       "required" : [ "control_token" ],

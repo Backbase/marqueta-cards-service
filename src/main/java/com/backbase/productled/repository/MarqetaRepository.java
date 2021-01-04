@@ -6,12 +6,14 @@ import com.backbase.buildingblocks.presentation.errors.NotFoundException;
 import com.backbase.marqeta.clients.api.CardTransitionsApi;
 import com.backbase.marqeta.clients.api.CardsApi;
 import com.backbase.marqeta.clients.api.PinsApi;
+import com.backbase.marqeta.clients.api.VelocityControlsApi;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest;
 import com.backbase.marqeta.clients.model.CardUpdateRequest;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.ControlTokenResponse;
 import com.backbase.marqeta.clients.model.PinRequest;
+import com.backbase.marqeta.clients.model.VelocityControlListResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class MarqetaRepository {
     private final CardTransitionsApi cardTransitionsApi;
 
     private final PinsApi pinsApi;
+
+    private final VelocityControlsApi velocityControlsApi;
 
     public CardResponse getCardDetails(String token) {
         try {
@@ -151,5 +155,9 @@ public class MarqetaRepository {
                         "Unexpected error while resetting pin in Marqeta: " + e.getMessage(), e);
             }
         }
+    }
+
+    public VelocityControlListResponse getCardLimits(String cardProductToken) {
+        return velocityControlsApi.getVelocitycontrols(cardProductToken, null, null, null, null, null);
     }
 }

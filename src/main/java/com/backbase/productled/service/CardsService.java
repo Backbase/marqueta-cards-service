@@ -15,6 +15,7 @@ import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.ArrangementRepository;
 import com.backbase.productled.repository.MambuRepository;
 import com.backbase.productled.repository.MarqetaRepository;
+import com.backbase.marqeta.clients.model.CardResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,8 @@ public class CardsService {
             .collect(Collectors.toList()).stream()
             .map(Card::getReferenceToken)
             .map(marqetaRepository::getCardDetails)
-            .map(cardMapper::mapCard)
+            .map(cardResponse -> cardMapper
+                .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken())))
             .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
             .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
             .filter(cardItem -> (types == null || types.contains(cardItem.getType())))
@@ -50,7 +52,8 @@ public class CardsService {
     }
 
     public CardItem getCard(String id) {
-        return cardMapper.mapCard(marqetaRepository.getCardDetails(id));
+        CardResponse cardResponse = marqetaRepository.getCardDetails(id);
+        return cardMapper.mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
     }
 
     public CardItem postLockStatus(String id, LockStatusPost lockStatusPost) {

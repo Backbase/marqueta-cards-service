@@ -48,7 +48,7 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> changeLimits(String id, @Valid List<ChangeLimitsPostItem> changeLimitsPostItem,
         HttpServletRequest httpServletRequest) {
-        return null;
+        return ResponseEntity.ok(cardsService.changeLimits(id, changeLimitsPostItem));
     }
 
     @Override

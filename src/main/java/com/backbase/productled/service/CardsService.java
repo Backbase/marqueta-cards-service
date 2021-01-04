@@ -3,11 +3,14 @@ package com.backbase.productled.service;
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
 import com.backbase.buildingblocks.presentation.errors.Error;
 import com.backbase.mambu.clients.model.Card;
+import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.PinRequest;
+import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
 import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
+import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
@@ -15,7 +18,6 @@ import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.ArrangementRepository;
 import com.backbase.productled.repository.MambuRepository;
 import com.backbase.productled.repository.MarqetaRepository;
-import com.backbase.marqeta.clients.model.CardResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,6 +89,12 @@ public class CardsService {
     public CardItem requestReplacement(String id, RequestReplacementPost requestReplacementPost) {
         marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.SUSPENDED));
         marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForReplacement(id, requestReplacementPost));
+        return getCard(id);
+    }
+
+    public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
+        changeLimitsPostItem.forEach(item -> marqetaRepository
+            .updateCardLimits(item.getId(), new VelocityControlUpdateRequest().amountLimit(item.getAmount())));
         return getCard(id);
     }
 }

@@ -14,6 +14,8 @@ import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.ControlTokenResponse;
 import com.backbase.marqeta.clients.model.PinRequest;
 import com.backbase.marqeta.clients.model.VelocityControlListResponse;
+import com.backbase.marqeta.clients.model.VelocityControlResponse;
+import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -159,5 +161,9 @@ public class MarqetaRepository {
 
     public VelocityControlListResponse getCardLimits(String cardProductToken) {
         return velocityControlsApi.getVelocitycontrols(cardProductToken, null, null, null, null, null);
+    }
+
+    public VelocityControlResponse updateCardLimits(String token, VelocityControlUpdateRequest velocityControlUpdateRequest) {
+        return velocityControlsApi.putVelocitycontrolsToken(token, velocityControlUpdateRequest);
     }
 }

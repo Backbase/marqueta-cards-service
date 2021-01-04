@@ -47,6 +47,7 @@ public class MarqetaRestClientConfiguration {
         apiClient.setUsername(username);
         apiClient.setPassword(password);
         apiClient.setBasePath(baseUrl);
+        apiClient.setDebugging(true);
         return apiClient;
     }
 

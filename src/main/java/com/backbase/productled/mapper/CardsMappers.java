@@ -6,14 +6,11 @@ import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.CardUpdateRequest;
 import com.backbase.marqeta.clients.model.VelocityControlListResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
-import com.backbase.presentation.card.rest.spec.v2.cards.CardLimit;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -28,8 +25,6 @@ public interface CardsMappers {
     String UNDER_REPLACEMENT = "UnderReplacement";
     String ATM = "ATM";
     String ONLINE = "ONLINE";
-    String MIN_AMOUNT = "minAmount";
-    String MAX_AMOUNT = "maxAmount";
 
     @Mapping(target = "id", source = "cardResponse.token")
     @Mapping(target = "brand", expression = "java(cardResponse.getMetadata().get(\"brand\"))")
@@ -44,30 +39,9 @@ public interface CardsMappers {
     @Mapping(target = "currency", expression = "java(cardResponse.getMetadata().get(\"currency\"))")
     @Mapping(target = "maskedNumber", source = "cardResponse.lastFour")
     @Mapping(target = "delivery", ignore = true)
-    @Mapping(target = "limits", source = "cardLimits", qualifiedByName = "limits")
+    @Mapping(target = "limits", expression = "java(cardLimits.getData().stream().map(velocityControlResponse -> {return new com.backbase.presentation.card.rest.spec.v2.cards.CardLimit().id(velocityControlResponse.getToken()).amount(velocityControlResponse.getAmountLimit()).frequency(FrequencyEnum.fromValue(velocityControlResponse.getVelocityWindow().getValue()).getValue()).channel(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase()).minAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase() + \"minAmount\")))).maxAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()) + \"maxAmount\"))));}).collect(java.util.stream.Collectors.toList()))")
     @Mapping(target = "additions", ignore = true)
     CardItem mapCard(CardResponse cardResponse, VelocityControlListResponse cardLimits);
-
-    @Named("limits")
-    default List<CardLimit> getLimits(VelocityControlListResponse cardLimits) {
-        return cardLimits.getData().stream()
-            .map(velocityControlResponse -> {
-                    return new CardLimit()
-                        .id(velocityControlResponse.getToken())
-                        .amount(velocityControlResponse.getAmountLimit())
-                        .frequency(
-                            FrequencyEnum.fromValue(velocityControlResponse.getVelocityWindow().getValue()).getValue())
-                        .channel(getChannel(velocityControlResponse.getIncludeWithdrawals()))
-                        /*.minAmount(BigDecimal.valueOf(Long.parseLong(
-                            cardResponse.getMetadata()
-                                .get(getChannel(velocityControlResponse.getIncludeWithdrawals()) + "minAmount"))))
-                        .maxAmount(BigDecimal.valueOf(Long.parseLong(
-                            cardResponse.getMetadata()
-                                .get(getChannel(velocityControlResponse.getIncludeWithdrawals()) + "maxAmount"))))*/;
-
-                }
-            ).collect(Collectors.toList());
-    }
 
     default String getChannel(Boolean withdrawalsWindow) {
         return withdrawalsWindow != null && withdrawalsWindow ? ATM : ONLINE;

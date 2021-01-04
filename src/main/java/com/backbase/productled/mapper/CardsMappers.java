@@ -64,7 +64,7 @@ public interface CardsMappers {
     @Mapping(target = "metadata", source = "requestReplacementPost", qualifiedByName = "replacementMetaData")
     @Mapping(target = "userToken", ignore = true)
     @Mapping(target = "fulfillment", ignore = true)
-    CardUpdateRequest mapUpdateCardRequestForReplacement(String id, RequestReplacementPost requestReplacementPost);
+    CardUpdateRequest mapUpdateCardRequestForReplacement(String token, RequestReplacementPost requestReplacementPost);
 
     @Named("replacementMetaData")
     default Map<String, String> getReplacementMetaData(RequestReplacementPost requestReplacementPost) {
@@ -75,13 +75,13 @@ public interface CardsMappers {
     }
 
     @Mapping(target = "token", source = "token")
-    @Mapping(target = "metadata", qualifiedByName = "activationMetaData")
+    @Mapping(target = "metadata", source = "token", qualifiedByName = "activationMetaData")
     @Mapping(target = "userToken", ignore = true)
     @Mapping(target = "fulfillment", ignore = true)
-    CardUpdateRequest mapUpdateCardRequestForActivation(String id);
+    CardUpdateRequest mapUpdateCardRequestForActivation(String token);
 
     @Named("activationMetaData")
-    default Map<String, String> getActivationMetaData() {
+    default Map<String, String> getActivationMetaData(String token) {
         HashMap<String, String> metaData = new HashMap<>();
         metaData.put(REPLACEMENT_STATUS, NOT_UNDER_REPLACEMENT);
         metaData.put(REPLACEMENT_REASON, null);

@@ -37,7 +37,6 @@ public class CardsService {
     private final CardsMappers cardMapper;
 
     public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
-
         return arrangementRepository.getExternalArrangementIds().stream()
             .map(mambuRepository::getCards)
             .collect(Collectors.toList())

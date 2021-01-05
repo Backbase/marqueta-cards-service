@@ -44,9 +44,7 @@ public class CardsService {
             .stream().flatMap(List::stream)
             .collect(Collectors.toList()).stream()
             .map(Card::getReferenceToken)
-            .map(marqetaRepository::getCardDetails)
-            .map(cardResponse -> cardMapper
-                .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken())))
+            .map(this::getCard)
             .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
             .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
             .filter(cardItem -> (types == null || types.contains(cardItem.getType())))
@@ -94,7 +92,8 @@ public class CardsService {
 
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
         changeLimitsPostItem.forEach(item -> marqetaRepository
-            .updateCardLimits(item.getId(), new VelocityControlUpdateRequest().amountLimit(item.getAmount())));
+            .updateCardLimits(item.getId(),
+                new VelocityControlUpdateRequest().amountLimit(item.getAmount()).includeTransfers(true)));
         return getCard(id);
     }
 }

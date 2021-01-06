@@ -37,16 +37,23 @@ public class CardsService {
     private final CardsMappers cardMapper;
 
     public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
+        return getCardsLinkedToAccount().stream()
+            .map(cardResponse -> cardMapper
+                .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken())))
+            .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
+            .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
+            .filter(cardItem -> (types == null || types.contains(cardItem.getType())))
+            .collect(Collectors.toList());
+    }
+
+    public List<CardResponse> getCardsLinkedToAccount() {
         return arrangementRepository.getExternalArrangementIds().stream()
             .map(mambuRepository::getCards)
             .collect(Collectors.toList())
             .stream().flatMap(List::stream)
             .collect(Collectors.toList()).stream()
             .map(Card::getReferenceToken)
-            .map(this::getCard)
-            .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
-            .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
-            .filter(cardItem -> (types == null || types.contains(cardItem.getType())))
+            .map(marqetaRepository::getCardDetails)
             .collect(Collectors.toList());
     }
 

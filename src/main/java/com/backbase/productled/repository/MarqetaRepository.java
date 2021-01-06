@@ -6,13 +6,17 @@ import com.backbase.buildingblocks.presentation.errors.NotFoundException;
 import com.backbase.marqeta.clients.api.CardTransitionsApi;
 import com.backbase.marqeta.clients.api.CardsApi;
 import com.backbase.marqeta.clients.api.PinsApi;
+import com.backbase.marqeta.clients.api.UsersApi;
 import com.backbase.marqeta.clients.api.VelocityControlsApi;
+import com.backbase.marqeta.clients.model.CardHolderModel;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest;
 import com.backbase.marqeta.clients.model.CardUpdateRequest;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.ControlTokenResponse;
 import com.backbase.marqeta.clients.model.PinRequest;
+import com.backbase.marqeta.clients.model.UserCardHolderResponse;
+import com.backbase.marqeta.clients.model.UserCardHolderUpdateModel;
 import com.backbase.marqeta.clients.model.VelocityControlListResponse;
 import com.backbase.marqeta.clients.model.VelocityControlResponse;
 import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
@@ -33,6 +37,8 @@ public class MarqetaRepository {
     private final PinsApi pinsApi;
 
     private final VelocityControlsApi velocityControlsApi;
+
+    private final UsersApi usersApi;
 
     public CardResponse getCardDetails(String token) {
         try {
@@ -163,7 +169,16 @@ public class MarqetaRepository {
         return velocityControlsApi.getVelocitycontrols(cardProductToken, null, null, null, null, null);
     }
 
-    public VelocityControlResponse updateCardLimits(String token, VelocityControlUpdateRequest velocityControlUpdateRequest) {
+    public VelocityControlResponse updateCardLimits(String token,
+        VelocityControlUpdateRequest velocityControlUpdateRequest) {
         return velocityControlsApi.putVelocitycontrolsToken(token, velocityControlUpdateRequest);
+    }
+
+    public UserCardHolderResponse getCardHolder(String id) {
+        return usersApi.getUsersToken(id, null);
+    }
+
+    public CardHolderModel updateCardHolder(String id, UserCardHolderUpdateModel userCardHolderUpdateModel) {
+        return usersApi.putUsersToken(id, userCardHolderUpdateModel);
     }
 }

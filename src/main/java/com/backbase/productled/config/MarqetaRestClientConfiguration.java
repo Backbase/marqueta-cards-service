@@ -4,6 +4,7 @@ import com.backbase.marqeta.clients.ApiClient;
 import com.backbase.marqeta.clients.api.CardTransitionsApi;
 import com.backbase.marqeta.clients.api.CardsApi;
 import com.backbase.marqeta.clients.api.PinsApi;
+import com.backbase.marqeta.clients.api.UsersApi;
 import com.backbase.marqeta.clients.api.VelocityControlsApi;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,11 @@ public class MarqetaRestClientConfiguration {
     @Bean
     public PinsApi pinsApi() {
         return new PinsApi(marqetaApiClient());
+    }
+
+    @Bean
+    public UsersApi usersApi() {
+        return new UsersApi(marqetaApiClient());
     }
 
     @Bean

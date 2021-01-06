@@ -8,9 +8,13 @@ import com.backbase.marqeta.clients.model.VelocityControlListResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
+import com.backbase.marqeta.clients.model.UserCardHolderUpdateModel;
+import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -94,6 +98,10 @@ public interface CardsMappers {
         metaData.put(REPLACEMENT_REASON, null);
         return metaData;
     }
+
+    UserCardHolderUpdateModel mapUpdateCardHolderRequest(UserCardHolderResponse response);
+
+    UserCardHolderUpdateModel mapUpdateCardHolderRequest(UserCardHolderResponse response, String id);
 
     enum FrequencyEnum {
         DAILY("DAILY", "DAY"),

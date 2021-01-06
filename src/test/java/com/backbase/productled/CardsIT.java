@@ -145,4 +145,23 @@ public class CardsIT {
             .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
+
+
+    @Test
+    public void testGetTravelNotice() throws Exception {
+
+        Mockito.when(productsummaryProductSummaryClient
+            .getArrangementsByBusinessFunction(Mockito.any(GetArrangementsByBusinessFunctionQueryParameters.class)))
+            .thenAnswer(invocationOnMock -> ResponseEntity.ok(Collections
+                .singletonList(
+                    new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("031000021"))));
+
+        MockHttpServletRequestBuilder requestBuilder = get("/client-api/v2/travel-notices")
+            .header("Authorization", TEST_JWT);
+
+        ResultActions result = mvc.perform(requestBuilder).andDo(print());
+
+        // Then the request is successful
+        result.andExpect(status().isOk());
+    }
 }

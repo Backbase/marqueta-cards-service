@@ -8,10 +8,10 @@ import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.MarqetaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -36,8 +36,8 @@ public class TravelNoticeService {
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> {
                 try {
-                    return req.metadata(Collections.singletonMap(String.format("travelnotice-%s", travelNotice.getId()),
-                        Arrays.toString(objectMapper.writeValueAsBytes(travelNotice))));
+                    return req.metadata(Collections.singletonMap(String.format("travelnotice-%s", UUID.randomUUID()),
+                        objectMapper.writeValueAsString(travelNotice)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

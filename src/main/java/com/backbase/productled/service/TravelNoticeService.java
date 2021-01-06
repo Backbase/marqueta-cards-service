@@ -25,6 +25,8 @@ public class TravelNoticeService {
 
     private static final String TRAVEL_NOTICE_REGEX = "travelnotice-%s";
 
+    private static final String TRAVEL_NOTICE = "travelnotice";
+
     private final MarqetaRepository marqetaRepository;
 
     private final CardsMappers cardsMappers;
@@ -71,7 +73,7 @@ public class TravelNoticeService {
             .map(marqetaRepository::getCardHolder)
             .map(UserCardHolderResponse::getMetadata)
             .map(map -> map.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(TRAVEL_NOTICE_REGEX))
+                .filter(entry -> entry.getKey().startsWith(TRAVEL_NOTICE))
                 .map(entry -> getTravelNotice(entry.getValue()))
                 .collect(Collectors.toList())
             ).orElse(new ArrayList<>());

@@ -6,6 +6,7 @@ import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
 import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.MarqetaRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +15,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 @Service

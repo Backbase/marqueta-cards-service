@@ -40,9 +40,10 @@ public class CardsService {
         return getCardsLinkedToAccount().stream()
             .map(cardResponse -> cardMapper
                 .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken())))
-            .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
-            .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
-            .filter(cardItem -> (types == null || types.contains(cardItem.getType())))
+            .filter(cardItem ->
+                (ids == null || ids.contains(cardItem.getId())) &&
+                    (status == null || status.contains(cardItem.getStatus()) &&
+                        (types == null || types.contains(cardItem.getType()))))
             .collect(Collectors.toList());
     }
 

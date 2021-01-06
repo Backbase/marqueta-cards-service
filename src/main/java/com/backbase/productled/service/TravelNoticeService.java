@@ -8,7 +8,6 @@ import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
 import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.MarqetaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,7 +51,7 @@ public class TravelNoticeService {
 
     public TravelNotice getTravelNoticeById(String id) {
         return getUserCardHolder()
-            .filter(response -> response.getMetadata()!= null)
+            .filter(response -> response.getMetadata() != null)
             .map(response -> response.getMetadata()
                 .get(String.format(TRAVEL_NOTICE_REGEX, id)))
             .map(this::getTravelNotice)
@@ -83,23 +83,15 @@ public class TravelNoticeService {
             .map(marqetaRepository::getCardHolder);
     }
 
+    @SneakyThrows
     private UserCardHolderUpdateModel getUserCardHolderUpdateModel(String id, UserCardHolderUpdateModel req,
         TravelNotice travelNotice) {
-        try {
-            return req.metadata(Collections.singletonMap(String.format(TRAVEL_NOTICE_REGEX, id),
-                objectMapper.writeValueAsString(travelNotice)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return req;
+        return req.metadata(Collections.singletonMap(String.format(TRAVEL_NOTICE_REGEX, id),
+            objectMapper.writeValueAsString(travelNotice)));
     }
 
+    @SneakyThrows
     private TravelNotice getTravelNotice(String value) {
-        try {
-            return objectMapper.readValue(value, TravelNotice.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return objectMapper.readValue(value, TravelNotice.class);
     }
 }

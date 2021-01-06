@@ -42,6 +42,6 @@ public class TravelNoticesApiController implements TravelNoticesApi {
     @Override
     public ResponseEntity<TravelNotice> updateTravelNotice(String id, @Valid TravelNotice travelNotice,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(travelNoticeService.updateTravelNotice(id));
+        return ResponseEntity.ok(travelNoticeService.updateTravelNotice(id, travelNotice));
     }
 }

@@ -626,7 +626,12 @@
           "404" : {
             "description" : "Cardholder not found"
           }
-        }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
       },
       "put" : {
         "tags" : [ "users" ],
@@ -663,7 +668,12 @@
           "500" : {
             "description" : "Server error"
           }
-        }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
       }
     }
   },

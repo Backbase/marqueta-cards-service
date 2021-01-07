@@ -1,20 +1,26 @@
 package com.backbase.productled.mapper;
 
+import static com.backbase.productled.utils.CardConstants.ATM;
+import static com.backbase.productled.utils.CardConstants.LOCK_STATUS;
+import static com.backbase.productled.utils.CardConstants.NOT_UNDER_REPLACEMENT;
+import static com.backbase.productled.utils.CardConstants.ONLINE;
+import static com.backbase.productled.utils.CardConstants.REPLACEMENT_REASON;
+import static com.backbase.productled.utils.CardConstants.REPLACEMENT_STATUS;
+import static com.backbase.productled.utils.CardConstants.UNDER_REPLACEMENT;
+
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.CardUpdateRequest;
+import com.backbase.marqeta.clients.model.UserCardHolderResponse;
+import com.backbase.marqeta.clients.model.UserCardHolderUpdateModel;
 import com.backbase.marqeta.clients.model.VelocityControlListResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
-import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
-import com.backbase.marqeta.clients.model.UserCardHolderUpdateModel;
-import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -22,15 +28,9 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface CardsMappers {
 
-    String LOCK_STATUS = "lockStatus";
-    String REPLACEMENT_REASON = "replacementReason";
-    String REPLACEMENT_STATUS = "replacementStatus";
-    String NOT_UNDER_REPLACEMENT = "NotUnderReplacement";
-    String UNDER_REPLACEMENT = "UnderReplacement";
-    String ATM = "ATM";
-    String ONLINE = "ONLINE";
 
     @Mapping(target = "id", source = "cardResponse.token")
+    @Mapping(target = "maskedNumber", source = "cardResponse.lastFour")
     @Mapping(target = "brand", expression = "java(cardResponse.getMetadata().get(\"brand\"))")
     @Mapping(target = "type", expression = "java(cardResponse.getMetadata().get(\"type\"))")
     @Mapping(target = "subType", expression = "java(cardResponse.getMetadata().get(\"subType\"))")
@@ -41,9 +41,8 @@ public interface CardsMappers {
     @Mapping(target = "replacement", expression = "java(new com.backbase.presentation.card.rest.spec.v2.cards.Replacement().status(cardResponse.getMetadata().get(\"replacementStatus\")).reason(cardResponse.getMetadata().get(\"replacementReason\")))")
     @Mapping(target = "expiryDate", expression = "java(new com.backbase.presentation.card.rest.spec.v2.cards.YearMonth().year(String.valueOf(cardResponse.getExpirationTime().getYear())).month(String.valueOf(cardResponse.getExpirationTime().getMonthValue())))")
     @Mapping(target = "currency", expression = "java(cardResponse.getMetadata().get(\"currency\"))")
-    @Mapping(target = "maskedNumber", source = "cardResponse.lastFour")
+    @Mapping(target = "limits", expression = "java(cardLimits.getData().stream().map(velocityControlResponse -> {return new com.backbase.presentation.card.rest.spec.v2.cards.CardLimit().id(velocityControlResponse.getToken()).amount(velocityControlResponse.getAmountLimit()).frequency(com.backbase.productled.utils.FrequencyEnum.fromValue(velocityControlResponse.getVelocityWindow().getValue()).getValue()).channel(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase()).minAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase().concat(\"MinAmount\")))).setScale(2, java.math.RoundingMode.HALF_UP)).maxAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase().concat(\"MaxAmount\")))).setScale(2, java.math.RoundingMode.HALF_UP));}).collect(java.util.stream.Collectors.toList()))")
     @Mapping(target = "delivery", ignore = true)
-    @Mapping(target = "limits", expression = "java(cardLimits.getData().stream().map(velocityControlResponse -> {return new com.backbase.presentation.card.rest.spec.v2.cards.CardLimit().id(velocityControlResponse.getToken()).amount(velocityControlResponse.getAmountLimit()).frequency(FrequencyEnum.fromValue(velocityControlResponse.getVelocityWindow().getValue()).getValue()).channel(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase()).minAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase().concat(\"MinAmount\")))).setScale(2, java.math.RoundingMode.HALF_UP)).maxAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase().concat(\"MaxAmount\")))).setScale(2, java.math.RoundingMode.HALF_UP));}).collect(java.util.stream.Collectors.toList()))")
     @Mapping(target = "additions", ignore = true)
     CardItem mapCard(CardResponse cardResponse, VelocityControlListResponse cardLimits);
 
@@ -66,30 +65,19 @@ public interface CardsMappers {
     @Mapping(target = "fulfillment", ignore = true)
     CardUpdateRequest mapUpdateCardRequestForLockStatus(String token, LockStatusPost lockStatusPost);
 
-    @Named("statusMetadata")
-    default Map<String, String> getStatusMetadata(LockStatusPost lockStatusPost) {
-        return Collections.singletonMap(LOCK_STATUS, lockStatusPost.getLockStatus().toString());
-    }
-
     @Mapping(target = "token", source = "token")
     @Mapping(target = "metadata", source = "requestReplacementPost", qualifiedByName = "replacementMetaData")
     @Mapping(target = "userToken", ignore = true)
     @Mapping(target = "fulfillment", ignore = true)
     CardUpdateRequest mapUpdateCardRequestForReplacement(String token, RequestReplacementPost requestReplacementPost);
 
-    @Named("replacementMetaData")
-    default Map<String, String> getReplacementMetaData(RequestReplacementPost requestReplacementPost) {
-        HashMap<String, String> metaData = new HashMap<>();
-        metaData.put(REPLACEMENT_STATUS, UNDER_REPLACEMENT);
-        metaData.put(REPLACEMENT_REASON, requestReplacementPost.getReplacementReason());
-        return metaData;
-    }
-
     @Mapping(target = "token", source = "token")
     @Mapping(target = "metadata", source = "token", qualifiedByName = "activationMetaData")
     @Mapping(target = "userToken", ignore = true)
     @Mapping(target = "fulfillment", ignore = true)
     CardUpdateRequest mapUpdateCardRequestForActivation(String token);
+
+    UserCardHolderUpdateModel mapUpdateCardHolderRequest(UserCardHolderResponse response);
 
     @Named("activationMetaData")
     default Map<String, String> getActivationMetaData(String token) {
@@ -99,41 +87,17 @@ public interface CardsMappers {
         return metaData;
     }
 
-    UserCardHolderUpdateModel mapUpdateCardHolderRequest(UserCardHolderResponse response);
+    @Named("replacementMetaData")
+    default Map<String, String> getReplacementMetaData(RequestReplacementPost requestReplacementPost) {
+        HashMap<String, String> metaData = new HashMap<>();
+        metaData.put(REPLACEMENT_STATUS, UNDER_REPLACEMENT);
+        metaData.put(REPLACEMENT_REASON, requestReplacementPost.getReplacementReason());
+        return metaData;
+    }
 
-    UserCardHolderUpdateModel mapUpdateCardHolderRequest(UserCardHolderResponse response, String id);
-
-    enum FrequencyEnum {
-        DAILY("DAILY", "DAY"),
-
-        WEEKLY("WEEKLY", "WEEK"),
-
-        MONTHLY("MONTHLY", "MONTH");
-
-        private String dbsValue;
-        private String marqetaValue;
-
-        FrequencyEnum(String dbsValue, String marqetaValue) {
-            this.dbsValue = dbsValue;
-            this.marqetaValue = marqetaValue;
-        }
-
-        public String getValue() {
-            return dbsValue;
-        }
-
-        public String toString() {
-            return String.valueOf(dbsValue);
-        }
-
-        public static FrequencyEnum fromValue(String value) {
-            for (FrequencyEnum b : FrequencyEnum.values()) {
-                if (b.marqetaValue.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
+    @Named("statusMetadata")
+    default Map<String, String> getStatusMetadata(LockStatusPost lockStatusPost) {
+        return Collections.singletonMap(LOCK_STATUS, lockStatusPost.getLockStatus().toString());
     }
 
 }

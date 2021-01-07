@@ -1,5 +1,8 @@
 package com.backbase.productled.service;
 
+import static com.backbase.productled.utils.CardConstants.TRAVEL_NOTICE;
+import static com.backbase.productled.utils.CardConstants.TRAVEL_NOTICE_REGEX;
+
 import com.backbase.buildingblocks.presentation.errors.NotFoundException;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.UserCardHolderResponse;
@@ -22,9 +25,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class TravelNoticeService {
 
-    private static final String TRAVEL_NOTICE_REGEX = "travelnotice-%s";
-
-    private static final String TRAVEL_NOTICE = "travelnotice";
 
     private final MarqetaRepository marqetaRepository;
 
@@ -35,10 +35,9 @@ public class TravelNoticeService {
     private final ObjectMapper objectMapper;
 
     public TravelNotice createTravelNotice(TravelNotice travelNotice) {
-        String id = UUID.randomUUID().toString();
         getUserCardHolder()
             .map(cardsMappers::mapUpdateCardHolderRequest)
-            .map(req -> getUserCardHolderUpdateModel(id, req, travelNotice.id(id)))
+            .map(req -> getUserCardHolderUpdateModel(UUID.randomUUID().toString(), req, travelNotice))
             .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
         return travelNotice;
     }
@@ -88,7 +87,7 @@ public class TravelNoticeService {
     private UserCardHolderUpdateModel getUserCardHolderUpdateModel(String id, UserCardHolderUpdateModel req,
         TravelNotice travelNotice) {
         return req.metadata(Collections.singletonMap(String.format(TRAVEL_NOTICE_REGEX, id),
-            objectMapper.writeValueAsString(travelNotice)));
+            objectMapper.writeValueAsString(travelNotice.id(id))));
     }
 
     @SneakyThrows

@@ -244,7 +244,7 @@
                             <outputFile>target/generated-sources/</outputFile>
                             <serviceId>arrangement-manager</serviceId>
                             <packageName>productsummary</packageName>
-                            <basePackageName>com.backbase.productled</basePackageName>
+                            <basePackageName>com.backbase.presentation</basePackageName>
                             <generateApi>false</generateApi>
                             <generateClients>true</generateClients>
                         </configuration>

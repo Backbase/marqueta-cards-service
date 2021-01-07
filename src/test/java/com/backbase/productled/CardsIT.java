@@ -1,21 +1,41 @@
 package com.backbase.productled;
 
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.backbase.mambu.clients.api.DepositAccountsApi;
+import com.backbase.mambu.clients.model.Card;
+import com.backbase.marqeta.clients.api.CardsApi;
+import com.backbase.marqeta.clients.api.PinsApi;
+import com.backbase.marqeta.clients.api.VelocityControlsApi;
+import com.backbase.marqeta.clients.model.CardResponse;
+import com.backbase.marqeta.clients.model.CardTransitionResponse;
+import com.backbase.marqeta.clients.model.CardUpdateRequest;
+import com.backbase.marqeta.clients.model.ControlTokenResponse;
+import com.backbase.marqeta.clients.model.VelocityControlResponse;
+import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
+import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
-import com.backbase.productled.productsummary.listener.client.v2.productsummary.GetArrangementsByBusinessFunctionQueryParameters;
-import com.backbase.productled.productsummary.listener.client.v2.productsummary.ProductsummaryProductSummaryClient;
-import com.backbase.productled.productsummary.rest.spec.v2.productsummary.ArrangementsByBusinessFunctionGetResponseBody;
+import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
+import com.backbase.presentation.productsummary.listener.client.v2.productsummary.GetArrangementsByBusinessFunctionQueryParameters;
+import com.backbase.presentation.productsummary.listener.client.v2.productsummary.ProductsummaryProductSummaryClient;
+import com.backbase.presentation.productsummary.rest.spec.v2.productsummary.ArrangementsByBusinessFunctionGetResponseBody;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Collections;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +52,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 @SpringBootTest(classes = Application.class)
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
@@ -56,27 +75,64 @@ public class CardsIT {
     @MockBean
     private ProductsummaryProductSummaryClient productsummaryProductSummaryClient;
 
+    @MockBean
+    private DepositAccountsApi depositAccountsApi;
+
+    @MockBean
+    private CardsApi cardsApi;
+
+    @MockBean
+    private PinsApi pinsApi;
+
+    @MockBean
+    private VelocityControlsApi velocityControlsApi;
+
+    @MockBean
+    private com.backbase.marqeta.clients.api.CardTransitionsApi cardTransitionsApi;
+
     @Autowired
     private MockMvc mvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Before
+    public void setUp() throws IOException {
+
+        when(depositAccountsApi.getAllCards(eq("091000021")))
+            .thenReturn(singletonList(new Card().referenceToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")));
+
+        when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getCardResponse.json"),
+                CardResponse.class));
+
+        when(cardsApi.getCardsTokenShowpan("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, true))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/showCvv.json"),
+                CardResponse.class));
+
+        when(cardTransitionsApi.postCardtransitions(Mockito.any())).thenReturn(new CardTransitionResponse());
+
+        when(velocityControlsApi
+            .getVelocitycontrols("b1e4b06c-06f2-49c8-9c28-016ace3154ad", null, null, null, null, null))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getVelocityResponse.json"),
+                com.backbase.marqeta.clients.model.VelocityControlListResponse.class));
+
+    }
+
     @Test
     public void testGetCards() throws Exception {
 
-        Mockito.when(productsummaryProductSummaryClient
+        // Given
+        when(productsummaryProductSummaryClient
             .getArrangementsByBusinessFunction(Mockito.any(GetArrangementsByBusinessFunctionQueryParameters.class)))
-            .thenAnswer(invocationOnMock -> ResponseEntity.ok(Collections
-                .singletonList(
-                    new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("091000021"))));
+            .thenAnswer(invocationOnMock -> ResponseEntity.ok(singletonList(
+                new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("091000021"))));
 
-        MockHttpServletRequestBuilder requestBuilder = get("/client-api/v2/cards")
-            .header("Authorization", TEST_JWT);
+        // When
+        ResultActions result = mvc.perform(get("/client-api/v2/cards")
+            .header("Authorization", TEST_JWT)).andDo(print());
 
-        ResultActions result = mvc.perform(requestBuilder).andDo(print());
-
-        // Then the request is successful
+        // Then
         result.andExpect(status().isOk())
             .andExpect(jsonPath("$.*", hasSize(1)))
             .andExpect(jsonPath("$.[0].id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
@@ -92,18 +148,45 @@ public class CardsIT {
     }
 
     @Test
+    public void testGetCardById() throws Exception {
+
+        // When
+        ResultActions result = mvc.perform(get("/client-api/v2/cards/{cardId}",
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .header("Authorization", TEST_JWT))
+            .andDo(print());
+
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.type", is("Debit")))
+            .andExpect(jsonPath("$.subType", is("ATM")))
+            .andExpect(jsonPath("$.status", is("Active")))
+            .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
+            .andExpect(jsonPath("$.expiryDate.month", is("12")))
+            .andExpect(jsonPath("$.currency", is("USD")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
+    }
+
+    @Test
     public void testLockCard() throws Exception {
 
-        MockHttpServletRequestBuilder requestBuilder = post("/client-api/v2/cards/{id}/lock-status",
+        // Given
+        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/cardLockedResponse.json"),
+                CardResponse.class));
+
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/lock-status",
             "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
             .content(
                 objectMapper.writeValueAsString(new LockStatusPost().lockStatus(LockStatus.LOCKED)))
             .contentType("application/json")
-            .header("Authorization", TEST_JWT);
+            .header("Authorization", TEST_JWT)).andDo(print());
 
-        ResultActions result = mvc.perform(requestBuilder).andDo(print());
-
-        // Then the request is successful
+        // Then
         result.andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
             .andExpect(jsonPath("$.type", is("Debit")))
@@ -120,16 +203,21 @@ public class CardsIT {
     @Test
     public void testUnLockCard() throws Exception {
 
-        MockHttpServletRequestBuilder requestBuilder = post("/client-api/v2/cards/{id}/lock-status",
+        // Given
+        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/cardUnlockedResponse.json"),
+                CardResponse.class));
+
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/lock-status",
             "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
             .content(
                 objectMapper.writeValueAsString(new LockStatusPost().lockStatus(LockStatus.UNLOCKED)))
             .contentType("application/json")
-            .header("Authorization", TEST_JWT);
+            .header("Authorization", TEST_JWT))
+            .andDo(print());
 
-        ResultActions result = mvc.perform(requestBuilder).andDo(print());
-
-        // Then the request is successful
+        // Then
         result.andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
             .andExpect(jsonPath("$.type", is("Debit")))
@@ -143,22 +231,149 @@ public class CardsIT {
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 
+    @Test
+    public void testRequestReplacement() throws Exception {
+
+        // Given
+        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/replacementCardResponse.json"),
+                CardResponse.class));
+
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/replacement",
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .content(objectMapper.writeValueAsString(new RequestReplacementPost().replacementReason("stolen")))
+            .contentType("application/json")
+            .header("Authorization", TEST_JWT))
+            .andDo(print());
+
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.type", is("Debit")))
+            .andExpect(jsonPath("$.subType", is("ATM")))
+            .andExpect(jsonPath("$.status", is("Inactive")))
+            .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
+            .andExpect(jsonPath("$.expiryDate.month", is("12")))
+            .andExpect(jsonPath("$.currency", is("USD")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
+            .andExpect(jsonPath("$.replacement.status", is("UnderReplacement")));
+    }
 
     @Test
-    public void testGetTravelNotice() throws Exception {
+    public void testActivation() throws Exception {
 
-        Mockito.when(productsummaryProductSummaryClient
-            .getArrangementsByBusinessFunction(Mockito.any(GetArrangementsByBusinessFunctionQueryParameters.class)))
-            .thenAnswer(invocationOnMock -> ResponseEntity.ok(Collections
-                .singletonList(
-                    new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("031000021"))));
+        // Given
+        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/cardUnlockedResponse.json"),
+                CardResponse.class));
 
-        MockHttpServletRequestBuilder requestBuilder = get("/client-api/v2/travel-notices")
-            .header("Authorization", TEST_JWT);
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/activation",
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .content(objectMapper.writeValueAsString(new ActivatePost().token("132")))
+            .contentType("application/json")
+            .header("Authorization", TEST_JWT)).andDo(print());
 
-        ResultActions result = mvc.perform(requestBuilder).andDo(print());
-
-        // Then the request is successful
-        result.andExpect(status().isOk());
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.type", is("Debit")))
+            .andExpect(jsonPath("$.subType", is("ATM")))
+            .andExpect(jsonPath("$.status", is("Active")))
+            .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
+            .andExpect(jsonPath("$.expiryDate.month", is("12")))
+            .andExpect(jsonPath("$.currency", is("USD")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
+
+    @Test
+    public void testChangeLimits() throws Exception {
+
+        // Given
+        when(velocityControlsApi.putVelocitycontrolsToken(eq("acdca953-f539-412f-9c03-e49f3c7f7b5e"), Mockito.any()))
+            .thenReturn(new VelocityControlResponse());
+
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/limits",
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .content(objectMapper
+                .writeValueAsString(singletonList(new ChangeLimitsPostItem().id("d5f5e333-9463-4050-b554-9d0d1119d64e")
+                    .amount(BigDecimal.valueOf(5000)))))
+            .contentType("application/json")
+            .header("Authorization", TEST_JWT)).andDo(print());
+
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.type", is("Debit")))
+            .andExpect(jsonPath("$.subType", is("ATM")))
+            .andExpect(jsonPath("$.status", is("Active")))
+            .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
+            .andExpect(jsonPath("$.expiryDate.month", is("12")))
+            .andExpect(jsonPath("$.currency", is("USD")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")))
+            .andExpect(jsonPath("$.limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
+            .andExpect(jsonPath("$.limits[0].amount", is("5000.00")));
+    }
+
+    @Test
+    public void testResetPin() throws Exception {
+
+        // Given
+        when(pinsApi.postPinsControltoken(Mockito.any()))
+            .thenReturn(new ControlTokenResponse().controlToken("test"));
+
+        Mockito.doNothing().when(pinsApi).putPins(Mockito.any());
+
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/pin/reset",
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .content(objectMapper
+                .writeValueAsString(new ResetPinPost().token("132").pin("7278")))
+            .contentType("application/json")
+            .header("Authorization", TEST_JWT)).andDo(print());
+
+        // Then
+        result.andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.type", is("Debit")))
+            .andExpect(jsonPath("$.subType", is("ATM")))
+            .andExpect(jsonPath("$.status", is("Active")))
+            .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
+            .andExpect(jsonPath("$.expiryDate.month", is("12")))
+            .andExpect(jsonPath("$.currency", is("USD")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")))
+            .andExpect(jsonPath("$.limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
+            .andExpect(jsonPath("$.limits[0].amount", is("5000.00")));
+    }
+
+    @Test
+    public void testResetPinWhenWrongCvv() throws Exception {
+
+        // Given
+        when(pinsApi.postPinsControltoken(Mockito.any()))
+            .thenReturn(new ControlTokenResponse().controlToken("test"));
+
+        Mockito.doNothing().when(pinsApi).putPins(Mockito.any());
+
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/pin/reset",
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .content(objectMapper
+                .writeValueAsString(new ResetPinPost().token("112").pin("7278")))
+            .contentType("application/json")
+            .header("Authorization", TEST_JWT)).andDo(print());
+
+        // Then
+        result.andExpect(status().isBadRequest());
+    }
+
 }

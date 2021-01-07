@@ -177,47 +177,57 @@
         ]
       }
     },
-    "/cards/{token}/showpan" : {
-      "get" : {
-        "tags" : [ "cards" ],
-        "summary" : "Returns a specific card - PAN visible",
-        "description" : "",
-        "operationId" : "getCardsTokenShowpan",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "token",
-          "in" : "path",
-          "description" : "Card token",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "fields",
-          "in" : "query",
-          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "show_cvv_number",
-          "in" : "query",
-          "required" : false,
-          "type" : "boolean"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "schema" : {
-              "$ref" : "#/definitions/card_response"
+    "/cards/{token}/showpan": {
+      "get": {
+        "tags": [
+          "cards"
+        ],
+        "summary": "Returns a specific card - PAN visible",
+        "description": "",
+        "operationId": "getCardsTokenShowpan",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Card token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "show_cvv_number",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/card_response"
             }
           },
-          "400" : {
-            "description" : "User input error/Bad request"
+          "400": {
+            "description": "User input error/Bad request"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           },
-          "404" : {
-            "description" : "Card not found"
+          "404": {
+            "description": "Card not found"
           }
         },
         "security": [
@@ -227,37 +237,45 @@
         ]
       }
     },
-    "/pins/controltoken" : {
-      "post" : {
-        "tags" : [ "pins" ],
-        "summary" : "Creates a new control token for a PIN",
-        "description" : "Creates a new control token for a PIN, for the specified card for PIN debit or ATM transactions,or to allow for a pin to be revealed to authorized callers.",
-        "operationId" : "postPinsControltoken",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/control_token_request"
+    "/pins/controltoken": {
+      "post": {
+        "tags": [
+          "pins"
+        ],
+        "summary": "Creates a new control token for a PIN",
+        "description": "Creates a new control token for a PIN, for the specified card for PIN debit or ATM transactions,or to allow for a pin to be revealed to authorized callers.",
+        "operationId": "postPinsControltoken",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/control_token_request"
+            }
           }
-        } ],
-        "responses" : {
-          "201" : {
-            "description" : "Control token created",
-            "schema" : {
-              "$ref" : "#/definitions/control_token_response"
+        ],
+        "responses": {
+          "201": {
+            "description": "Control token created",
+            "schema": {
+              "$ref": "#/definitions/control_token_response"
             }
           },
-          "400" : {
-            "description" : "Bad request"
+          "400": {
+            "description": "Bad request"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           },
-          "403" : {
-            "description" : "Forbidden"
+          "403": {
+            "description": "Forbidden"
           }
         },
         "security": [
@@ -267,34 +285,42 @@
         ]
       }
     },
-    "/pins" : {
-      "put" : {
-        "tags" : [ "pins" ],
-        "summary" : "Updates the PIN control token",
-        "description" : "Updates a PIN identified by its control token.",
-        "operationId" : "putPins",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/pin_request"
+    "/pins": {
+      "put": {
+        "tags": [
+          "pins"
+        ],
+        "summary": "Updates the PIN control token",
+        "description": "Updates a PIN identified by its control token.",
+        "operationId": "putPins",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/pin_request"
+            }
           }
-        } ],
-        "responses" : {
-          "400" : {
-            "description" : "Bad request"
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad request"
           },
-          "412" : {
-            "description" : "Weak PIN"
+          "412": {
+            "description": "Weak PIN"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           },
-          "204" : {
-            "description" : "PIN was successfully set"
+          "204": {
+            "description": "PIN was successfully set"
           }
         },
         "security": [
@@ -304,68 +330,81 @@
         ]
       }
     },
-    "/velocitycontrols" : {
-      "get" : {
-        "tags" : [ "velocity controls" ],
-        "summary" : "Queries velocity controls",
-        "description" : "",
-        "operationId" : "getVelocitycontrols",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "card_product",
-          "in" : "query",
-          "description" : "Card product token. Use \"null\" to get velocity controls that are not associated with any card product.",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "user",
-          "in" : "query",
-          "description" : "User token. Use \"null\" to get velocity controls that are not associated with any user.",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "count",
-          "in" : "query",
-          "description" : "Number of items to retrieve. Count can be between 1 - 10 items.",
-          "required" : false,
-          "type" : "integer",
-          "default" : 5,
-          "format" : "int32"
-        }, {
-          "name" : "start_index",
-          "in" : "query",
-          "description" : "Indicates from what row to start returning data.",
-          "required" : false,
-          "type" : "integer",
-          "default" : 0,
-          "format" : "int32"
-        }, {
-          "name" : "fields",
-          "in" : "query",
-          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "sort_by",
-          "in" : "query",
-          "description" : "Field by which to sort the returned items. Use any field in the model, or system fields lastModifiedTime or createdTime.",
-          "required" : false,
-          "type" : "string",
-          "default" : "-lastModifiedTime"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "schema" : {
-              "$ref" : "#/definitions/VelocityControlListResponse"
+    "/velocitycontrols": {
+      "get": {
+        "tags": [
+          "velocity controls"
+        ],
+        "summary": "Queries velocity controls",
+        "description": "",
+        "operationId": "getVelocitycontrols",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "card_product",
+            "in": "query",
+            "description": "Card product token. Use \"null\" to get velocity controls that are not associated with any card product.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "description": "User token. Use \"null\" to get velocity controls that are not associated with any user.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Number of items to retrieve. Count can be between 1 - 10 items.",
+            "required": false,
+            "type": "integer",
+            "default": 5,
+            "format": "int32"
+          },
+          {
+            "name": "start_index",
+            "in": "query",
+            "description": "Indicates from what row to start returning data.",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int32"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "description": "Field by which to sort the returned items. Use any field in the model, or system fields lastModifiedTime or createdTime.",
+            "required": false,
+            "type": "string",
+            "default": "-lastModifiedTime"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VelocityControlListResponse"
             }
           },
-          "400" : {
-            "description" : "Bad request"
+          "400": {
+            "description": "Bad request"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           }
         },
         "security": [
@@ -374,37 +413,45 @@
           }
         ]
       },
-      "post" : {
-        "tags" : [ "velocity controls" ],
-        "summary" : "Creates a velocity control",
-        "description" : "",
-        "operationId" : "postVelocitycontrols",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Velocity control object",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/velocity_control_request"
+      "post": {
+        "tags": [
+          "velocity controls"
+        ],
+        "summary": "Creates a velocity control",
+        "description": "",
+        "operationId": "postVelocitycontrols",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Velocity control object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/velocity_control_request"
+            }
           }
-        } ],
-        "responses" : {
-          "201" : {
-            "description" : "Created",
-            "schema" : {
-              "$ref" : "#/definitions/velocity_control_response"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/velocity_control_response"
             }
           },
-          "400" : {
-            "description" : "Bad request"
+          "400": {
+            "description": "Bad request"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           },
-          "409" : {
-            "description" : "Token already associated with a different payload"
+          "409": {
+            "description": "Token already associated with a different payload"
           }
         },
         "security": [
@@ -414,67 +461,80 @@
         ]
       }
     },
-    "/velocitycontrols/user/{user_token}/available" : {
-      "get" : {
-        "tags" : [ "velocity controls" ],
-        "summary" : "Queries a user's velocity control balances",
-        "description" : "",
-        "operationId" : "getVelocitycontrolsUserUsertokenAvailable",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "user_token",
-          "in" : "path",
-          "description" : "User token",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "count",
-          "in" : "query",
-          "description" : "Number of items to retrieve. Count can be between 1 - 10 items.",
-          "required" : false,
-          "type" : "integer",
-          "default" : 5,
-          "format" : "int32"
-        }, {
-          "name" : "start_index",
-          "in" : "query",
-          "description" : "Indicates from what row to start returning data.",
-          "required" : false,
-          "type" : "integer",
-          "default" : 0,
-          "format" : "int32"
-        }, {
-          "name" : "fields",
-          "in" : "query",
-          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
-          "required" : false,
-          "type" : "string"
-        }, {
-          "name" : "sort_by",
-          "in" : "query",
-          "description" : "Field by which to sort the returned items. Use any field in the model, or system fields lastModifiedTime or createdTime.",
-          "required" : false,
-          "type" : "string",
-          "default" : "-lastModifiedTime"
-        }, {
-          "name" : "force_dto",
-          "in" : "query",
-          "required" : false,
-          "type" : "string"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "schema" : {
-              "$ref" : "#/definitions/VelocityControlBalanceListResponse"
+    "/velocitycontrols/user/{user_token}/available": {
+      "get": {
+        "tags": [
+          "velocity controls"
+        ],
+        "summary": "Queries a user's velocity control balances",
+        "description": "",
+        "operationId": "getVelocitycontrolsUserUsertokenAvailable",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user_token",
+            "in": "path",
+            "description": "User token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Number of items to retrieve. Count can be between 1 - 10 items.",
+            "required": false,
+            "type": "integer",
+            "default": 5,
+            "format": "int32"
+          },
+          {
+            "name": "start_index",
+            "in": "query",
+            "description": "Indicates from what row to start returning data.",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int32"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "description": "Field by which to sort the returned items. Use any field in the model, or system fields lastModifiedTime or createdTime.",
+            "required": false,
+            "type": "string",
+            "default": "-lastModifiedTime"
+          },
+          {
+            "name": "force_dto",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VelocityControlBalanceListResponse"
             }
           },
-          "400" : {
-            "description" : "Bad request"
+          "400": {
+            "description": "Bad request"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           }
         },
         "security": [
@@ -484,7 +544,7 @@
         ]
       }
     },
-    "/velocitycontrols/{token}" : {
+    "/velocitycontrols/{token}": {
       "get": {
         "tags": [
           "velocity controls"
@@ -589,42 +649,51 @@
         ]
       }
     },
-    "/users/{token}" : {
-      "get" : {
-        "tags" : [ "users" ],
-        "summary" : "Returns a specific user",
-        "description" : "",
-        "operationId" : "getUsersToken",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "token",
-          "in" : "path",
-          "description" : "User token",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "fields",
-          "in" : "query",
-          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
-          "required" : false,
-          "type" : "string"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "schema" : {
-              "$ref" : "#/definitions/user_card_holder_response"
+    "/users/{token}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Returns a specific user",
+        "description": "",
+        "operationId": "getUsersToken",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "User token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/user_card_holder_response"
             }
           },
-          "400" : {
-            "description" : "Bad request"
+          "400": {
+            "description": "Bad request"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           },
-          "404" : {
-            "description" : "Cardholder not found"
+          "404": {
+            "description": "Cardholder not found"
           }
         },
         "security": [
@@ -633,40 +702,49 @@
           }
         ]
       },
-      "put" : {
-        "tags" : [ "users" ],
-        "summary" : "Updates a specific user",
-        "description" : "",
-        "operationId" : "putUsersToken",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "token",
-          "in" : "path",
-          "description" : "User token",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "User object",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/UserCardHolderUpdateModel"
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Updates a specific user",
+        "description": "",
+        "operationId": "putUsersToken",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "User token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCardHolderUpdateModel"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "schema" : {
-              "$ref" : "#/definitions/card_holder_model"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/card_holder_model"
             }
           },
-          "400" : {
-            "description" : "User input error/Bad request"
+          "400": {
+            "description": "User input error/Bad request"
           },
-          "500" : {
-            "description" : "Server error"
+          "500": {
+            "description": "Server error"
           }
         },
         "security": [
@@ -684,1046 +762,1147 @@
     }
   },
   "definitions": {
-    "IdentificationResponseModel" : {
-      "type" : "object",
-      "properties" : {
-        "type" : {
-          "type" : "string",
-          "readOnly" : true,
-          "enum" : [ "SSN", "TIN", "SIN", "NIN", "PASSPORT_NUMBER", "DRIVERS_LICENSE", "BUSINESS_NUMBER", "BUSINESS_TAX_ID", "TAXPAYER_REFERENCE" ]
+    "IdentificationResponseModel": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "readOnly": true,
+          "enum": [
+            "SSN",
+            "TIN",
+            "SIN",
+            "NIN",
+            "PASSPORT_NUMBER",
+            "DRIVERS_LICENSE",
+            "BUSINESS_NUMBER",
+            "BUSINESS_TAX_ID",
+            "TAXPAYER_REFERENCE"
+          ]
         },
-        "value" : {
-          "type" : "string",
-          "readOnly" : true
+        "value": {
+          "type": "string",
+          "readOnly": true
         },
-        "expiration_date" : {
-          "type" : "string",
-          "readOnly" : true
+        "expiration_date": {
+          "type": "string",
+          "readOnly": true
         }
       }
     },
-    "Authentication" : {
-      "type" : "object",
-      "properties" : {
-        "last_password_update_channel" : {
-          "type" : "string",
-          "enum" : [ "USER_CHANGE", "USER_RESET" ]
+    "Authentication": {
+      "type": "object",
+      "properties": {
+        "last_password_update_channel": {
+          "type": "string",
+          "enum": [
+            "USER_CHANGE",
+            "USER_RESET"
+          ]
         },
-        "last_password_update_time" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "yyyy-MM-ddTHH:mm:ssZ"
+        "last_password_update_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ssZ"
         },
-        "email_verified" : {
-          "type" : "boolean",
-          "default" : false
+        "email_verified": {
+          "type": "boolean",
+          "default": false
         },
-        "email_verified_time" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "yyyy-MM-ddTHH:mm:ssZ"
+        "email_verified_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ssZ"
         }
       }
     },
-    "user_card_holder_response" : {
-      "type" : "object",
-      "required" : [ "created_time", "last_modified_time" ],
-      "properties" : {
-        "authentication" : {
-          "$ref" : "#/definitions/Authentication"
+    "user_card_holder_response": {
+      "type": "object",
+      "required": [
+        "created_time",
+        "last_modified_time"
+      ],
+      "properties": {
+        "authentication": {
+          "$ref": "#/definitions/Authentication"
         },
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "active" : {
-          "type" : "boolean",
-          "description" : "Default is true",
-          "default" : false
+        "active": {
+          "type": "boolean",
+          "description": "Default is true",
+          "default": false
         },
-        "honorific" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "honorific": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
         },
-        "gender" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 1,
-          "enum" : [ "F", "M" ]
+        "gender": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1,
+          "enum": [
+            "F",
+            "M"
+          ]
         },
-        "first_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "first_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "middle_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "middle_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "last_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "last_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "email" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 255
+        "email": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
         },
-        "address1" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "address1": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "address2" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "address2": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "city" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "city": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "state" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 2
+        "state": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 2
         },
-        "zip" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "zip": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
         },
-        "postal_code" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "postal_code": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
         },
-        "country" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "country": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "notes" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "notes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "phone" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "phone": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "parent_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "parent_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "uses_parent_account" : {
-          "type" : "boolean",
-          "description" : "Default is false",
-          "default" : false
+        "uses_parent_account": {
+          "type": "boolean",
+          "description": "Default is false",
+          "default": false
         },
-        "ssn" : {
-          "type" : "string"
+        "ssn": {
+          "type": "string"
         },
-        "corporate_card_holder" : {
-          "type" : "boolean",
-          "default" : false
+        "corporate_card_holder": {
+          "type": "boolean",
+          "default": false
         },
-        "passport_number" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "passport_number": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "id_card_number" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "id_card_number": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "nationality" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "nationality": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "company" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "company": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "ip_address" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 39
+        "ip_address": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 39
         },
-        "password" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 255
+        "password": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
         },
-        "created_time" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "yyyy-MM-ddTHH:mm:ssZ"
+        "created_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ssZ"
         },
-        "last_modified_time" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "yyyy-MM-ddTHH:mm:ssZ"
+        "last_modified_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "yyyy-MM-ddTHH:mm:ssZ"
         },
-        "business_token" : {
-          "type" : "string"
+        "business_token": {
+          "type": "string"
         },
-        "metadata" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "string"
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         },
-        "account_holder_group_token" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 36
+        "account_holder_group_token": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 36
         },
-        "status" : {
-          "type" : "string",
-          "enum" : [ "UNVERIFIED", "LIMITED", "ACTIVE", "SUSPENDED", "CLOSED" ]
+        "status": {
+          "type": "string",
+          "enum": [
+            "UNVERIFIED",
+            "LIMITED",
+            "ACTIVE",
+            "SUSPENDED",
+            "CLOSED"
+          ]
         },
-        "identifications" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/IdentificationResponseModel"
+        "identifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IdentificationResponseModel"
           }
         },
-        "deposit_account" : {
-          "$ref" : "#/definitions/deposit_account"
+        "deposit_account": {
+          "$ref": "#/definitions/deposit_account"
         },
-        "passport_expiration_date" : {
-          "type" : "string",
-          "readOnly" : true
+        "passport_expiration_date": {
+          "type": "string",
+          "readOnly": true
         },
-        "birth_date" : {
-          "type" : "string",
-          "readOnly" : true
+        "birth_date": {
+          "type": "string",
+          "readOnly": true
         },
-        "id_card_expiration_date" : {
-          "type" : "string",
-          "readOnly" : true
+        "id_card_expiration_date": {
+          "type": "string",
+          "readOnly": true
         }
       },
-      "xml" : {
-        "name" : "user_card_holder_response"
+      "xml": {
+        "name": "user_card_holder_response"
       }
     },
-    "deposit_account" : {
-      "type" : "object",
-      "required" : [ "account_number", "routing_number", "token" ],
-      "properties" : {
-        "token" : {
-          "type" : "string"
+    "deposit_account": {
+      "type": "object",
+      "required": [
+        "account_number",
+        "routing_number",
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string"
         },
-        "user_token" : {
-          "type" : "string"
+        "user_token": {
+          "type": "string"
         },
-        "business_token" : {
-          "type" : "string"
+        "business_token": {
+          "type": "string"
         },
-        "account_number" : {
-          "type" : "string"
+        "account_number": {
+          "type": "string"
         },
-        "routing_number" : {
-          "type" : "string"
+        "routing_number": {
+          "type": "string"
         },
-        "allow_immediate_credit" : {
-          "type" : "boolean",
-          "default" : false
+        "allow_immediate_credit": {
+          "type": "boolean",
+          "default": false
         }
       },
-      "xml" : {
-        "name" : "deposit_account"
+      "xml": {
+        "name": "deposit_account"
       }
     },
-    "UserCardHolderUpdateModel" : {
-      "type" : "object",
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+    "UserCardHolderUpdateModel": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "active" : {
-          "type" : "boolean",
-          "default" : true
+        "active": {
+          "type": "boolean",
+          "default": true
         },
-        "notes" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "notes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "ip_address" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 39
+        "ip_address": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 39
         },
-        "password" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "password": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "phone" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "phone": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "metadata" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "string"
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         },
-        "account_holder_group_token" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 36
+        "account_holder_group_token": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 36
         },
-        "identifications" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/IdentificationRequestModel"
+        "identifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IdentificationRequestModel"
           }
         },
-        "honorific" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "honorific": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
         },
-        "gender" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 1,
-          "enum" : [ "F", "M" ]
+        "gender": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1,
+          "enum": [
+            "F",
+            "M"
+          ]
         },
-        "first_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "first_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "middle_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "middle_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "last_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "last_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "email" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 255
+        "email": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
         },
-        "address1" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "address1": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "address2" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "address2": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "city" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "city": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "state" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 32
+        "state": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 32
         },
-        "country" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "country": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "birth_date" : {
-          "type" : "string"
+        "birth_date": {
+          "type": "string"
         },
-        "corporate_card_holder" : {
-          "type" : "boolean",
-          "default" : false
+        "corporate_card_holder": {
+          "type": "boolean",
+          "default": false
         },
-        "ssn" : {
-          "type" : "string"
+        "ssn": {
+          "type": "string"
         },
-        "passport_number" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "passport_number": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "passport_expiration_date" : {
-          "type" : "string"
+        "passport_expiration_date": {
+          "type": "string"
         },
-        "id_card_number" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "id_card_number": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "id_card_expiration_date" : {
-          "type" : "string"
+        "id_card_expiration_date": {
+          "type": "string"
         },
-        "nationality" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "nationality": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "company" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "company": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "parent_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "parent_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "uses_parent_account" : {
-          "type" : "boolean",
-          "description" : "Default is false",
-          "default" : false
+        "uses_parent_account": {
+          "type": "boolean",
+          "description": "Default is false",
+          "default": false
         },
-        "postal_code" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "postal_code": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
         }
       }
     },
-    "IdentificationRequestModel" : {
-      "type" : "object",
-      "required" : [ "type" ],
-      "properties" : {
-        "type" : {
-          "type" : "string",
-          "readOnly" : true,
-          "enum" : [ "SSN", "TIN", "SIN", "NIN", "PASSPORT_NUMBER", "DRIVERS_LICENSE", "BUSINESS_NUMBER", "BUSINESS_TAX_ID", "TAXPAYER_REFERENCE" ]
+    "IdentificationRequestModel": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "readOnly": true,
+          "enum": [
+            "SSN",
+            "TIN",
+            "SIN",
+            "NIN",
+            "PASSPORT_NUMBER",
+            "DRIVERS_LICENSE",
+            "BUSINESS_NUMBER",
+            "BUSINESS_TAX_ID",
+            "TAXPAYER_REFERENCE"
+          ]
         },
-        "value" : {
-          "type" : "string",
-          "readOnly" : true
+        "value": {
+          "type": "string",
+          "readOnly": true
         },
-        "expiration_date" : {
-          "type" : "string"
+        "expiration_date": {
+          "type": "string"
         }
       }
     },
-    "card_holder_model" : {
-      "type" : "object",
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+    "card_holder_model": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "active" : {
-          "type" : "boolean",
-          "default" : true
+        "active": {
+          "type": "boolean",
+          "default": true
         },
-        "notes" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "notes": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "ip_address" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 39
+        "ip_address": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 39
         },
-        "password" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "password": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "phone" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "phone": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "metadata" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "string"
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         },
-        "account_holder_group_token" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 36
+        "account_holder_group_token": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 36
         },
-        "identifications" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/IdentificationRequestModel"
+        "identifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IdentificationRequestModel"
           }
         },
-        "honorific" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "honorific": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
         },
-        "gender" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 1,
-          "enum" : [ "F", "M" ]
+        "gender": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1,
+          "enum": [
+            "F",
+            "M"
+          ]
         },
-        "first_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "first_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "middle_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "middle_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "last_name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "last_name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "email" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 255
+        "email": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
         },
-        "address1" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "address1": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "address2" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "address2": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "city" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "city": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "state" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 32
+        "state": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 32
         },
-        "country" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "country": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "birth_date" : {
-          "type" : "string"
+        "birth_date": {
+          "type": "string"
         },
-        "corporate_card_holder" : {
-          "type" : "boolean",
-          "default" : false
+        "corporate_card_holder": {
+          "type": "boolean",
+          "default": false
         },
-        "ssn" : {
-          "type" : "string"
+        "ssn": {
+          "type": "string"
         },
-        "passport_number" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 40
+        "passport_number": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
         },
-        "passport_expiration_date" : {
-          "type" : "string"
+        "passport_expiration_date": {
+          "type": "string"
         },
-        "id_card_number" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "id_card_number": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "id_card_expiration_date" : {
-          "type" : "string"
+        "id_card_expiration_date": {
+          "type": "string"
         },
-        "nationality" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "nationality": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "company" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "company": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "parent_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "parent_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "uses_parent_account" : {
-          "type" : "boolean",
-          "description" : "Default is false",
-          "default" : false
+        "uses_parent_account": {
+          "type": "boolean",
+          "description": "Default is false",
+          "default": false
         },
-        "postal_code" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 10
+        "postal_code": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 10
         }
       },
-      "xml" : {
-        "name" : "card_holder_model"
+      "xml": {
+        "name": "card_holder_model"
       }
     },
-    "velocity_control_request" : {
-      "type" : "object",
-      "required" : [ "amount_limit", "currency_code", "velocity_window" ],
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+    "velocity_control_request": {
+      "type": "object",
+      "required": [
+        "amount_limit",
+        "currency_code",
+        "velocity_window"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "association" : {
-          "$ref" : "#/definitions/spend_control_association"
+        "association": {
+          "$ref": "#/definitions/spend_control_association"
         },
-        "merchant_scope" : {
-          "$ref" : "#/definitions/merchant_scope"
+        "merchant_scope": {
+          "$ref": "#/definitions/merchant_scope"
         },
-        "usage_limit" : {
-          "type" : "integer",
-          "format" : "int32",
-          "minimum" : -1.0
+        "usage_limit": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -1.0
         },
-        "approvals_only" : {
-          "type" : "boolean",
-          "default" : false
+        "approvals_only": {
+          "type": "boolean",
+          "default": false
         },
-        "include_purchases" : {
-          "type" : "boolean",
-          "default" : false
+        "include_purchases": {
+          "type": "boolean",
+          "default": false
         },
-        "include_withdrawals" : {
-          "type" : "boolean",
-          "default" : false
+        "include_withdrawals": {
+          "type": "boolean",
+          "default": false
         },
-        "include_transfers" : {
-          "type" : "boolean",
-          "default" : false
+        "include_transfers": {
+          "type": "boolean",
+          "default": false
         },
-        "include_cashback" : {
-          "type" : "boolean",
-          "default" : false
+        "include_cashback": {
+          "type": "boolean",
+          "default": false
         },
-        "include_credits" : {
-          "type" : "boolean",
-          "default" : false
+        "include_credits": {
+          "type": "boolean",
+          "default": false
         },
-        "currency_code" : {
-          "type" : "string"
+        "currency_code": {
+          "type": "string"
         },
-        "amount_limit" : {
-          "type" : "number",
-          "minimum" : 0.0
+        "amount_limit": {
+          "type": "number",
+          "minimum": 0.0
         },
-        "velocity_window" : {
-          "type" : "string",
-          "enum" : [ "DAY", "WEEK", "MONTH", "LIFETIME", "TRANSACTION" ]
+        "velocity_window": {
+          "type": "string",
+          "enum": [
+            "DAY",
+            "WEEK",
+            "MONTH",
+            "LIFETIME",
+            "TRANSACTION"
+          ]
         },
-        "active" : {
-          "type" : "boolean",
-          "default" : false
+        "active": {
+          "type": "boolean",
+          "default": false
         }
       },
-      "xml" : {
-        "name" : "velocity_control_request"
+      "xml": {
+        "name": "velocity_control_request"
       }
     },
-    "velocity_control_balance_response" : {
-      "type" : "object",
-      "required" : [ "amount_limit", "available", "currency_code", "velocity_window" ],
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+    "velocity_control_balance_response": {
+      "type": "object",
+      "required": [
+        "amount_limit",
+        "available",
+        "currency_code",
+        "velocity_window"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
         },
-        "name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
+        "name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
         },
-        "association" : {
-          "$ref" : "#/definitions/spend_control_association"
+        "association": {
+          "$ref": "#/definitions/spend_control_association"
         },
-        "merchant_scope" : {
-          "$ref" : "#/definitions/merchant_scope"
+        "merchant_scope": {
+          "$ref": "#/definitions/merchant_scope"
         },
-        "usage_limit" : {
-          "type" : "integer",
-          "format" : "int32",
-          "minimum" : -1.0
+        "usage_limit": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -1.0
         },
-        "approvals_only" : {
-          "type" : "boolean",
-          "default" : false
+        "approvals_only": {
+          "type": "boolean",
+          "default": false
         },
-        "include_purchases" : {
-          "type" : "boolean",
-          "default" : false
+        "include_purchases": {
+          "type": "boolean",
+          "default": false
         },
-        "include_withdrawals" : {
-          "type" : "boolean",
-          "default" : false
+        "include_withdrawals": {
+          "type": "boolean",
+          "default": false
         },
-        "include_transfers" : {
-          "type" : "boolean",
-          "default" : false
+        "include_transfers": {
+          "type": "boolean",
+          "default": false
         },
-        "include_cashback" : {
-          "type" : "boolean",
-          "default" : false
+        "include_cashback": {
+          "type": "boolean",
+          "default": false
         },
-        "include_credits" : {
-          "type" : "boolean",
-          "default" : false
+        "include_credits": {
+          "type": "boolean",
+          "default": false
         },
-        "currency_code" : {
-          "type" : "string"
+        "currency_code": {
+          "type": "string"
         },
-        "amount_limit" : {
-          "type" : "number",
-          "minimum" : 0.0
+        "amount_limit": {
+          "type": "number",
+          "minimum": 0.0
         },
-        "velocity_window" : {
-          "type" : "string",
-          "enum" : [ "DAY", "WEEK", "MONTH", "LIFETIME", "TRANSACTION" ]
+        "velocity_window": {
+          "type": "string",
+          "enum": [
+            "DAY",
+            "WEEK",
+            "MONTH",
+            "LIFETIME",
+            "TRANSACTION"
+          ]
         },
-        "active" : {
-          "type" : "boolean",
-          "default" : false
+        "active": {
+          "type": "boolean",
+          "default": false
         },
-        "available" : {
-          "description" : "Available balance",
-          "$ref" : "#/definitions/available"
+        "available": {
+          "description": "Available balance",
+          "$ref": "#/definitions/available"
         }
       },
-      "xml" : {
-        "name" : "velocity_control_balance_response"
+      "xml": {
+        "name": "velocity_control_balance_response"
       }
     },
-    "available" : {
-      "type" : "object",
-      "required" : [ "amount", "uses" ],
-      "properties" : {
-        "uses" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "Uses available",
-          "default" : 0
+    "available": {
+      "type": "object",
+      "required": [
+        "amount",
+        "uses"
+      ],
+      "properties": {
+        "uses": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Uses available",
+          "default": 0
         },
-        "amount" : {
-          "type" : "number",
-          "minimum" : 0.0
+        "amount": {
+          "type": "number",
+          "minimum": 0.0
         },
-        "days_remaining" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "Days remaining"
+        "days_remaining": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Days remaining"
         }
       },
-      "xml" : {
-        "name" : "available"
+      "xml": {
+        "name": "available"
       }
     },
-    "VelocityControlBalanceListResponse" : {
-      "type" : "object",
-      "properties" : {
-        "count" : {
-          "type" : "integer",
-          "format" : "int32"
+    "VelocityControlBalanceListResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
         },
-        "start_index" : {
-          "type" : "integer",
-          "format" : "int32"
+        "start_index": {
+          "type": "integer",
+          "format": "int32"
         },
-        "end_index" : {
-          "type" : "integer",
-          "format" : "int32"
+        "end_index": {
+          "type": "integer",
+          "format": "int32"
         },
-        "is_more" : {
-          "type" : "boolean",
-          "default" : false
+        "is_more": {
+          "type": "boolean",
+          "default": false
         },
-        "data" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/velocity_control_balance_response"
-          }
-        }
-      }
-    },
-    "velocity_control_update_request" : {
-      "type" : "object",
-      "required" : [ "token" ],
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
-        },
-        "name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
-        },
-        "association" : {
-          "$ref" : "#/definitions/spend_control_association"
-        },
-        "merchant_scope" : {
-          "$ref" : "#/definitions/merchant_scope"
-        },
-        "usage_limit" : {
-          "type" : "integer",
-          "format" : "int32",
-          "minimum" : -1.0
-        },
-        "approvals_only" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_purchases" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_withdrawals" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_transfers" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_cashback" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_credits" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "currency_code" : {
-          "type" : "string"
-        },
-        "amount_limit" : {
-          "type" : "number",
-          "minimum" : 0.0
-        },
-        "velocity_window" : {
-          "type" : "string",
-          "enum" : [ "DAY", "WEEK", "MONTH", "QUARTER", "YEAR", "LIFETIME", "TRANSACTION" ]
-        },
-        "active" : {
-          "type" : "boolean",
-          "default" : false
-        }
-      },
-      "xml" : {
-        "name" : "velocity_control_update_request"
-      }
-    },
-    "merchant_scope" : {
-      "type" : "object",
-      "properties" : {
-        "mid" : {
-          "type" : "string",
-          "description" : "36 char max"
-        },
-        "mcc" : {
-          "type" : "string",
-          "description" : "4 char max"
-        },
-        "mcc_group" : {
-          "type" : "string",
-          "description" : "36 char max"
-        }
-      },
-      "xml" : {
-        "name" : "merchant_scope"
-      }
-    },
-    "velocity_control_response" : {
-      "type" : "object",
-      "required" : [ "amount_limit", "currency_code", "velocity_window" ],
-      "properties" : {
-        "token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
-        },
-        "name" : {
-          "type" : "string",
-          "minLength" : 0,
-          "maxLength" : 255
-        },
-        "association" : {
-          "$ref" : "#/definitions/spend_control_association"
-        },
-        "merchant_scope" : {
-          "$ref" : "#/definitions/merchant_scope"
-        },
-        "usage_limit" : {
-          "type" : "integer",
-          "format" : "int32",
-          "minimum" : -1.0
-        },
-        "approvals_only" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_purchases" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_withdrawals" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_transfers" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_cashback" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "include_credits" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "currency_code" : {
-          "type" : "string"
-        },
-        "amount_limit" : {
-          "type" : "number",
-          "minimum" : 0.0
-        },
-        "velocity_window" : {
-          "type" : "string",
-          "enum" : [ "DAY", "WEEK", "MONTH", "LIFETIME", "TRANSACTION" ]
-        },
-        "active" : {
-          "type" : "boolean",
-          "default" : false
-        }
-      },
-      "xml" : {
-        "name" : "velocity_control_response"
-      }
-    },
-    "spend_control_association" : {
-      "type" : "object",
-      "properties" : {
-        "card_product_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
-        },
-        "user_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
-        }
-      },
-      "xml" : {
-        "name" : "spend_control_association"
-      }
-    },
-    "VelocityControlListResponse" : {
-      "type" : "object",
-      "properties" : {
-        "count" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
-        "start_index" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
-        "end_index" : {
-          "type" : "integer",
-          "format" : "int32"
-        },
-        "is_more" : {
-          "type" : "boolean",
-          "default" : false
-        },
-        "data" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/velocity_control_response"
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/velocity_control_balance_response"
           }
         }
       }
     },
-    "control_token_response" : {
-      "type" : "object",
-      "required" : [ "control_token" ],
-      "properties" : {
-        "control_token" : {
-          "type" : "string"
+    "velocity_control_update_request": {
+      "type": "object",
+      "required": [
+        "token"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
+        },
+        "association": {
+          "$ref": "#/definitions/spend_control_association"
+        },
+        "merchant_scope": {
+          "$ref": "#/definitions/merchant_scope"
+        },
+        "usage_limit": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -1.0
+        },
+        "approvals_only": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_purchases": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_withdrawals": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_transfers": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_cashback": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_credits": {
+          "type": "boolean",
+          "default": false
+        },
+        "currency_code": {
+          "type": "string"
+        },
+        "amount_limit": {
+          "type": "number",
+          "minimum": 0.0
+        },
+        "velocity_window": {
+          "type": "string",
+          "enum": [
+            "DAY",
+            "WEEK",
+            "MONTH",
+            "QUARTER",
+            "YEAR",
+            "LIFETIME",
+            "TRANSACTION"
+          ]
+        },
+        "active": {
+          "type": "boolean",
+          "default": false
         }
       },
-      "xml" : {
-        "name" : "control_token_response"
+      "xml": {
+        "name": "velocity_control_update_request"
       }
     },
-    "control_token_request" : {
-      "type" : "object",
-      "required" : [ "card_token" ],
-      "properties" : {
-        "card_token" : {
-          "type" : "string",
-          "description" : "Token associated with the card",
-          "minLength" : 1,
-          "maxLength" : 36
+    "merchant_scope": {
+      "type": "object",
+      "properties": {
+        "mid": {
+          "type": "string",
+          "description": "36 char max"
         },
-        "controltoken_type" : {
-          "type" : "string",
-          "description" : "Type of control token required",
-          "enum" : [ "SET_PIN", "SHOW_PIN" ]
-        }
-      }
-    },
-    "pin_request" : {
-      "type" : "object",
-      "required" : [ "control_token", "pin" ],
-      "properties" : {
-        "control_token" : {
-          "type" : "string",
-          "minLength" : 1,
-          "maxLength" : 36
+        "mcc": {
+          "type": "string",
+          "description": "4 char max"
         },
-        "pin" : {
-          "type" : "string"
+        "mcc_group": {
+          "type": "string",
+          "description": "36 char max"
         }
       },
-      "xml" : {
-        "name" : "pin_request"
+      "xml": {
+        "name": "merchant_scope"
+      }
+    },
+    "velocity_control_response": {
+      "type": "object",
+      "required": [
+        "amount_limit",
+        "currency_code",
+        "velocity_window"
+      ],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "name": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 255
+        },
+        "association": {
+          "$ref": "#/definitions/spend_control_association"
+        },
+        "merchant_scope": {
+          "$ref": "#/definitions/merchant_scope"
+        },
+        "usage_limit": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -1.0
+        },
+        "approvals_only": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_purchases": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_withdrawals": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_transfers": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_cashback": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_credits": {
+          "type": "boolean",
+          "default": false
+        },
+        "currency_code": {
+          "type": "string"
+        },
+        "amount_limit": {
+          "type": "number",
+          "minimum": 0.0
+        },
+        "velocity_window": {
+          "type": "string",
+          "enum": [
+            "DAY",
+            "WEEK",
+            "MONTH",
+            "LIFETIME",
+            "TRANSACTION"
+          ]
+        },
+        "active": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "xml": {
+        "name": "velocity_control_response"
+      }
+    },
+    "spend_control_association": {
+      "type": "object",
+      "properties": {
+        "card_product_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "user_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        }
+      },
+      "xml": {
+        "name": "spend_control_association"
+      }
+    },
+    "VelocityControlListResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "start_index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "end_index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "is_more": {
+          "type": "boolean",
+          "default": false
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/velocity_control_response"
+          }
+        }
+      }
+    },
+    "control_token_response": {
+      "type": "object",
+      "required": [
+        "control_token"
+      ],
+      "properties": {
+        "control_token": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "control_token_response"
+      }
+    },
+    "control_token_request": {
+      "type": "object",
+      "required": [
+        "card_token"
+      ],
+      "properties": {
+        "card_token": {
+          "type": "string",
+          "description": "Token associated with the card",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "controltoken_type": {
+          "type": "string",
+          "description": "Type of control token required",
+          "enum": [
+            "SET_PIN",
+            "SHOW_PIN"
+          ]
+        }
+      }
+    },
+    "pin_request": {
+      "type": "object",
+      "required": [
+        "control_token",
+        "pin"
+      ],
+      "properties": {
+        "control_token": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "pin": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "pin_request"
       }
     },
     "CardListResponse": {

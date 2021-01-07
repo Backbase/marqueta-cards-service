@@ -18,7 +18,6 @@ import com.backbase.marqeta.clients.model.PinRequest;
 import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import com.backbase.marqeta.clients.model.UserCardHolderUpdateModel;
 import com.backbase.marqeta.clients.model.VelocityControlListResponse;
-import com.backbase.marqeta.clients.model.VelocityControlResponse;
 import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -166,19 +165,86 @@ public class MarqetaRepository {
     }
 
     public VelocityControlListResponse getCardLimits(String cardProductToken) {
-        return velocityControlsApi.getVelocitycontrols(cardProductToken, null, null, null, null, null);
+        try {
+            return velocityControlsApi.getVelocitycontrols(cardProductToken, null, null, null, null, null);
+        } catch (HttpClientErrorException e) {
+            switch (e.getStatusCode()) {
+                case NOT_FOUND:
+                    log.error("cardProductToken {} not found in Marqeta: {}", cardProductToken,
+                        e.getMessage());
+                    throw new NotFoundException("cardProductToken not found in Marqeta", e);
+                case BAD_REQUEST:
+                    log.error("Bad Request while retrieving Velocity from Marqeta : {}", e.getMessage(), e);
+                    throw new BadRequestException(
+                        "Bad request while retrieving Velocity from Marqeta: " + e.getMessage(), e);
+                default:
+                    log.error("Unexpected error while retrieving Velocity from Marqeta: {}", e.getMessage(), e);
+                    throw new InternalServerErrorException(
+                        "Unexpected error while retrieving Velocity from Marqeta: " + e.getMessage(), e);
+            }
+        }
     }
 
-    public VelocityControlResponse updateCardLimits(String token,
-        VelocityControlUpdateRequest velocityControlUpdateRequest) {
-        return velocityControlsApi.putVelocitycontrolsToken(token, velocityControlUpdateRequest);
+    public void updateCardLimits(String token, VelocityControlUpdateRequest velocityControlUpdateRequest) {
+        try {
+            velocityControlsApi.putVelocitycontrolsToken(token, velocityControlUpdateRequest);
+        } catch (HttpClientErrorException e) {
+            switch (e.getStatusCode()) {
+                case NOT_FOUND:
+                    log.error("cardProductToken {} not found in Marqeta: {}", token,
+                        e.getMessage());
+                    throw new NotFoundException("cardProductToken not found in Marqeta", e);
+                case BAD_REQUEST:
+                    log.error("Bad Request while updating Velocity in Marqeta : {}", e.getMessage(), e);
+                    throw new BadRequestException(
+                        "Bad request while updating Velocity in Marqeta: " + e.getMessage(), e);
+                default:
+                    log.error("Unexpected error while updating Velocity in Marqeta: {}", e.getMessage(), e);
+                    throw new InternalServerErrorException(
+                        "Unexpected error while updating Velocity in Marqeta: " + e.getMessage(), e);
+            }
+        }
     }
 
-    public UserCardHolderResponse getCardHolder(String id) {
-        return usersApi.getUsersToken(id, null);
+    public UserCardHolderResponse getCardHolder(String token) {
+        try {
+            return usersApi.getUsersToken(token, null);
+        } catch (HttpClientErrorException e) {
+            switch (e.getStatusCode()) {
+                case NOT_FOUND:
+                    log.error("UsersToken {} not found in Marqeta: {}", token,
+                        e.getMessage());
+                    throw new NotFoundException("UsersToken not found in Marqeta", e);
+                case BAD_REQUEST:
+                    log.error("Bad Request while updating retrieving from Marqeta : {}", e.getMessage(), e);
+                    throw new BadRequestException(
+                        "Bad request while updating retrieving from Marqeta: " + e.getMessage(), e);
+                default:
+                    log.error("Unexpected error while retrieving Velocity from Marqeta: {}", e.getMessage(), e);
+                    throw new InternalServerErrorException(
+                        "Unexpected error while retrieving Velocity from Marqeta: " + e.getMessage(), e);
+            }
+        }
     }
 
-    public CardHolderModel updateCardHolder(String id, UserCardHolderUpdateModel userCardHolderUpdateModel) {
-        return usersApi.putUsersToken(id, userCardHolderUpdateModel);
+    public CardHolderModel updateCardHolder(String token, UserCardHolderUpdateModel userCardHolderUpdateModel) {
+        try {
+            return usersApi.putUsersToken(token, userCardHolderUpdateModel);
+        } catch (HttpClientErrorException e) {
+            switch (e.getStatusCode()) {
+                case NOT_FOUND:
+                    log.error("UsersToken {} not found in Marqeta: {}", token,
+                        e.getMessage());
+                    throw new NotFoundException("UsersToken not found in Marqeta", e);
+                case BAD_REQUEST:
+                    log.error("Bad Request while updating UsersToken in Marqeta : {}", e.getMessage(), e);
+                    throw new BadRequestException(
+                        "Bad request while updating UsersToken in Marqeta: " + e.getMessage(), e);
+                default:
+                    log.error("Unexpected error while updating UsersToken in Marqeta: {}", e.getMessage(), e);
+                    throw new InternalServerErrorException(
+                        "Unexpected error while updating UsersToken in Marqeta: " + e.getMessage(), e);
+            }
+        }
     }
 }

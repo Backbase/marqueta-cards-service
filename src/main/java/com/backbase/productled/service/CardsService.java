@@ -59,20 +59,18 @@ public class CardsService {
     }
 
     public CardItem getCard(String id) {
-        CardResponse cardResponse = marqetaRepository.getCardDetails(id);
-        return cardMapper.mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
+        return mapCardItem(marqetaRepository.getCardDetails(id));
     }
 
     public CardItem postLockStatus(String id, LockStatusPost lockStatusPost) {
-        marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForLockStatus(id, lockStatusPost));
-        return getCard(id);
+        return mapCardItem(
+            marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForLockStatus(id, lockStatusPost)));
     }
 
     public CardItem activateCard(String id, ActivatePost activatePost) {
         validateCvv(id, activatePost.getToken());
         marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.ACTIVE));
-        marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id));
-        return getCard(id);
+        return mapCardItem(marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id)));
     }
 
     public CardItem resetPin(String id, ResetPinPost resetPinPost) {
@@ -93,8 +91,8 @@ public class CardsService {
 
     public CardItem requestReplacement(String id, RequestReplacementPost requestReplacementPost) {
         marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.SUSPENDED));
-        marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForReplacement(id, requestReplacementPost));
-        return getCard(id);
+        return mapCardItem(marqetaRepository
+            .updateCard(id, cardMapper.mapUpdateCardRequestForReplacement(id, requestReplacementPost)));
     }
 
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
@@ -102,5 +100,9 @@ public class CardsService {
             .updateCardLimits(item.getId(),
                 new VelocityControlUpdateRequest().amountLimit(item.getAmount()).includeTransfers(true)));
         return getCard(id);
+    }
+
+    private CardItem mapCardItem(CardResponse cardResponse) {
+        return cardMapper.mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
     }
 }

@@ -1262,7 +1262,7 @@ paths:
                       contact:
                         phoneNumber: +1 646 432 3000
                 kim:
-                  value: []
+                  value: [ ]
         '403':
           description: Forbidden
           content:

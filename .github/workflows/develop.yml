@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [8]
+        java: [ 8 ]
     name: Build Project Java ${{ matrix.java }} with tests execution
     env:
       DOCKER_REPO_URL: ${{ secrets.DOCKER_REPO_URL }}

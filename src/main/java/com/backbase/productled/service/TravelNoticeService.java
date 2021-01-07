@@ -35,9 +35,10 @@ public class TravelNoticeService {
     private final ObjectMapper objectMapper;
 
     public TravelNotice createTravelNotice(TravelNotice travelNotice) {
+        String id = UUID.randomUUID().toString();
         getUserCardHolder()
             .map(cardsMappers::mapUpdateCardHolderRequest)
-            .map(req -> getUserCardHolderUpdateModel(UUID.randomUUID().toString(), req, travelNotice))
+            .map(req -> getUserCardHolderUpdateModel(id, req, travelNotice.id(id)))
             .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
         return travelNotice;
     }

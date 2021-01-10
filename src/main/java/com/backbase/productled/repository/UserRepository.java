@@ -21,7 +21,7 @@ public class UserRepository {
 
     public String getMarqetaUserToken() {
 
-        userManagementApi.updateUserInBatch(Collections.singletonList(new BatchUser()
+        userManagementApi.updateUserInBatch(Collections.singletonList(new BatchUser().externalId("paolo")
             .userUpdate(new User()
                 .externalId("paolo")
                 .fullName("Paolo Doe")

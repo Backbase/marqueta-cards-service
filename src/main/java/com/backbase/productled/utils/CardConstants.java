@@ -14,4 +14,6 @@ public interface CardConstants {
     String UNDER_REPLACEMENT = "UnderReplacement";
     String ATM = "ATM";
     String ONLINE = "ONLINE";
+    String TERMINATED = "TERMINATED";
+
 }

@@ -1,5 +1,6 @@
 package com.backbase.productled.service;
 
+import static com.backbase.productled.utils.CardConstants.TERMINATED;
 import static java.util.Objects.requireNonNull;
 
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
@@ -37,10 +38,10 @@ public class CardsService {
     private final CardsMappers cardMapper;
 
     public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
-
         return requireNonNull(marqetaRepository.getUserCards(
             userRepository.getMarqetaUserToken())
             .getData()).stream()
+            .filter(cardResponse -> !TERMINATED.equals(cardResponse.getState().toString()))
             .map(getCardResponseCardItemFunction())
             .filter(getCardItemPredicate(ids, status, types))
             .collect(Collectors.toList());

@@ -38,7 +38,7 @@ public interface CardsMappers {
     @Mapping(target = "holder", expression = "java(new com.backbase.presentation.card.rest.spec.v2.cards.CardHolder().name(cardResponse.getMetadata().get(\"cardHolderName\")))")
     @Mapping(target = "name", expression = "java(cardResponse.getMetadata().get(\"name\"))")
     @Mapping(target = "status", expression = "java(cardResponse.getState() == com.backbase.marqeta.clients.model.CardResponse.StateEnum.ACTIVE || cardResponse.getState() == com.backbase.marqeta.clients.model.CardResponse.StateEnum.SUSPENDED  ? \"Active\" : \"Inactive\")")
-    @Mapping(target = "lockStatus", expression = "java(com.backbase.presentation.card.rest.spec.v2.cards.LockStatus.fromValue(cardResponse.getMetadata().get(\"lockStatus\")))")
+    @Mapping(target = "lockStatus", expression = "java(cardResponse.getState() == com.backbase.marqeta.clients.model.CardResponse.StateEnum.SUSPENDED  ? com.backbase.presentation.card.rest.spec.v2.cards.LockStatus.LOCKED : com.backbase.presentation.card.rest.spec.v2.cards.LockStatus.UNLOCKED)")
     @Mapping(target = "replacement", expression = "java(new com.backbase.presentation.card.rest.spec.v2.cards.Replacement().status(cardResponse.getMetadata().get(\"replacementStatus\")).reason(cardResponse.getMetadata().get(\"replacementReason\")))")
     @Mapping(target = "expiryDate", expression = "java(new com.backbase.presentation.card.rest.spec.v2.cards.YearMonth().year(String.valueOf(cardResponse.getExpirationTime().getYear())).month(String.valueOf(cardResponse.getExpirationTime().getMonthValue())))")
     @Mapping(target = "currency", expression = "java(cardResponse.getMetadata().get(\"currency\"))")

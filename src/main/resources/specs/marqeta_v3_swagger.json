@@ -15,6 +15,60 @@
     "https"
   ],
   "paths": {
+    "/cards" : {
+      "post" : {
+        "tags" : [ "cards" ],
+        "summary" : "Creates a card",
+        "description" : "",
+        "operationId" : "postCards",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/card_request"
+          }
+        }, {
+          "name" : "show_cvv_number",
+          "in" : "query",
+          "description" : "Show CVV",
+          "required" : false,
+          "type" : "boolean",
+          "default" : false
+        }, {
+          "name" : "show_pan",
+          "in" : "query",
+          "description" : "Show PAN",
+          "required" : false,
+          "type" : "boolean",
+          "default" : false
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/card_response"
+            }
+          },
+          "400" : {
+            "description" : "User input error/Bad request"
+          },
+          "500" : {
+            "description" : "Server error"
+          },
+          "409" : {
+            "description" : "Token already associated with a different payload"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
+    },
     "/cards/{token}": {
       "get": {
         "tags": [
@@ -753,6 +807,71 @@
           }
         ]
       }
+    },
+    "/cards/user/{token}" : {
+      "get" : {
+        "tags" : [ "cards" ],
+        "summary" : "Lists all cards for a specific user",
+        "description" : "",
+        "operationId" : "getCardsUserToken",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "path",
+          "description" : "User token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "count",
+          "in" : "query",
+          "description" : "Number of items to retrieve",
+          "required" : false,
+          "type" : "integer",
+          "default" : 5,
+          "format" : "int32"
+        }, {
+          "name" : "start_index",
+          "in" : "query",
+          "description" : "Start index",
+          "required" : false,
+          "type" : "integer",
+          "default" : 0,
+          "format" : "int32"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "Comma-delimited list of fields to return (e.g. field_1,field_2,..). Leave blank to return all fields.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "sort_by",
+          "in" : "query",
+          "description" : "Sort order",
+          "required" : false,
+          "type" : "string",
+          "default" : "-lastModifiedTime"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/CardListResponse"
+            }
+          },
+          "400" : {
+            "description" : "User input error/Bad request"
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        },
+        "security": [
+          {
+            "basic": []
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -762,6 +881,77 @@
     }
   },
   "definitions": {
+    "expiration_offset" : {
+      "type" : "object",
+      "properties" : {
+        "unit" : {
+          "type" : "string",
+          "description" : "specify if a value is provided; default is card product expiration offset unit",
+          "enum" : [ "YEARS", "MONTHS", "DAYS", "HOURS", "MINUTES", "SECONDS" ]
+        },
+        "value" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "specify if unit is provided; default is card product expiration offset value"
+        }
+      },
+      "xml" : {
+        "name" : "expiration_offset"
+      }
+    },
+    "card_request" : {
+      "type" : "object",
+      "required" : [ "card_product_token", "user_token" ],
+      "properties" : {
+        "card_product_token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "expedite" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "metadata" : {
+          "type" : "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
+        },
+        "expiration_offset" : {
+          "$ref" : "#/definitions/expiration_offset"
+        },
+        "token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "user_token" : {
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 36
+        },
+        "fulfillment" : {
+          "$ref" : "#/definitions/fulfillment"
+        },
+        "reissue_pan_from_card_token" : {
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 36
+        },
+        "translate_pin_from_card_token" : {
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 36
+        },
+        "activation_actions" : {
+          "$ref" : "#/definitions/activation_actions"
+        },
+        "bulk_issuance_token" : {
+          "type" : "string"
+        }
+      }
+    },
     "IdentificationResponseModel": {
       "type": "object",
       "properties": {

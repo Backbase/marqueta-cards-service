@@ -4,12 +4,12 @@ import static com.backbase.productled.utils.CardConstants.TRAVEL_NOTICE;
 import static com.backbase.productled.utils.CardConstants.TRAVEL_NOTICE_REGEX;
 
 import com.backbase.buildingblocks.presentation.errors.NotFoundException;
-import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import com.backbase.marqeta.clients.model.UserCardHolderUpdateModel;
 import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
 import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.MarqetaRepository;
+import com.backbase.productled.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,17 +25,16 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class TravelNoticeService {
 
-
     private final MarqetaRepository marqetaRepository;
 
     private final CardsMappers cardsMappers;
 
-    private final CardsService cardsService;
+    private final UserRepository userRepository;
 
     private final ObjectMapper objectMapper;
 
     public TravelNotice createTravelNotice(TravelNotice travelNotice) {
-        getUserCardHolder()
+        getCardHolder()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> getUserCardHolderUpdateModel(UUID.randomUUID().toString(), req, travelNotice))
             .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
@@ -43,14 +42,14 @@ public class TravelNoticeService {
     }
 
     public void deleteTravelNoticeById(String id) {
-        getUserCardHolder()
+        getCardHolder()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> req.metadata(Collections.singletonMap(String.format(TRAVEL_NOTICE_REGEX, id), null)))
             .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
     }
 
     public TravelNotice getTravelNoticeById(String id) {
-        return getUserCardHolder()
+        return getCardHolder()
             .filter(response -> response.getMetadata() != null)
             .map(response -> response.getMetadata()
                 .get(String.format(TRAVEL_NOTICE_REGEX, id)))
@@ -59,7 +58,7 @@ public class TravelNoticeService {
     }
 
     public List<TravelNotice> getTravelNotices() {
-        return getUserCardHolder()
+        return getCardHolder()
             .map(UserCardHolderResponse::getMetadata)
             .map(map -> map.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(TRAVEL_NOTICE))
@@ -69,17 +68,15 @@ public class TravelNoticeService {
     }
 
     public TravelNotice updateTravelNotice(String id, TravelNotice travelNotice) {
-        getUserCardHolder()
+        getCardHolder()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> getUserCardHolderUpdateModel(id, req, travelNotice))
             .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
         return travelNotice;
     }
 
-    private Optional<UserCardHolderResponse> getUserCardHolder() {
-        return cardsService.getCardsLinkedToAccount().stream()
-            .map(CardResponse::getUserToken)
-            .findFirst()
+    private Optional<UserCardHolderResponse> getCardHolder() {
+        return Optional.ofNullable(userRepository.getMarqetaUserToken())
             .map(marqetaRepository::getCardHolder);
     }
 

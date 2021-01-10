@@ -8,6 +8,7 @@ import static com.backbase.productled.utils.CardConstants.REPLACEMENT_REASON;
 import static com.backbase.productled.utils.CardConstants.REPLACEMENT_STATUS;
 import static com.backbase.productled.utils.CardConstants.UNDER_REPLACEMENT;
 
+import com.backbase.marqeta.clients.model.CardRequest;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
@@ -79,6 +80,13 @@ public interface CardsMappers {
 
     UserCardHolderUpdateModel mapUpdateCardHolderRequest(UserCardHolderResponse response);
 
+    default CardRequest mapCreateCardRequest(CardResponse cardDetails) {
+        return new CardRequest()
+            .cardProductToken(cardDetails.getCardProductToken())
+            .userToken(cardDetails.getUserToken())
+            .metadata(cardDetails.getMetadata());
+    }
+
     @Named("activationMetaData")
     default Map<String, String> getActivationMetaData(String token) {
         HashMap<String, String> metaData = new HashMap<>();
@@ -99,5 +107,4 @@ public interface CardsMappers {
     default Map<String, String> getStatusMetadata(LockStatusPost lockStatusPost) {
         return Collections.singletonMap(LOCK_STATUS, lockStatusPost.getLockStatus().toString());
     }
-
 }

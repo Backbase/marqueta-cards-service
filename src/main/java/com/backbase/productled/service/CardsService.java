@@ -1,8 +1,9 @@
 package com.backbase.productled.service;
 
+import static java.util.Objects.requireNonNull;
+
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
 import com.backbase.buildingblocks.presentation.errors.Error;
-import com.backbase.mambu.clients.model.Card;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
@@ -11,15 +12,16 @@ import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
 import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
+import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
-import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.mapper.CardsMappers;
-import com.backbase.productled.repository.ArrangementRepository;
-import com.backbase.productled.repository.MambuRepository;
 import com.backbase.productled.repository.MarqetaRepository;
+import com.backbase.productled.repository.UserRepository;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,33 +30,18 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CardsService {
 
-    private final ArrangementRepository arrangementRepository;
+    private final UserRepository userRepository;
 
     private final MarqetaRepository marqetaRepository;
-
-    private final MambuRepository mambuRepository;
 
     private final CardsMappers cardMapper;
 
     public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
-        return getCardsLinkedToAccount().stream()
-            .map(cardResponse -> cardMapper
-                .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken())))
-            .filter(cardItem ->
-                (ids == null || ids.contains(cardItem.getId())) &&
-                    (status == null || status.contains(cardItem.getStatus()) &&
-                        (types == null || types.contains(cardItem.getType()))))
-            .collect(Collectors.toList());
-    }
-
-    public List<CardResponse> getCardsLinkedToAccount() {
-        return arrangementRepository.getExternalArrangementIds().stream()
-            .map(mambuRepository::getCards)
-            .collect(Collectors.toList())
-            .stream().flatMap(List::stream)
-            .collect(Collectors.toList()).stream()
-            .map(Card::getReferenceToken)
-            .map(marqetaRepository::getCardDetails)
+        return requireNonNull(marqetaRepository.getUserCards(
+            userRepository.getMarqetaUserToken())
+            .getData()).stream()
+            .map(getCardResponseCardItemFunction())
+            .filter(getCardItemPredicate(ids, status, types))
             .collect(Collectors.toList());
     }
 
@@ -63,8 +50,9 @@ public class CardsService {
     }
 
     public CardItem postLockStatus(String id, LockStatusPost lockStatusPost) {
-        return mapCardItem(
-            marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForLockStatus(id, lockStatusPost)));
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id,
+            lockStatusPost.getLockStatus() == LockStatus.UNLOCKED ? StateEnum.ACTIVE : StateEnum.SUSPENDED));
+        return getCard(id);
     }
 
     public CardItem activateCard(String id, ActivatePost activatePost) {
@@ -75,10 +63,7 @@ public class CardsService {
 
     public CardItem resetPin(String id, ResetPinPost resetPinPost) {
         validateCvv(id, resetPinPost.getToken());
-        marqetaRepository.updatePin(new PinRequest()
-            .controlToken(
-                marqetaRepository.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
-            .pin(resetPinPost.getPin()));
+        marqetaRepository.updatePin(getPin(id, resetPinPost));
         return getCard(id);
     }
 
@@ -89,10 +74,12 @@ public class CardsService {
         }
     }
 
-    public CardItem requestReplacement(String id, RequestReplacementPost requestReplacementPost) {
-        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.SUSPENDED));
-        return mapCardItem(marqetaRepository
-            .updateCard(id, cardMapper.mapUpdateCardRequestForReplacement(id, requestReplacementPost)));
+    public CardItem requestReplacement(String id) {
+        // change state of old card from Active to Terminated
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.TERMINATED));
+        // create new Card
+        return mapCardItem(
+            marqetaRepository.createCard(cardMapper.mapCreateCardRequest(marqetaRepository.getCardDetails(id))));
     }
 
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
@@ -102,7 +89,26 @@ public class CardsService {
         return getCard(id);
     }
 
+    private Function<CardResponse, CardItem> getCardResponseCardItemFunction() {
+        return cardResponse -> cardMapper
+            .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
+    }
+
     private CardItem mapCardItem(CardResponse cardResponse) {
         return cardMapper.mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
+    }
+
+    private Predicate<CardItem> getCardItemPredicate(List<String> ids, List<String> status, List<String> types) {
+        return cardItem ->
+            (ids == null || ids.contains(cardItem.getId())) &&
+                (status == null || status.contains(cardItem.getStatus()) &&
+                    (types == null || types.contains(cardItem.getType())));
+    }
+
+    private PinRequest getPin(String id, ResetPinPost resetPinPost) {
+        return new PinRequest()
+            .controlToken(
+                marqetaRepository.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
+            .pin(resetPinPost.getPin());
     }
 }

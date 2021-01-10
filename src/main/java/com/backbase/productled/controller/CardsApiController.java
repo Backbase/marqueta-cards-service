@@ -60,7 +60,7 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> requestReplacement(String id, @Valid RequestReplacementPost requestReplacementPost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.requestReplacement(id, requestReplacementPost));
+        return ResponseEntity.ok(cardsService.requestReplacement(id));
     }
 
     @Override

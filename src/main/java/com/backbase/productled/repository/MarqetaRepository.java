@@ -9,6 +9,8 @@ import com.backbase.marqeta.clients.api.PinsApi;
 import com.backbase.marqeta.clients.api.UsersApi;
 import com.backbase.marqeta.clients.api.VelocityControlsApi;
 import com.backbase.marqeta.clients.model.CardHolderModel;
+import com.backbase.marqeta.clients.model.CardListResponse;
+import com.backbase.marqeta.clients.model.CardRequest;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest;
 import com.backbase.marqeta.clients.model.CardUpdateRequest;
@@ -55,6 +57,46 @@ public class MarqetaRepository {
                     log.error("Unexpected error retrieving Card token from Marqeta: {}", e.getMessage(), e);
                     throw new InternalServerErrorException(
                         "Unexpected error retrieving Card token from Marqeta: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    public CardListResponse getUserCards(String userToken) {
+        try {
+            return cardsApi.getCardsUserToken(userToken, null, null, null, null);
+        } catch (HttpClientErrorException e) {
+            switch (e.getStatusCode()) {
+                case NOT_FOUND:
+                    log.error("userToken {} not found in Marqeta: {}", userToken, e.getMessage());
+                    throw new NotFoundException("userTokenn not found in Marqeta", e);
+                case BAD_REQUEST:
+                    log.error("Bad Request while retrieving userToken from Marqeta : {}", e.getMessage(), e);
+                    throw new BadRequestException(
+                        "Bad request retrieving userToken from Marqeta: " + e.getMessage(), e);
+                default:
+                    log.error("Unexpected error retrieving userToken from Marqeta: {}", e.getMessage(), e);
+                    throw new InternalServerErrorException(
+                        "Unexpected error retrieving userToken from Marqeta: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    public CardResponse createCard(CardRequest cardRequest) {
+        try {
+            return cardsApi.postCards(false, false, cardRequest);
+        } catch (HttpClientErrorException e) {
+            switch (e.getStatusCode()) {
+                case NOT_FOUND:
+                    log.error("source data in Marqeta: {}", e.getMessage());
+                    throw new NotFoundException("data not found in Marqeta", e);
+                case BAD_REQUEST:
+                    log.error("Bad Request while creating Card in Marqeta : {}", e.getMessage(), e);
+                    throw new BadRequestException(
+                        "Bad request retrieving creating Card in Marqeta: " + e.getMessage(), e);
+                default:
+                    log.error("Unexpected error while creating Card in Marqeta: {}", e.getMessage(), e);
+                    throw new InternalServerErrorException(
+                        "Unexpected error while creating Card in Marqeta: " + e.getMessage(), e);
             }
         }
     }

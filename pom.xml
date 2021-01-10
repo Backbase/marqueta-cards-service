@@ -192,20 +192,20 @@
                             </configOptions>
                         </configuration>
                     </execution>
-                    <!--<execution>
-                        <id>generate-arrangement-api-code</id>
+                    <execution>
+                        <id>generate-user-manager-api-code</id>
                         <goals>
                             <goal>generate-rest-template-embedded</goal>
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
                             <inputSpec>
-                                ${basedir}/src/main/resources/specs/arrangement-client-api-v${arrangement-service-api.version}.yaml
+                                ${basedir}/src/main/resources/specs/user-manager-service-api-v2.2.0.yaml
                             </inputSpec>
-                            <apiPackage>com.backbase.dbs.arrangement.api.service.v2</apiPackage>
-                            <modelPackage>com.backbase.dbs.arrangement.api.service.v2.model</modelPackage>
+                            <apiPackage>com.backbase.dbs.user.manager.api.service.v2</apiPackage>
+                            <modelPackage>com.backbase.dbs.user.manager.api.service.v2.model</modelPackage>
                         </configuration>
-                    </execution>-->
+                    </execution>
                     <execution>
                         <id>generate-marqeta-api-code</id>
                         <goals>

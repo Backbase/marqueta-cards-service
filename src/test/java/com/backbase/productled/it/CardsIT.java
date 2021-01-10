@@ -1,4 +1,4 @@
-package com.backbase.productled;
+package com.backbase.productled.it;
 
 
 import static java.util.Collections.singletonList;
@@ -26,11 +26,13 @@ import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.presentation.productsummary.listener.client.v2.productsummary.GetArrangementsByBusinessFunctionQueryParameters;
 import com.backbase.presentation.productsummary.listener.client.v2.productsummary.ProductsummaryProductSummaryClient;
 import com.backbase.presentation.productsummary.rest.spec.v2.productsummary.ArrangementsByBusinessFunctionGetResponseBody;
+import com.backbase.productled.Application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -376,4 +378,18 @@ public class CardsIT {
         result.andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void testRequestPin() throws Exception {
+
+        // When
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/pin/request",
+            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .content(objectMapper
+                .writeValueAsString(new RequestPinPost().token("112")))
+            .contentType("application/json")
+            .header("Authorization", TEST_JWT)).andDo(print());
+
+        // Then
+        result.andExpect(status().isOk());
+    }
 }

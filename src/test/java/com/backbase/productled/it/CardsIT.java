@@ -29,9 +29,6 @@ import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
-import com.backbase.presentation.productsummary.listener.client.v2.productsummary.GetArrangementsByBusinessFunctionQueryParameters;
-import com.backbase.presentation.productsummary.listener.client.v2.productsummary.ProductsummaryProductSummaryClient;
-import com.backbase.presentation.productsummary.rest.spec.v2.productsummary.ArrangementsByBusinessFunctionGetResponseBody;
 import com.backbase.productled.Application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -47,7 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -73,9 +69,6 @@ public class CardsIT {
             + "Y2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2Nr"
             + "ZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXSwiaW51aWQiOiJKaW1te"
             + "SJ9.O9TE28ygrHmDjItYK6wRis6wELD5Wtpi6ekeYfR1WqM";
-
-    @MockBean
-    private ProductsummaryProductSummaryClient productsummaryProductSummaryClient;
 
     @MockBean
     private DepositAccountsApi depositAccountsApi;
@@ -123,12 +116,6 @@ public class CardsIT {
 
     @Test
     public void testGetCards() throws Exception {
-
-        // Given
-        when(productsummaryProductSummaryClient
-            .getArrangementsByBusinessFunction(Mockito.any(GetArrangementsByBusinessFunctionQueryParameters.class)))
-            .thenAnswer(invocationOnMock -> ResponseEntity.ok(singletonList(
-                new ArrangementsByBusinessFunctionGetResponseBody().withBBAN("091000021"))));
 
         // When
         ResultActions result = mvc.perform(get("/client-api/v2/cards")

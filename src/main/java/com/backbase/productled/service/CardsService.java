@@ -87,7 +87,16 @@ public class CardsService {
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
         changeLimitsPostItem.forEach(item -> marqetaRepository
             .updateCardLimits(item.getId(),
-                new VelocityControlUpdateRequest().amountLimit(item.getAmount()).includeTransfers(true)));
+                new VelocityControlUpdateRequest()
+                    .amountLimit(item.getAmount())
+                    .includeTransfers(true)
+                    .active(true)
+                    .association(null)
+                    .approvalsOnly(null)
+                    .includePurchases(null)
+                    .includeCashback(null)
+                    .includeWithdrawals(null)
+                    .includeCredits(null)));
         return getCard(id);
     }
 

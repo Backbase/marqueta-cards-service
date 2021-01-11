@@ -1,5 +1,7 @@
 package com.backbase.productled.repository;
 
+import static com.backbase.productled.utils.CardConstants.MARQETA_USER_TOKEN;
+
 import com.backbase.buildingblocks.backend.security.auth.config.SecurityContextUtil;
 import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
 import java.util.Objects;
@@ -20,7 +22,7 @@ public class UserRepository {
         log.info("Calling user manager for to retrieve marqeta user token");
         return Objects.requireNonNull(
             userManagementApi.getUserById(securityContextUtil.getInternalId().orElse(null), false).getAdditions())
-            .getOrDefault("marqetaUserToken", null);
+            .getOrDefault(MARQETA_USER_TOKEN, null);
     }
 
 }

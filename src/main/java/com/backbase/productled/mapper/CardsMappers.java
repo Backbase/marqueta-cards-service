@@ -6,14 +6,12 @@ import static com.backbase.productled.utils.CardConstants.CARD_HOLDER_NAME;
 import static com.backbase.productled.utils.CardConstants.DELIVERED;
 import static com.backbase.productled.utils.CardConstants.INACTIVE;
 import static com.backbase.productled.utils.CardConstants.IN_TRANSIT;
-import static com.backbase.productled.utils.CardConstants.LOCK_STATUS;
 import static com.backbase.productled.utils.CardConstants.NOT_UNDER_REPLACEMENT;
 import static com.backbase.productled.utils.CardConstants.ONLINE;
 import static com.backbase.productled.utils.CardConstants.ORDERED;
 import static com.backbase.productled.utils.CardConstants.PROCESSED;
 import static com.backbase.productled.utils.CardConstants.REPLACEMENT_REASON;
 import static com.backbase.productled.utils.CardConstants.REPLACEMENT_STATUS;
-import static com.backbase.productled.utils.CardConstants.UNDER_REPLACEMENT;
 
 import com.backbase.marqeta.clients.model.CardRequest;
 import com.backbase.marqeta.clients.model.CardResponse;
@@ -29,13 +27,10 @@ import com.backbase.presentation.card.rest.spec.v2.cards.Delivery;
 import com.backbase.presentation.card.rest.spec.v2.cards.DeliveryTransitStep;
 import com.backbase.presentation.card.rest.spec.v2.cards.DeliveryTransitStep.StatusEnum;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
-import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.Replacement;
-import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.YearMonth;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.mapstruct.Mapper;
@@ -77,18 +72,6 @@ public interface CardsMappers {
         com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum state);
 
     @Mapping(target = "token", source = "token")
-    @Mapping(target = "metadata", source = "lockStatusPost", qualifiedByName = "statusMetadata")
-    @Mapping(target = "userToken", ignore = true)
-    @Mapping(target = "fulfillment", ignore = true)
-    CardUpdateRequest mapUpdateCardRequestForLockStatus(String token, LockStatusPost lockStatusPost);
-
-    @Mapping(target = "token", source = "token")
-    @Mapping(target = "metadata", source = "requestReplacementPost", qualifiedByName = "replacementMetaData")
-    @Mapping(target = "userToken", ignore = true)
-    @Mapping(target = "fulfillment", ignore = true)
-    CardUpdateRequest mapUpdateCardRequestForReplacement(String token, RequestReplacementPost requestReplacementPost);
-
-    @Mapping(target = "token", source = "token")
     @Mapping(target = "metadata", source = "token", qualifiedByName = "activationMetaData")
     @Mapping(target = "userToken", ignore = true)
     @Mapping(target = "fulfillment", ignore = true)
@@ -111,19 +94,6 @@ public interface CardsMappers {
         return metaData;
     }
 
-    @Named("replacementMetaData")
-    default Map<String, String> getReplacementMetaData(RequestReplacementPost requestReplacementPost) {
-        HashMap<String, String> metaData = new HashMap<>();
-        metaData.put(REPLACEMENT_STATUS, UNDER_REPLACEMENT);
-        metaData.put(REPLACEMENT_REASON, requestReplacementPost.getReplacementReason());
-        return metaData;
-    }
-
-    @Named("statusMetadata")
-    default Map<String, String> getStatusMetadata(LockStatusPost lockStatusPost) {
-        return Collections.singletonMap(LOCK_STATUS, lockStatusPost.getLockStatus().toString());
-    }
-
     @Named("getStatus")
     default String getStatus(CardResponse cardResponse) {
         if (Arrays.asList(StateEnum.ACTIVE, StateEnum.SUSPENDED).contains(cardResponse.getState())) {
@@ -134,20 +104,21 @@ public interface CardsMappers {
 
     @Named("getLockStatus")
     default LockStatus getLockStatus(CardResponse cardResponse) {
-        if (com.backbase.marqeta.clients.model.CardResponse.StateEnum.ACTIVE == cardResponse.getState()) {
-            return LockStatus.UNLOCKED;
+        if (StateEnum.SUSPENDED == cardResponse.getState()) {
+            return LockStatus.LOCKED;
         }
-        return LockStatus.LOCKED;
+        return LockStatus.UNLOCKED;
     }
 
     @Named("getReplacement")
     default Replacement getReplacement(CardResponse cardResponse) {
+        Replacement replacement = new Replacement();
         if (cardResponse.getMetadata() != null) {
-            return new Replacement()
+            replacement
                 .status(cardResponse.getMetadata().get(REPLACEMENT_STATUS))
                 .reason(cardResponse.getMetadata().get(REPLACEMENT_REASON));
         }
-        return new Replacement().status(NOT_UNDER_REPLACEMENT);
+        return replacement;
     }
 
     @Named("getExpiryDate")
@@ -160,9 +131,7 @@ public interface CardsMappers {
 
     @Named("getCardHolder")
     default CardHolder getCardHolder(CardResponse cardResponse) {
-        if (cardResponse.getMetadata() == null) {
-            return null;
-        }
+        assert cardResponse.getMetadata() != null;
         return new CardHolder()
             .name(cardResponse.getMetadata().get(CARD_HOLDER_NAME));
     }
@@ -177,8 +146,7 @@ public interface CardsMappers {
                     new DeliveryTransitStep().name(PROCESSED).status(StatusEnum.SUCCESS)
                         .stepDateTime(OffsetDateTime.now().minusMinutes(25)),
                     new DeliveryTransitStep().name(IN_TRANSIT).status(StatusEnum.PENDING),
-                    new DeliveryTransitStep().name(DELIVERED).status(StatusEnum.PENDING)
-                ));
+                    new DeliveryTransitStep().name(DELIVERED).status(StatusEnum.PENDING)));
         }
         return null;
     }

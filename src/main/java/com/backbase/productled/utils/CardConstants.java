@@ -19,5 +19,6 @@ public interface CardConstants {
     String PROCESSED = "Processed";
     String IN_TRANSIT = "In Transit";
     String DELIVERED = "Delivered";
+    String MARQETA_USER_TOKEN = "marqetaUserToken";
 
 }

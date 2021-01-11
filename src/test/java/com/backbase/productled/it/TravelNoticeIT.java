@@ -1,6 +1,5 @@
 package com.backbase.productled.it;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.eq;
@@ -13,8 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.backbase.mambu.clients.api.DepositAccountsApi;
-import com.backbase.mambu.clients.model.Card;
+import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
+import com.backbase.dbs.user.manager.api.service.v2.model.GetUser;
 import com.backbase.marqeta.clients.api.CardsApi;
 import com.backbase.marqeta.clients.api.UsersApi;
 import com.backbase.marqeta.clients.model.CardHolderModel;
@@ -76,13 +75,13 @@ public class TravelNoticeIT {
     private CardsApi cardsApi;
 
     @MockBean
-    private DepositAccountsApi depositAccountsApi;
+    private UserManagementApi userManagementApi;
 
     @Before
     public void setUp() throws IOException {
 
-        when(depositAccountsApi.getAllCards(eq("031000021")))
-            .thenReturn(singletonList(new Card().referenceToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")));
+        when(userManagementApi.getUserById(Mockito.any(), Mockito.any()))
+            .thenReturn(new GetUser().putAdditionsItem("marqetaUserToken", "1be8bb0b-dcdd-4219-81ab-565621d3707c"));
 
         when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getCardResponse.json"),

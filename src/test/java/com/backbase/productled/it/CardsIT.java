@@ -29,6 +29,9 @@ import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
+import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
+import com.backbase.marqeta.clients.api.CardTransitionsApi;
+import com.backbase.marqeta.clients.model.CardListResponse;
 import com.backbase.productled.Application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -83,7 +86,10 @@ public class CardsIT {
     private VelocityControlsApi velocityControlsApi;
 
     @MockBean
-    private com.backbase.marqeta.clients.api.CardTransitionsApi cardTransitionsApi;
+    private UserManagementApi userManagementApi;
+
+    @MockBean
+    private CardTransitionsApi cardTransitionsApi;
 
     @Autowired
     private MockMvc mvc;
@@ -93,6 +99,14 @@ public class CardsIT {
 
     @Before
     public void setUp() throws IOException {
+
+        when(cardsApi.getCardsUserToken(Mockito.eq("1be8bb0b-dcdd-4219-81ab-565621d3707c"), eq(null), eq(null), eq(null), eq(null)))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getUserTokenResponse.json"),
+                CardListResponse.class));
+
+        when(userManagementApi.getUserById(Mockito.any(), Mockito.any()))
+            .thenReturn(new com.backbase.dbs.user.manager.api.service.v2.model.GetUser()
+                .putAdditionsItem("marqetaUserToken", "1be8bb0b-dcdd-4219-81ab-565621d3707c"));
 
         when(depositAccountsApi.getAllCards(eq("091000021")))
             .thenReturn(singletonList(new Card().referenceToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")));
@@ -119,21 +133,38 @@ public class CardsIT {
 
         // When
         ResultActions result = mvc.perform(get("/client-api/v2/cards")
+            .param("types","Debit")
+            .param("status","Active")
             .header("Authorization", TEST_JWT)).andDo(print());
 
         // Then
         result.andExpect(status().isOk())
             .andExpect(jsonPath("$.*", hasSize(1)))
             .andExpect(jsonPath("$.[0].id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.[0].brand", is("mastercard")))
             .andExpect(jsonPath("$.[0].type", is("Debit")))
             .andExpect(jsonPath("$.[0].subType", is("ATM")))
             .andExpect(jsonPath("$.[0].status", is("Active")))
             .andExpect(jsonPath("$.[0].lockStatus", is("UNLOCKED")))
+            .andExpect(jsonPath("$.[0].replacement.status", is("NotUnderReplacement")))
+            .andExpect(jsonPath("$.[0].holder.name", is("Paolo")))
             .andExpect(jsonPath("$.[0].expiryDate.year", is("2024")))
             .andExpect(jsonPath("$.[0].expiryDate.month", is("12")))
             .andExpect(jsonPath("$.[0].currency", is("USD")))
             .andExpect(jsonPath("$.[0].maskedNumber", is("2053")))
-            .andExpect(jsonPath("$.[0].replacement.status", is("NotUnderReplacement")));
+            .andExpect(jsonPath("$.[0].replacement.status", is("NotUnderReplacement")))
+            .andExpect(jsonPath("$.[0].limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
+            .andExpect(jsonPath("$.[0].limits[0].channel", is("online")))
+            .andExpect(jsonPath("$.[0].limits[0].frequency", is("DAILY")))
+            .andExpect(jsonPath("$.[0].limits[0].amount", is("5000.00")))
+            .andExpect(jsonPath("$.[0].limits[0].maxAmount", is("10000.00")))
+            .andExpect(jsonPath("$.[0].limits[0].minAmount", is("0.00")))
+            .andExpect(jsonPath("$.[0].limits[1].id", is("0cfe3139-7792-4894-ba75-79e7aef7fe9c")))
+            .andExpect(jsonPath("$.[0].limits[1].channel", is("atm")))
+            .andExpect(jsonPath("$.[0].limits[1].frequency", is("DAILY")))
+            .andExpect(jsonPath("$.[0].limits[1].amount", is("5000.00")))
+            .andExpect(jsonPath("$.[0].limits[1].maxAmount", is("10000.00")))
+            .andExpect(jsonPath("$.[0].limits[1].minAmount", is("0.00")));
     }
 
     @Test
@@ -148,22 +179,37 @@ public class CardsIT {
         // Then
         result.andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.brand", is("mastercard")))
             .andExpect(jsonPath("$.type", is("Debit")))
             .andExpect(jsonPath("$.subType", is("ATM")))
             .andExpect(jsonPath("$.status", is("Active")))
             .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")))
+            .andExpect(jsonPath("$.holder.name", is("Paolo")))
             .andExpect(jsonPath("$.expiryDate.year", is("2024")))
             .andExpect(jsonPath("$.expiryDate.month", is("12")))
             .andExpect(jsonPath("$.currency", is("USD")))
             .andExpect(jsonPath("$.maskedNumber", is("2053")))
-            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")))
+            .andExpect(jsonPath("$.limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
+            .andExpect(jsonPath("$.limits[0].channel", is("online")))
+            .andExpect(jsonPath("$.limits[0].frequency", is("DAILY")))
+            .andExpect(jsonPath("$.limits[0].amount", is("5000.00")))
+            .andExpect(jsonPath("$.limits[0].maxAmount", is("10000.00")))
+            .andExpect(jsonPath("$.limits[0].minAmount", is("0.00")))
+            .andExpect(jsonPath("$.limits[1].id", is("0cfe3139-7792-4894-ba75-79e7aef7fe9c")))
+            .andExpect(jsonPath("$.limits[1].channel", is("atm")))
+            .andExpect(jsonPath("$.limits[1].frequency", is("DAILY")))
+            .andExpect(jsonPath("$.limits[1].amount", is("5000.00")))
+            .andExpect(jsonPath("$.limits[1].maxAmount", is("10000.00")))
+            .andExpect(jsonPath("$.limits[1].minAmount", is("0.00")));
     }
 
     @Test
     public void testLockCard() throws Exception {
 
         // Given
-        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
+        when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/cardLockedResponse.json"),
                 CardResponse.class));
 
@@ -193,7 +239,7 @@ public class CardsIT {
     public void testUnLockCard() throws Exception {
 
         // Given
-        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
+        when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/cardUnlockedResponse.json"),
                 CardResponse.class));
 
@@ -224,8 +270,8 @@ public class CardsIT {
     public void testRequestReplacement() throws Exception {
 
         // Given
-        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
-            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/replacementCardResponse.json"),
+        when(cardsApi.postCards(Mockito.eq(false), Mockito.eq(false), Mockito.any()))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/postCardResponse.json"),
                 CardResponse.class));
 
         // When
@@ -238,16 +284,16 @@ public class CardsIT {
 
         // Then
         result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.id", is("31b29920-540e-4d52-8f0a-c3aada72399b")))
             .andExpect(jsonPath("$.type", is("Debit")))
             .andExpect(jsonPath("$.subType", is("ATM")))
             .andExpect(jsonPath("$.status", is("Inactive")))
             .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
-            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
-            .andExpect(jsonPath("$.expiryDate.month", is("12")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2025")))
+            .andExpect(jsonPath("$.expiryDate.month", is("1")))
             .andExpect(jsonPath("$.currency", is("USD")))
-            .andExpect(jsonPath("$.maskedNumber", is("2053")))
-            .andExpect(jsonPath("$.replacement.status", is("UnderReplacement")));
+            .andExpect(jsonPath("$.maskedNumber", is("8119")))
+            .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 
     @Test

@@ -7,11 +7,12 @@ logging:
     com.backbase: INFO
     org.springframework: INFO
 
+
 backbase:
   usermanager:
     client:
       openapi:
-        baseUrl: https://arrangement-manager
+        serviceId: user-manager
   communication:
     logRequests: true
     logReplies: true

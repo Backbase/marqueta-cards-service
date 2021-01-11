@@ -7,8 +7,8 @@ public enum FrequencyEnum {
 
     MONTHLY("MONTHLY", "MONTH");
 
-    private String dbsValue;
-    private String marqetaValue;
+    private final String dbsValue;
+    private final String marqetaValue;
 
     FrequencyEnum(String dbsValue, String marqetaValue) {
         this.dbsValue = dbsValue;
@@ -25,6 +25,6 @@ public enum FrequencyEnum {
                 return b;
             }
         }
-        throw new IllegalArgumentException("Unexpected value '" + value + "'");
+        return FrequencyEnum.DAILY;
     }
 }

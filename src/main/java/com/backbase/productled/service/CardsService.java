@@ -9,7 +9,7 @@ import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.PinRequest;
-import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
+import com.backbase.marqeta.clients.model.VelocityControlResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
@@ -85,18 +85,12 @@ public class CardsService {
     }
 
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
-        changeLimitsPostItem.forEach(item -> marqetaRepository
-            .updateCardLimits(item.getId(),
-                new VelocityControlUpdateRequest()
-                    .amountLimit(item.getAmount())
-                    .includeTransfers(true)
-                    .active(true)
-                    .association(null)
-                    .approvalsOnly(null)
-                    .includePurchases(null)
-                    .includeCashback(null)
-                    .includeWithdrawals(null)
-                    .includeCredits(null)));
+        changeLimitsPostItem.forEach(item -> {
+            VelocityControlResponse velocityControlResponse = marqetaRepository.getCardLimitById(item.getId());
+            marqetaRepository.updateCardLimits(item.getId(),
+                cardMapper.mapVelocityControlUpdateRequest(velocityControlResponse, item.getAmount()));
+        });
+
         return getCard(id);
     }
 

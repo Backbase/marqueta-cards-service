@@ -29,6 +29,9 @@ import com.backbase.presentation.card.rest.spec.v2.cards.DeliveryTransitStep.Sta
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.Replacement;
 import com.backbase.presentation.card.rest.spec.v2.cards.YearMonth;
+import com.backbase.marqeta.clients.model.VelocityControlResponse;
+import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -150,4 +153,8 @@ public interface CardsMappers {
         }
         return null;
     }
+
+    @Mapping(target = "amountLimit.", source = "amount")
+    VelocityControlUpdateRequest mapVelocityControlUpdateRequest(VelocityControlResponse velocityControlResponse,
+        BigDecimal amount);
 }

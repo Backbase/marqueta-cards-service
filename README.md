@@ -6,21 +6,23 @@ guide: https://community.backbase.com/documentation/ServiceSDK/11-3-0/create_a_c
 This service is an implementation of `cards-presenation-spec`
 - https://stash.backbase.com/projects/CARDS/repos/cards-presentation-spec
 
-This service is an Implementation of Cards Presentation to communicate with Mambu and Marqeta to retrieve cards
-information
+This service is an Implementation of Cards Presentation to communicate with Marqeta to retrieve cards 
+and Travel notice information.
 
 ## Getting started
 
 Components overview:
 
-- Controller/API - `CardsApiController`: Controller class to receive HTTP requests from `acount-statement-service` and
-  post to Mambu using the restful API - DocumentsApi. Implements controller interface from spec - `AccountStatementsApi`
-  .
-- Configuration - `MambuConfiguration`, `MarqetaConfiguration`, `MarqetaConfigurationProperties`
-  & `MambuConfigurationProperties`: configuration classes to load properties from config file and initialize Mambu
-  client.
+- Controller/API -`CardsApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and
+  post to Marqeta using the restful API. Implements controller interface from spec - `CardsApi`
+  
+  `TravelNoticesApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and
+  post to Marqeta using the restful API. Implements controller interface from spec - `TravelNoticesApi`
+  
+- Configuration - `MarqetaRestClientConfiguration`, `UserManagerRestClientConfiguration`: 
+  configuration classes to load properties from config file and initialize Marqeta and user Manager Rest client.
 - Mapper - `CardMapper`: Map models from Mambu <-> DBS.
-- Service - `CardsService`: Orchestrate the business to Mambu and map response to DBS model.
+- Service - `CardsService`, `TravelNoticeService`: Orchestrate the business to Marqeta and map response to DBS model.
 
 ## Configuration
 
@@ -45,21 +47,6 @@ custom:
         enabled: false
       env:
         BACKBASE_COMMUNICATION_HTTP_ACCESS-TOKEN-URI: "http://token-converter:8080/oauth/token"
-        mambu.username:
-          valueFrom:
-            secretKeyRef:
-              name: mambu-credentials
-              key: username
-        mambu.password:
-          valueFrom:
-            secretKeyRef:
-              name: mambu-credentials
-              key: password
-        mambu.baseUrl:
-          valueFrom:
-            configMapKeyRef:
-              name: mambu-env
-              key: basePath
         marqeta.username:
           valueFrom:
             secretKeyRef:
@@ -112,12 +99,12 @@ sso.jwt.internal.signature.key.type** | https://community.backbase.com/documenta
 **
 sso.jwt.internal.signature.key.value** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `SIG_SECRET_KEY`
 
-#### Mambu config
+#### Marqeta config
 
 The following properties **must** be set as they have no default:
 
 Property | Description
 --- | ---
-**mambu.baseUrl** | Base URL of Mambu API (i.e. `https://backbase.sandbox.mambu.com/api`)
-**mambu.username** | API username
-**mambu.password** | API password
+**marqeta.baseUrl** | Base URL of Mambu API (i.e. `https://sandbox-api.marqeta.com/v3`)
+**marqeta.username** | API username
+**marqeta.password** | API password

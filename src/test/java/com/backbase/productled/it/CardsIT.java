@@ -12,11 +12,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
 import com.backbase.mambu.clients.api.DepositAccountsApi;
 import com.backbase.mambu.clients.model.Card;
+import com.backbase.marqeta.clients.api.CardTransitionsApi;
 import com.backbase.marqeta.clients.api.CardsApi;
 import com.backbase.marqeta.clients.api.PinsApi;
 import com.backbase.marqeta.clients.api.VelocityControlsApi;
+import com.backbase.marqeta.clients.model.CardListResponse;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionResponse;
 import com.backbase.marqeta.clients.model.CardUpdateRequest;
@@ -29,9 +32,6 @@ import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
-import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
-import com.backbase.marqeta.clients.api.CardTransitionsApi;
-import com.backbase.marqeta.clients.model.CardListResponse;
 import com.backbase.productled.Application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;

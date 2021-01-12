@@ -19,4 +19,8 @@ public final class CardConstants {
     public static final String DELIVERED = "Delivered";
     public static final String MARQETA_USER_TOKEN = "marqetaUserToken";
 
+    private CardConstants() {
+        throw new IllegalStateException("Utility class");
+    }
+
 }

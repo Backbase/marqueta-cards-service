@@ -269,6 +269,16 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <!-- Override parent plugin and exclude model classes and spring boot centric classes -->
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration combine.self="override">
+                    <excludes>
+                        <exclude>**/utils/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

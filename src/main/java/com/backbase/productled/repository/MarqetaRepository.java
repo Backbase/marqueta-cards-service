@@ -108,14 +108,14 @@ public class MarqetaRepository {
         } catch (HttpClientErrorException e) {
             switch (e.getStatusCode()) {
                 case NOT_FOUND:
-                    log.error("Card token {} not found in Marqeta: {}", token, e.getMessage());
-                    throw new NotFoundException("Card token not found in Marqeta", e);
+                    log.error("Cardtoken {} not found in Marqeta: {}", token, e.getMessage());
+                    throw new NotFoundException("Cardtoken not found in Marqeta", e);
                 case BAD_REQUEST:
                     log.error("Bad Request: {}", e.getMessage(), e);
                     throw new BadRequestException(
                         "Bad request while updating Card  in Marqeta: " + e.getMessage(), e);
                 default:
-                    log.error("Unexpected error retrieving Card token from Marqeta: {}", e.getMessage(), e);
+                    log.error("Unexpected error retrieving Cardtoken from Marqeta: {}", e.getMessage(), e);
                     throw new InternalServerErrorException(
                         "Unexpected error while updating Card in Marqeta: " + e.getMessage(), e);
             }
@@ -148,14 +148,14 @@ public class MarqetaRepository {
         } catch (HttpClientErrorException e) {
             switch (e.getStatusCode()) {
                 case NOT_FOUND:
-                    log.error("Card token {} not found in Marqeta: {}", token, e.getMessage());
-                    throw new NotFoundException("Card token not found in Marqeta", e);
+                    log.error("Card {} not found in Marqeta: {}", token, e.getMessage());
+                    throw new NotFoundException("Card not found in Marqeta", e);
                 case BAD_REQUEST:
                     log.error("Bad Request while retrieving Card cvv from Marqeta : {}", e.getMessage(), e);
                     throw new BadRequestException(
                         "Bad request retrieving Card cvv from Marqeta: " + e.getMessage(), e);
                 default:
-                    log.error("Unexpected error retrieving Card token from Marqeta: {}", e.getMessage(), e);
+                    log.error("Unexpected error retrieving Card from Marqeta: {}", e.getMessage(), e);
                     throw new InternalServerErrorException(
                         "Unexpected error retrieving Card cvv token from Marqeta: " + e.getMessage(), e);
             }
@@ -168,9 +168,9 @@ public class MarqetaRepository {
         } catch (HttpClientErrorException e) {
             switch (e.getStatusCode()) {
                 case NOT_FOUND:
-                    log.error("Card token {} not found in Marqeta: {}", controlTokenRequest.getCardToken(),
+                    log.error("token {} not found in Marqeta: {}", controlTokenRequest.getCardToken(),
                         e.getMessage());
-                    throw new NotFoundException("Card token not found in Marqeta", e);
+                    throw new NotFoundException("token not found in Marqeta", e);
                 case BAD_REQUEST:
                     log.error("Bad Request while requesting PinControlToken from Marqeta : {}", e.getMessage(), e);
                     throw new BadRequestException(

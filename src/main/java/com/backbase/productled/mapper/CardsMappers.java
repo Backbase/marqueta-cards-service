@@ -12,6 +12,7 @@ import static com.backbase.productled.utils.CardConstants.ORDERED;
 import static com.backbase.productled.utils.CardConstants.PROCESSED;
 import static com.backbase.productled.utils.CardConstants.REPLACEMENT_REASON;
 import static com.backbase.productled.utils.CardConstants.REPLACEMENT_STATUS;
+import static java.util.Objects.requireNonNull;
 
 import com.backbase.marqeta.clients.model.CardRequest;
 import com.backbase.marqeta.clients.model.CardResponse;
@@ -21,6 +22,8 @@ import com.backbase.marqeta.clients.model.CardUpdateRequest;
 import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import com.backbase.marqeta.clients.model.UserCardHolderUpdateModel;
 import com.backbase.marqeta.clients.model.VelocityControlListResponse;
+import com.backbase.marqeta.clients.model.VelocityControlResponse;
+import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardHolder;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.Delivery;
@@ -29,8 +32,6 @@ import com.backbase.presentation.card.rest.spec.v2.cards.DeliveryTransitStep.Sta
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.Replacement;
 import com.backbase.presentation.card.rest.spec.v2.cards.YearMonth;
-import com.backbase.marqeta.clients.model.VelocityControlResponse;
-import com.backbase.marqeta.clients.model.VelocityControlUpdateRequest;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -115,13 +116,9 @@ public interface CardsMappers {
 
     @Named("getReplacement")
     default Replacement getReplacement(CardResponse cardResponse) {
-        Replacement replacement = new Replacement();
-        if (cardResponse.getMetadata() != null) {
-            replacement
-                .status(cardResponse.getMetadata().get(REPLACEMENT_STATUS))
-                .reason(cardResponse.getMetadata().get(REPLACEMENT_REASON));
-        }
-        return replacement;
+        return new Replacement()
+            .status(requireNonNull(cardResponse.getMetadata()).get(REPLACEMENT_STATUS))
+            .reason(requireNonNull(cardResponse.getMetadata()).get(REPLACEMENT_REASON));
     }
 
     @Named("getExpiryDate")
@@ -134,9 +131,8 @@ public interface CardsMappers {
 
     @Named("getCardHolder")
     default CardHolder getCardHolder(CardResponse cardResponse) {
-        assert cardResponse.getMetadata() != null;
         return new CardHolder()
-            .name(cardResponse.getMetadata().get(CARD_HOLDER_NAME));
+            .name(requireNonNull(cardResponse.getMetadata()).get(CARD_HOLDER_NAME));
     }
 
     @Named("getDelivery")

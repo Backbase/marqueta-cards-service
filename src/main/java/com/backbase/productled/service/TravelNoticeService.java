@@ -31,7 +31,7 @@ public class TravelNoticeService {
         travelNoticeUtil.getMarqetaUserToken()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> travelNoticeUtil.getUserCardHolderUpdateModel(UUID.randomUUID().toString(), req, travelNotice))
-            .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
+            .ifPresent(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
         return travelNotice;
     }
 
@@ -39,7 +39,7 @@ public class TravelNoticeService {
         travelNoticeUtil.getMarqetaUserToken()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> req.metadata(Collections.singletonMap(String.format(TRAVEL_NOTICE_REGEX, id), null)))
-            .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
+            .ifPresent(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
     }
 
     public TravelNotice getTravelNoticeById(String id) {
@@ -65,7 +65,7 @@ public class TravelNoticeService {
         travelNoticeUtil.getMarqetaUserToken()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> travelNoticeUtil.getUserCardHolderUpdateModel(id, req, travelNotice))
-            .map(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
+            .ifPresent(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
         return travelNotice;
     }
 

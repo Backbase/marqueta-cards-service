@@ -1,17 +1,5 @@
 package com.backbase.productled.mapper;
 
-import static com.backbase.productled.utils.CardConstants.ACTIVE;
-import static com.backbase.productled.utils.CardConstants.ATM;
-import static com.backbase.productled.utils.CardConstants.CARD_HOLDER_NAME;
-import static com.backbase.productled.utils.CardConstants.DELIVERED;
-import static com.backbase.productled.utils.CardConstants.INACTIVE;
-import static com.backbase.productled.utils.CardConstants.IN_TRANSIT;
-import static com.backbase.productled.utils.CardConstants.NOT_UNDER_REPLACEMENT;
-import static com.backbase.productled.utils.CardConstants.ONLINE;
-import static com.backbase.productled.utils.CardConstants.ORDERED;
-import static com.backbase.productled.utils.CardConstants.PROCESSED;
-import static com.backbase.productled.utils.CardConstants.REPLACEMENT_REASON;
-import static com.backbase.productled.utils.CardConstants.REPLACEMENT_STATUS;
 import static java.util.Objects.requireNonNull;
 
 import com.backbase.marqeta.clients.model.CardRequest;
@@ -43,6 +31,19 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface CardsMappers {
+
+    String REPLACEMENT_REASON = "replacementReason";
+    String REPLACEMENT_STATUS = "replacementStatus";
+    String NOT_UNDER_REPLACEMENT = "NotUnderReplacement";
+    String ATM = "ATM";
+    String ONLINE = "ONLINE";
+    String ACTIVE = "Active";
+    String INACTIVE = "Inactive";
+    String CARD_HOLDER_NAME = "cardHolderName";
+    String ORDERED = "Ordered";
+    String PROCESSED = "Processed";
+    String IN_TRANSIT = "In Transit";
+    String DELIVERED = "Delivered";
 
     @Mapping(target = "id", source = "cardResponse.token")
     @Mapping(target = "maskedNumber", source = "cardResponse.lastFour")

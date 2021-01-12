@@ -1,7 +1,5 @@
 package com.backbase.productled.repository;
 
-import static com.backbase.productled.utils.CardConstants.MARQETA_USER_TOKEN;
-
 import com.backbase.buildingblocks.backend.security.auth.config.SecurityContextUtil;
 import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
 import java.util.Objects;
@@ -13,6 +11,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Slf4j
 public class UserRepository {
+
+    private static final String MARQETA_USER_TOKEN = "marqetaUserToken";
 
     private final SecurityContextUtil securityContextUtil;
 

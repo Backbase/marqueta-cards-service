@@ -1,6 +1,5 @@
 package com.backbase.productled.service;
 
-import static com.backbase.productled.utils.CardConstants.TERMINATED;
 import static java.util.Objects.requireNonNull;
 
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
@@ -30,6 +29,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class CardsService {
+
+    private static final String TERMINATED = "TERMINATED";
 
     private final UserRepository userRepository;
 

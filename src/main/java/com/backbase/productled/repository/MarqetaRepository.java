@@ -8,7 +8,6 @@ import com.backbase.marqeta.clients.api.CardsApi;
 import com.backbase.marqeta.clients.api.PinsApi;
 import com.backbase.marqeta.clients.api.UsersApi;
 import com.backbase.marqeta.clients.api.VelocityControlsApi;
-import com.backbase.marqeta.clients.model.CardHolderModel;
 import com.backbase.marqeta.clients.model.CardListResponse;
 import com.backbase.marqeta.clients.model.CardRequest;
 import com.backbase.marqeta.clients.model.CardResponse;
@@ -291,9 +290,9 @@ public class MarqetaRepository {
         }
     }
 
-    public CardHolderModel updateCardHolder(String token, UserCardHolderUpdateModel userCardHolderUpdateModel) {
+    public void updateCardHolder(String token, UserCardHolderUpdateModel userCardHolderUpdateModel) {
         try {
-            return usersApi.putUsersToken(token, userCardHolderUpdateModel);
+            usersApi.putUsersToken(token, userCardHolderUpdateModel);
         } catch (HttpClientErrorException e) {
             switch (e.getStatusCode()) {
                 case NOT_FOUND:

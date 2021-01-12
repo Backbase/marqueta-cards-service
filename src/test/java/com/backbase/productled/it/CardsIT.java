@@ -165,6 +165,13 @@ public class CardsIT {
             .andExpect(jsonPath("$.[0].limits[1].amount", is("5000")))
             .andExpect(jsonPath("$.[0].limits[1].maxAmount", is("10000")))
             .andExpect(jsonPath("$.[0].limits[1].minAmount", is("0")));
+
+        // When and Then
+        ResultActions result1 = mvc.perform(get("/client-api/v2/cards")
+            .param("ids","aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .header("Authorization", TEST_JWT)).andDo(print())
+            .andExpect(status().isOk());
+
     }
 
     @Test

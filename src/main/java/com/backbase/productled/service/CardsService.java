@@ -21,7 +21,6 @@ import com.backbase.productled.repository.UserRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,9 @@ public class CardsService {
             .getData()).stream()
             .filter(cardResponse -> !TERMINATED.equals(cardResponse.getState().toString()))
             .map(getCardResponseCardItemFunction())
-            .filter(getCardItemPredicate(ids, status, types))
+            .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
+            .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
+            .filter(cardItem -> (types == null || types.contains(cardItem.getType())))
             .collect(Collectors.toList());
     }
 
@@ -102,13 +103,6 @@ public class CardsService {
 
     private CardItem mapCardItem(CardResponse cardResponse) {
         return cardMapper.mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
-    }
-
-    private Predicate<CardItem> getCardItemPredicate(List<String> ids, List<String> status, List<String> types) {
-        return cardItem ->
-            (ids == null || ids.contains(cardItem.getId())) &&
-                (status == null || status.contains(cardItem.getStatus()) &&
-                    (types == null || types.contains(cardItem.getType())));
     }
 
     private PinRequest getPin(String id, ResetPinPost resetPinPost) {

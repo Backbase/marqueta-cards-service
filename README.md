@@ -94,10 +94,8 @@ To run the service from the built binaries, use:
 
 Property | Description | Default
 --- | --- | ---
-**
-sso.jwt.internal.signature.key.type** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `ENV`
-**
-sso.jwt.internal.signature.key.value** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `SIG_SECRET_KEY`
+**sso.jwt.internal.signature.key.type** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `ENV`
+**sso.jwt.internal.signature.key.value** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `SIG_SECRET_KEY`
 
 #### Marqeta config
 

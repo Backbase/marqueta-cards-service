@@ -6,7 +6,13 @@ logging:
   level:
     com.backbase: INFO
     org.springframework: INFO
+
+
 backbase:
+  usermanager:
+    client:
+      openapi:
+        serviceId: user-manager
   communication:
     logRequests: true
     logReplies: true
@@ -24,3 +30,4 @@ marqeta:
   username: ede3b3c0-791e-42c8-99d9-2709b3f2b0df
   baseUrl: https://sandbox-api.marqeta.com/v3
   password: 92e2471b-6310-4706-9ff1-f7331ffb2533
+

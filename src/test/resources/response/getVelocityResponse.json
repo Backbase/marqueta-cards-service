@@ -1,0 +1,44 @@
+{
+  "count": 2,
+  "start_index": 0,
+  "end_index": 1,
+  "is_more": false,
+  "data": [
+    {
+      "token": "d5f5e333-9463-4050-b554-9d0d1119d64e",
+      "association": {
+        "card_product_token": "b1e4b06c-06f2-49c8-9c28-016ace3154ad"
+      },
+      "merchant_scope": {},
+      "usage_limit": 10,
+      "approvals_only": true,
+      "include_purchases": true,
+      "include_withdrawals": false,
+      "include_transfers": true,
+      "include_cashback": true,
+      "include_credits": false,
+      "currency_code": "USD",
+      "amount_limit": 5000.00,
+      "velocity_window": "DAY",
+      "active": true
+    },
+    {
+      "token": "0cfe3139-7792-4894-ba75-79e7aef7fe9c",
+      "association": {
+        "card_product_token": "b1e4b06c-06f2-49c8-9c28-016ace3154ad"
+      },
+      "merchant_scope": {},
+      "usage_limit": 10,
+      "approvals_only": true,
+      "include_purchases": true,
+      "include_withdrawals": true,
+      "include_transfers": true,
+      "include_cashback": true,
+      "include_credits": false,
+      "currency_code": "USD",
+      "amount_limit": 5000.00,
+      "velocity_window": "LIFETIME",
+      "active": true
+    }
+  ]
+}

@@ -1,14 +1,27 @@
 package com.backbase.productled.service;
 
-import com.backbase.mambu.clients.model.Card;
-import com.backbase.presentation.card.rest.spec.v2.cards.IdlockstatusPostRequestBody;
-import com.backbase.presentation.card.spec.v2.cards.CardItem;
-import com.backbase.productled.mapper.CardMapper;
-import com.backbase.productled.repository.ArrangementRepository;
-import com.backbase.productled.repository.MambuRepository;
+import static java.util.Objects.requireNonNull;
+
+import com.backbase.buildingblocks.presentation.errors.BadRequestException;
+import com.backbase.buildingblocks.presentation.errors.Error;
+import com.backbase.marqeta.clients.model.CardResponse;
+import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
+import com.backbase.marqeta.clients.model.ControlTokenRequest;
+import com.backbase.marqeta.clients.model.PinRequest;
+import com.backbase.marqeta.clients.model.VelocityControlResponse;
+import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
+import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
+import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
+import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
+import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
+import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.MarqetaRepository;
-import java.util.Arrays;
+import com.backbase.productled.repository.UserRepository;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,33 +30,92 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CardsService {
 
-    private final ArrangementRepository arrangementRepository;
+    private static final String TERMINATED = "TERMINATED";
+
+    private final UserRepository userRepository;
 
     private final MarqetaRepository marqetaRepository;
 
-    private final MambuRepository mambuRepository;
+    private final CardsMappers cardMapper;
 
-    private final CardMapper cardMapper;
-
-    public List<CardItem> getCards(String[] ids, String[] status, String[] types) {
-
-        return arrangementRepository.getExternalArrangementIds().stream()
-            .map(mambuRepository::getCards)
-            .collect(Collectors.toList())
-            .stream().flatMap(List::stream)
-            .collect(Collectors.toList()).stream()
-            .map(Card::getReferenceToken)
-            .map(marqetaRepository::getCardDetails)
-            .map(cardMapper::mapCard)
-            .filter(cardItem -> (ids == null || Arrays.asList(ids).contains(cardItem.getId())))
-            .filter(cardItem -> (status == null || Arrays.asList(status).contains(cardItem.getStatus())))
-            .filter(cardItem -> (types == null || Arrays.asList(types).contains(cardItem.getType())))
+    public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
+        return requireNonNull(marqetaRepository.getUserCards(
+            userRepository.getMarqetaUserToken())
+            .getData()).stream()
+            .filter(cardResponse -> !TERMINATED.equals(cardResponse.getState().toString()))
+            .map(getCardResponseCardItemFunction())
+            .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
+            .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
+            .filter(cardItem -> (types == null || types.contains(cardItem.getType())))
             .collect(Collectors.toList());
     }
 
-    public CardItem postLockStatus(String id, IdlockstatusPostRequestBody idlockstatusPostRequestBody) {
-        marqetaRepository.postCardTransitions(cardMapper
-            .mapCardTransitionRequest(id, idlockstatusPostRequestBody));
-        return cardMapper.mapCard(marqetaRepository.getCardDetails(id));
+    public CardItem getCard(String id) {
+        return mapCardItem(marqetaRepository.getCardDetails(id));
     }
+
+    public CardItem postLockStatus(String id, LockStatusPost lockStatusPost) {
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id,
+            lockStatusPost.getLockStatus() == LockStatus.UNLOCKED ? StateEnum.ACTIVE : StateEnum.SUSPENDED));
+        return getCard(id);
+    }
+
+    public CardItem activateCard(String id, ActivatePost activatePost) {
+        validateCvv(id, activatePost.getToken());
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.ACTIVE));
+        return mapCardItem(marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id)));
+    }
+
+    public CardItem resetPin(String id, ResetPinPost resetPinPost) {
+        validateCvv(id, resetPinPost.getToken());
+        marqetaRepository.updatePin(getPin(id, resetPinPost));
+        return getCard(id);
+    }
+
+    public CardItem requestPin(String id, RequestPinPost requestPin) {
+        validateCvv(id, requestPin.getToken());
+        return getCard(id);
+    }
+
+    private void validateCvv(String cardToken, String cvv) {
+        if (!cvv.equals(marqetaRepository.getCardCvv(cardToken).getCvvNumber())) {
+            throw new BadRequestException()
+                .withErrors(Collections.singletonList(new Error().withMessage("cvv is incorrect")));
+        }
+    }
+
+    public CardItem requestReplacement(String id) {
+        // change state of old card from Active to Terminated
+        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.TERMINATED));
+        // create new Card
+        return mapCardItem(
+            marqetaRepository.createCard(cardMapper.mapCreateCardRequest(marqetaRepository.getCardDetails(id))));
+    }
+
+    public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
+        changeLimitsPostItem.forEach(item -> {
+            VelocityControlResponse velocityControlResponse = marqetaRepository.getCardLimitById(item.getId());
+            marqetaRepository.updateCardLimits(item.getId(),
+                cardMapper.mapVelocityControlUpdateRequest(velocityControlResponse, item.getAmount()));
+        });
+
+        return getCard(id);
+    }
+
+    private Function<CardResponse, CardItem> getCardResponseCardItemFunction() {
+        return cardResponse -> cardMapper
+            .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
+    }
+
+    private CardItem mapCardItem(CardResponse cardResponse) {
+        return cardMapper.mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
+    }
+
+    private PinRequest getPin(String id, ResetPinPost resetPinPost) {
+        return new PinRequest()
+            .controlToken(
+                marqetaRepository.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
+            .pin(resetPinPost.getPin());
+    }
+
 }

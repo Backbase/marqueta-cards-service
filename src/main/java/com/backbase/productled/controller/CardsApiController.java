@@ -1,20 +1,19 @@
 package com.backbase.productled.controller;
 
+import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
+import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardsApi;
-import com.backbase.presentation.card.rest.spec.v2.cards.IdactivationPostRequestBody;
-import com.backbase.presentation.card.rest.spec.v2.cards.IdlockstatusPostRequestBody;
-import com.backbase.presentation.card.rest.spec.v2.cards.IdpinrequestPostRequestBody;
-import com.backbase.presentation.card.rest.spec.v2.cards.IdpinresetPostRequestBody;
-import com.backbase.presentation.card.rest.spec.v2.cards.IdreplacementPostRequestBody;
-import com.backbase.presentation.card.spec.v2.cards.CardItem;
-import com.backbase.presentation.card.spec.v2.cards.ChangeLimitsPostItem;
+import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
+import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.service.CardsService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,54 +23,50 @@ public class CardsApiController implements CardsApi {
     private final CardsService cardsService;
 
     @Override
-    public List<CardItem> getCards(String[] ids, String[] status, String[] types, HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse) {
-        return cardsService.getCards(ids, status, types);
+    public ResponseEntity<CardItem> getCardById(String id, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.getCard(id));
     }
 
     @Override
-    public CardItem getId(String id, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return cardsService.getCards(new String[]{id}, null, null).get(0);
+    public ResponseEntity<List<CardItem>> getCards(@Valid List<String> ids, @Valid List<String> status,
+        @Valid List<String> types, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.getCards(ids, status, types));
     }
 
     @Override
-    public CardItem postIdlockstatus(@Valid IdlockstatusPostRequestBody idlockstatusPostRequestBody,
-        BindingResult bindingResult, String id, HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse) {
-        return cardsService.postLockStatus(id, idlockstatusPostRequestBody);
+    public ResponseEntity<CardItem> updateLockStatus(String id, @Valid LockStatusPost lockStatusPost,
+        HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.postLockStatus(id, lockStatusPost));
     }
 
     @Override
-    public CardItem postIdreplacement(@Valid IdreplacementPostRequestBody idreplacementPostRequestBody,
-        BindingResult bindingResult, String id, HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse) {
-        return null;
+    public ResponseEntity<CardItem> activate(String id, @Valid ActivatePost activatePost,
+        HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.activateCard(id, activatePost));
     }
 
     @Override
-    public CardItem postIdactivation(@Valid IdactivationPostRequestBody idactivationPostRequestBody,
-        BindingResult bindingResult, String id, HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse) {
-        return null;
+    public ResponseEntity<CardItem> changeLimits(String id, @Valid List<ChangeLimitsPostItem> changeLimitsPostItem,
+        HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.changeLimits(id, changeLimitsPostItem));
     }
 
     @Override
-    public CardItem postIdpinreset(@Valid IdpinresetPostRequestBody idpinresetPostRequestBody,
-        BindingResult bindingResult, String id, HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse) {
-        return null;
+    public ResponseEntity<CardItem> requestPin(String id, @Valid RequestPinPost requestPin,
+        HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.requestPin(id, requestPin));
     }
 
     @Override
-    public CardItem postIdpinrequest(@Valid IdpinrequestPostRequestBody idpinrequestPostRequestBody,
-        BindingResult bindingResult, String id, HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse) {
-        return null;
+    public ResponseEntity<CardItem> requestReplacement(String id, @Valid RequestReplacementPost requestReplacementPost,
+        HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.requestReplacement(id));
     }
 
     @Override
-    public CardItem postIdlimits(@Valid List<ChangeLimitsPostItem> changeLimitsPostItem, BindingResult bindingResult,
-        String id, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return null;
+    public ResponseEntity<CardItem> resetPin(String id, @Valid ResetPinPost resetPinPost,
+        HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(cardsService.resetPin(id, resetPinPost));
     }
+
 }

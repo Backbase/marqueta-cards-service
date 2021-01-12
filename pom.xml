@@ -30,6 +30,10 @@
         <lombok.version>1.18.12</lombok.version>
         <cards-presentation-spec.version>1.1.27</cards-presentation-spec.version>
         <mambu.clients.version>1.0.1-cr.11</mambu.clients.version>
+        <boat-maven-plugin.version>0.11.4</boat-maven-plugin.version>
+        <cards-management-api.version>2.2.0</cards-management-api.version>
+        <arrangement-service-api.version>2.0.6</arrangement-service-api.version>
+        <mapstruct.version>1.3.1.Final</mapstruct.version>
 
         <openapi-generator-maven-plugin.library>resttemplate</openapi-generator-maven-plugin.library>
         <openapi-generator-maven-plugin.java8>true</openapi-generator-maven-plugin.java8>
@@ -62,6 +66,11 @@
             <artifactId>communication</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
             <artifactId>building-blocks-common</artifactId>
         </dependency>
@@ -72,6 +81,10 @@
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
             <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
@@ -101,9 +114,20 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
@@ -111,33 +135,89 @@
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
                         </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>com.backbase.buildingblocks</groupId>
+                            <artifactId>service-sdk-starter-mapping</artifactId>
+                            <version>${project.parent.version}</version>
+                        </path>
                     </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>-Amapstruct.unmappedTargetPolicy=ERROR</compilerArg>
+                        <compilerArg>-parameters</compilerArg>
+                    </compilerArgs>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>2.4.7</version>
+                <groupId>com.backbase.oss</groupId>
+                <artifactId>boat-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>generate-code-from-limit-api-client-v2</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${basedir}/src/main/resources/marqeta_v3_swagger.json</inputSpec>
-                            <language>java</language>
-                            <library>resttemplate</library>
-                            <output>${project.basedir}/target/generated-sources/</output>
-                            <apiPackage>com.backbase.marqeta.clients.api</apiPackage>
-                            <modelPackage>com.backbase.marqeta.clients.model</modelPackage>
+                            <inputSpec>
+                                ${basedir}/src/main/resources/specs/card-manager-client-api-v${cards-management-api.version}.yaml
+                            </inputSpec>
+                            <output>${project.build.directory}/generated-sources</output>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <generatorName>spring</generatorName>
+                            <strictSpec>true</strictSpec>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
-                            <generateApiDocumentation>false</generateApiDocumentation>
-                            <generateModelDocumentation>false</generateModelDocumentation>
                             <configOptions>
+                                <library>spring-boot</library>
                                 <dateLibrary>java8</dateLibrary>
-                                <sourceFolder>restclient</sourceFolder>
+                                <interfaceOnly>true</interfaceOnly>
+                                <addServletRequest>true</addServletRequest>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useBeanValidation>true</useBeanValidation>
+                                <generateAliasAsModel>true</generateAliasAsModel>
+                                <useClassLevelBeanValidation>true</useClassLevelBeanValidation>
+                                <useTags>true</useTags>
+                                <java8>true</java8>
+                                <bigDecimalAsString>true</bigDecimalAsString>
+                                <useOptional>false</useOptional>
+                                <apiPackage>com.backbase.presentation.card.rest.spec.v2.cards</apiPackage>
+                                <modelPackage>com.backbase.presentation.card.rest.spec.v2.cards</modelPackage>
+                                <sourceFolder>/</sourceFolder>
                             </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-user-manager-api-code</id>
+                        <goals>
+                            <goal>generate-rest-template-embedded</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <inputSpec>
+                                ${basedir}/src/main/resources/specs/user-manager-service-api-v2.2.0.yaml
+                            </inputSpec>
+                            <apiPackage>com.backbase.dbs.user.manager.api.service.v2</apiPackage>
+                            <modelPackage>com.backbase.dbs.user.manager.api.service.v2.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-marqeta-api-code</id>
+                        <goals>
+                            <goal>generate-rest-template-embedded</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <inputSpec>
+                                ${basedir}/src/main/resources/specs/marqeta_v3_swagger.json
+                            </inputSpec>
+                            <apiPackage>com.backbase.marqeta.clients.api</apiPackage>
+                            <modelPackage>com.backbase.marqeta.clients.model</modelPackage>
                         </configuration>
                     </execution>
                 </executions>
@@ -146,28 +226,6 @@
                 <groupId>com.backbase.codegen</groupId>
                 <artifactId>raml-api-maven-plugin-1-0</artifactId>
                 <executions>
-                    <execution>
-                        <id>cards-presentation-spec</id>
-                        <goals>
-                            <goal>raml-api-generator</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>
-                                <groupId>com.backbase.dbs.cards</groupId>
-                                <artifactId>cards-presentation-spec</artifactId>
-                                <version>${cards-presentation-spec.version}</version>
-                                <inputFiles>
-                                    <inputFile>api.raml</inputFile>
-                                </inputFiles>
-                            </inputSpec>
-                            <outputFile>target/generated-sources/</outputFile>
-                            <serviceId>cards-presenation-service</serviceId>
-                            <packageName>presentation.card</packageName>
-                            <basePackageName>com.backbase</basePackageName>
-                            <includeBindingResult>true</includeBindingResult>
-                            <generateApi>true</generateApi>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>product-summary-presentation-spec</id>
                         <goals>
@@ -186,7 +244,7 @@
                             <outputFile>target/generated-sources/</outputFile>
                             <serviceId>arrangement-manager</serviceId>
                             <packageName>productsummary</packageName>
-                            <basePackageName>com.backbase.productled</basePackageName>
+                            <basePackageName>com.backbase.presentation</basePackageName>
                             <generateApi>false</generateApi>
                             <generateClients>true</generateClients>
                         </configuration>
@@ -205,7 +263,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${basedir}/target/generated-sources</source>
+                                <source>${project.build.directory}/generated-sources</source>
                             </sources>
                         </configuration>
                     </execution>

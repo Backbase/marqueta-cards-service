@@ -1,0 +1,31 @@
+{
+  "created_time": "2020-12-31T15:21:31Z",
+  "last_modified_time": "2021-01-07T11:25:25Z",
+  "token": "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5",
+  "user_token": "1be8bb0b-dcdd-4219-81ab-565621d3707c",
+  "card_product_token": "b1e4b06c-06f2-49c8-9c28-016ace3154ad",
+  "last_four": "2053",
+  "pan": "111111______2053",
+  "expiration": "1224",
+  "expiration_time": "2024-12-31T23:59:59Z",
+  "barcode": "22049711782641525588",
+  "pin_is_set": true,
+  "state": "SUSPENDED",
+  "state_reason": "ReInstated",
+  "fulfillment_status": "DIGITALLY_PRESENTED",
+  "instrument_type": "VIRTUAL_PAN",
+  "expedite": false,
+  "metadata": {
+    "atmMaxAmount": "10000",
+    "atmMinAmount": "0",
+    "brand": "mastercard",
+    "cardHolderName": "Paolo",
+    "currency": "USD",
+    "lockStatus": "LOCKED",
+    "onlineMaxAmount": "10000",
+    "onlineMinAmount": "0",
+    "replacementStatus": "NotUnderReplacement",
+    "subType": "ATM",
+    "type": "Debit"
+  }
+}

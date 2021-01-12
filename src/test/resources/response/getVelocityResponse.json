@@ -37,7 +37,7 @@
       "include_credits": false,
       "currency_code": "USD",
       "amount_limit": 5000.00,
-      "velocity_window": "DAY",
+      "velocity_window": "LIFETIME",
       "active": true
     }
   ]

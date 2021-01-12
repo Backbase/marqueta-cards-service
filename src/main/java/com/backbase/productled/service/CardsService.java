@@ -14,6 +14,7 @@ import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.MarqetaRepository;
@@ -71,6 +72,11 @@ public class CardsService {
         return getCard(id);
     }
 
+    public CardItem requestPin(String id, RequestPinPost requestPin) {
+        validateCvv(id, requestPin.getToken());
+        return getCard(id);
+    }
+
     private void validateCvv(String cardToken, String cvv) {
         if (!cvv.equals(marqetaRepository.getCardCvv(cardToken).getCvvNumber())) {
             throw new BadRequestException()
@@ -111,4 +117,5 @@ public class CardsService {
                 marqetaRepository.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
             .pin(resetPinPost.getPin());
     }
+
 }

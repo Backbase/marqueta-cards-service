@@ -133,6 +133,7 @@ public class CardsIT {
 
         // When
         ResultActions result = mvc.perform(get("/client-api/v2/cards")
+            .param("ids","aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
             .param("types","Debit")
             .param("status","Active")
             .header("Authorization", TEST_JWT)).andDo(print());
@@ -167,8 +168,20 @@ public class CardsIT {
             .andExpect(jsonPath("$.[0].limits[1].minAmount", is("0")));
 
         // When and Then
-        ResultActions result1 = mvc.perform(get("/client-api/v2/cards")
-            .param("ids","aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+        mvc.perform(get("/client-api/v2/cards")
+            .param("ids","aeeff27f-94a3-4687-8fd6-1f94cf26b2e5")
+            .header("Authorization", TEST_JWT)).andDo(print())
+            .andExpect(status().isOk());
+
+        // When and Then
+        mvc.perform(get("/client-api/v2/cards")
+            .param("types","Debit1")
+            .header("Authorization", TEST_JWT)).andDo(print())
+            .andExpect(status().isOk());
+
+        // When and Then
+        mvc.perform(get("/client-api/v2/cards")
+            .param("status","Active1")
             .header("Authorization", TEST_JWT)).andDo(print())
             .andExpect(status().isOk());
 
@@ -425,7 +438,7 @@ public class CardsIT {
         ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/pin/request",
             "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
             .content(objectMapper
-                .writeValueAsString(new RequestPinPost().token("112")))
+                .writeValueAsString(new RequestPinPost().token("132")))
             .contentType("application/json")
             .header("Authorization", TEST_JWT)).andDo(print());
 

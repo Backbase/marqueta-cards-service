@@ -1,6 +1,8 @@
 package com.backbase.productled.service;
 
 
+import static java.util.Objects.requireNonNull;
+
 import com.backbase.buildingblocks.presentation.errors.InternalServerErrorException;
 import com.backbase.buildingblocks.presentation.errors.NotFoundException;
 import com.backbase.marqeta.clients.model.UserCardHolderResponse;
@@ -8,19 +10,23 @@ import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
 import com.backbase.productled.mapper.CardsMappers;
 import com.backbase.productled.repository.MarqetaRepository;
 import com.backbase.productled.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TravelNoticeService {
 
     private static final String TRAVEL_NOTICE_REGEX = "travelnotice-%s";
@@ -51,8 +57,7 @@ public class TravelNoticeService {
 
     public TravelNotice getTravelNoticeById(String id) {
         return getMarqetaUserToken()
-            .filter(response -> response.getMetadata() != null)
-            .map(response -> response.getMetadata()
+            .map(response -> requireNonNull(response.getMetadata())
                 .get(String.format(TRAVEL_NOTICE_REGEX, id)))
             .map(this::getTravelNotice)
             .orElseThrow(NotFoundException::new);
@@ -64,6 +69,7 @@ public class TravelNoticeService {
             .map(map -> map.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(TRAVEL_NOTICE))
                 .map(entry -> getTravelNotice(entry.getValue()))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList())
             ).orElse(new ArrayList<>());
     }
@@ -82,7 +88,7 @@ public class TravelNoticeService {
         try {
             return req.metadata(Collections.singletonMap(String.format(TRAVEL_NOTICE_REGEX, id),
                 objectMapper.writeValueAsString(travelNotice.id(id))));
-        } catch (IOException e) {
+        } catch (JsonProcessingException e) {
             throw new InternalServerErrorException().withMessage("Error while parsing travel notice");
         }
     }
@@ -91,7 +97,8 @@ public class TravelNoticeService {
         try {
             return objectMapper.readValue(value, TravelNotice.class);
         } catch (IOException e) {
-            throw new InternalServerErrorException().withMessage("Error while parsing travel notice");
+            log.error("Unable to parse travel notice");
+            return null;
         }
     }
 

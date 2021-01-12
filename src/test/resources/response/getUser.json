@@ -14,7 +14,8 @@
   "created_time": "2020-12-22T14:48:22Z",
   "last_modified_time": "2020-12-22T14:48:22Z",
   "metadata": {
-    "travelnotice-a1ae90c1-93d8-4257-8bf5-cb56818a2537": "{\"id\":\"a1ae90c1-93d8-4257-8bf5-cb56818a2537\",\"cardIds\":[\"4694a2c0-8838-4f1b-9c3b-1bb1ea8eb829\"],\"departureDate\":\"2021-01-29\",\"arrivalDate\":\"2021-01-31\",\"destinations\":[{\"country\":\"IND\"}],\"contact\":{\"phoneNumber\":\"\"}}"
+    "travelnotice-a1ae90c1-93d8-4257-8bf5-cb56818a2537": "{\"id\":\"a1ae90c1-93d8-4257-8bf5-cb56818a2537\",\"cardIds\":[\"4694a2c0-8838-4f1b-9c3b-1bb1ea8eb829\"],\"departureDate\":\"2021-01-29\",\"arrivalDate\":\"2021-01-31\",\"destinations\":[{\"country\":\"IND\"}],\"contact\":{\"phoneNumber\":\"\"}}",
+    "travelnotice-a1ae90c1-93d8-4257-7bf5-cb56818a2537": "{\"issue\"}"
   },
   "account_holder_group_token": "DEFAULT_AHG",
   "status": "ACTIVE"

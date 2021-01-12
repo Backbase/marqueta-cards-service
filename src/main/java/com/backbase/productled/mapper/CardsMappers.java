@@ -63,7 +63,7 @@ public interface CardsMappers {
     CardItem mapCard(CardResponse cardResponse, VelocityControlListResponse cardLimits);
 
     default String getChannel(Boolean withdrawalsWindow) {
-        return withdrawalsWindow ? ATM : ONLINE;
+        return Boolean.TRUE.equals(withdrawalsWindow) ? ATM : ONLINE;
     }
 
     @Mapping(target = "token", expression = "java(java.util.UUID.randomUUID().toString())")

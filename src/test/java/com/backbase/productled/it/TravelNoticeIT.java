@@ -21,6 +21,7 @@ import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.Destination;
 import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
 import com.backbase.productled.Application;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -185,6 +186,23 @@ public class TravelNoticeIT {
             .andExpect(jsonPath("$.departureDate", is("2021-01-29")))
             .andExpect(jsonPath("$.arrivalDate", is("2021-01-31")))
             .andExpect(jsonPath("$.cardIds[0]", is("4694a2c0-8838-4f1b-9c3b-1bb1ea8eb829")));
+
+
+        // When
+        ObjectMapper om = Mockito.spy(new ObjectMapper());
+        Mockito.when(om.writeValueAsString(Mockito.any())).thenThrow(new JsonProcessingException("") {});
+
+        // then
+        mvc.perform(post("/client-api/v2/travel-notices",
+            "a1ae90c1-93d8-4257-8bf5-cb56818a2537")
+            .content(objectMapper.writeValueAsString(
+                new TravelNotice().arrivalDate("2021-01-31")
+                    .departureDate("2021-01-29").addDestinationsItem(new Destination().country("IND"))
+                    .addCardIdsItem("4694a2c0-8838-4f1b-9c3b-1bb1ea8eb829")))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", TEST_JWT)).andDo(print());
+
+
     }
 
 

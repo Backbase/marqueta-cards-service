@@ -52,9 +52,9 @@ public class CardsApiController implements CardsApi {
     }
 
     @Override
-    public ResponseEntity<CardItem> requestPin(String id, @Valid RequestPinPost requestPinPost,
+    public ResponseEntity<CardItem> requestPin(String id, @Valid RequestPinPost requestPin,
         HttpServletRequest httpServletRequest) {
-        return null;
+        return ResponseEntity.ok(cardsService.requestPin(id, requestPin));
     }
 
     @Override

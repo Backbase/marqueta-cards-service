@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserRepository {
 
-    private static final String MARQETA_USER_TOKEN = "marqetaUserToken";
-
     private final SecurityContextUtil securityContextUtil;
 
     private final UserManagementApi userManagementApi;
@@ -21,8 +19,8 @@ public class UserRepository {
     public String getMarqetaUserToken() {
         log.info("Calling user manager for to retrieve marqeta user token");
         return Objects.requireNonNull(
-            userManagementApi.getUserById(securityContextUtil.getInternalId().orElse(null), false).getAdditions())
-            .getOrDefault(MARQETA_USER_TOKEN, null);
+            userManagementApi.getUserById(securityContextUtil.getInternalId().orElse(null), false))
+            .getExternalId();
     }
 
 }

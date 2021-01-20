@@ -106,7 +106,7 @@ public class CardsIT {
 
         when(userManagementApi.getUserById(Mockito.any(), Mockito.any()))
             .thenReturn(new com.backbase.dbs.user.manager.api.service.v2.model.GetUser()
-                .putAdditionsItem("marqetaUserToken", "1be8bb0b-dcdd-4219-81ab-565621d3707c"));
+                .externalId("1be8bb0b-dcdd-4219-81ab-565621d3707c"));
 
         when(depositAccountsApi.getAllCards(eq("091000021")))
             .thenReturn(singletonList(new Card().referenceToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")));

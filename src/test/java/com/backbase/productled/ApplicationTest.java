@@ -31,7 +31,7 @@ public class ApplicationTest {
     @Test
     public void shouldLoadContext() {
         Application
-            .main(new String[]{ "--spring.profiles.active=it"});
+            .main(new String[]{"--spring.profiles.active=it"});
 
         Assert.assertNotNull(applicationContext);
     }

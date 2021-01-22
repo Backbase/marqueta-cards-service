@@ -587,7 +587,7 @@ public class MarqetaRepositoryTest {
         // given
         UserCardHolderUpdateModel userCardHolderUpdateModel = new UserCardHolderUpdateModel();
         doThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND))
-        .when(usersApi).putUsersToken(USER_TOKEN, userCardHolderUpdateModel);
+            .when(usersApi).putUsersToken(USER_TOKEN, userCardHolderUpdateModel);
 
         // when
         marqetaRepository.updateCardHolder(USER_TOKEN, userCardHolderUpdateModel);

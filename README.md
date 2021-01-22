@@ -4,10 +4,11 @@ Generated using `core-service-archetype` - Community
 guide: https://community.backbase.com/documentation/ServiceSDK/11-3-0/create_a_core_service
 
 This service is an implementation of `cards-presenation-spec`
+
 - https://stash.backbase.com/projects/CARDS/repos/cards-presentation-spec
 
-This service is an Implementation of Cards Presentation to communicate with Marqeta to retrieve cards 
-and Travel notice information.
+This service is an Implementation of Cards Presentation to communicate with Marqeta to retrieve cards and Travel notice
+information.
 
 ## Getting started
 
@@ -15,11 +16,11 @@ Components overview:
 
 - Controller/API -`CardsApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and
   post to Marqeta using the restful API. Implements controller interface from spec - `CardsApi`
-  
-  `TravelNoticesApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and
-  post to Marqeta using the restful API. Implements controller interface from spec - `TravelNoticesApi`
-  
-- Configuration - `MarqetaRestClientConfiguration`, `UserManagerRestClientConfiguration`: 
+
+  `TravelNoticesApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and post to
+  Marqeta using the restful API. Implements controller interface from spec - `TravelNoticesApi`
+
+- Configuration - `MarqetaRestClientConfiguration`, `UserManagerRestClientConfiguration`:
   configuration classes to load properties from config file and initialize Marqeta and user Manager Rest client.
 - Mapper - `CardMapper`: Map models from Mambu <-> DBS.
 - Service - `CardsService`, `TravelNoticeService`: Orchestrate the business to Marqeta and map response to DBS model.
@@ -94,8 +95,10 @@ To run the service from the built binaries, use:
 
 Property | Description | Default
 --- | --- | ---
-**sso.jwt.internal.signature.key.type** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `ENV`
-**sso.jwt.internal.signature.key.value** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `SIG_SECRET_KEY`
+**
+sso.jwt.internal.signature.key.type** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `ENV`
+**
+sso.jwt.internal.signature.key.value** | https://community.backbase.com/documentation/ServiceSDK/latest/jwt_key_configuration | `SIG_SECRET_KEY`
 
 #### Marqeta config
 

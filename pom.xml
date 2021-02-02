@@ -34,6 +34,9 @@
         <cards-management-api.version>2.2.0</cards-management-api.version>
         <arrangement-service-api.version>2.0.6</arrangement-service-api.version>
         <mapstruct.version>1.3.1.Final</mapstruct.version>
+        <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
+        <user-manager-service-api.version>2.2.0</user-manager-service-api.version>
+        <backbase.specs.url>https://repo.backbase.com/specs</backbase.specs.url>
 
         <openapi-generator-maven-plugin.library>resttemplate</openapi-generator-maven-plugin.library>
         <openapi-generator-maven-plugin.java8>true</openapi-generator-maven-plugin.java8>
@@ -99,16 +102,6 @@
             <artifactId>service-sdk-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.backbase.buildingblocks</groupId>
-            <artifactId>communication</artifactId>
-            <version>11.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.backbase.buildingblocks</groupId>
-            <artifactId>building-blocks-common</artifactId>
-            <version>11.3.0</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -154,20 +147,54 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>wagon-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <serverId>Backbase Repository</serverId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>download-cards-management-api-spec</id>
+                        <goals>
+                            <goal>download-single</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <url>${backbase.specs.url}/card-manager</url>
+                            <fromFile>card-manager-client-api-v${cards-management-api.version}.yaml</fromFile>
+                            <toDir>${open-api-specs-dir}/card-manager</toDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>download-user-manager-service-api-spec</id>
+                        <goals>
+                            <goal>download-single</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <url>${backbase.specs.url}/user-manager</url>
+                            <fromFile>user-manager-service-api-v${user-manager-service-api.version}.yaml</fromFile>
+                            <toDir>${open-api-specs-dir}/user-manager</toDir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.backbase.oss</groupId>
                 <artifactId>boat-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-code-from-limit-api-client-v2</id>
+                        <id>generate-code-from-cards-management-api-client-v2</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
                             <inputSpec>
-                                ${basedir}/src/main/resources/specs/card-manager-client-api-v${cards-management-api.version}.yaml
+                                ${open-api-specs-dir}/card-manager/card-manager-client-api-v${cards-management-api.version}.yaml
                             </inputSpec>
-                            <output>${project.build.directory}/generated-sources</output>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
                             <generateSupportingFiles>true</generateSupportingFiles>
                             <generatorName>spring</generatorName>
                             <strictSpec>true</strictSpec>
@@ -200,7 +227,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <inputSpec>
-                                ${basedir}/src/main/resources/specs/user-manager-service-api-v2.2.0.yaml
+                                ${open-api-specs-dir}/user-manager/user-manager-service-api-v${user-manager-service-api.version}.yaml
                             </inputSpec>
                             <apiPackage>com.backbase.dbs.user.manager.api.service.v2</apiPackage>
                             <modelPackage>com.backbase.dbs.user.manager.api.service.v2.model</modelPackage>
@@ -213,40 +240,9 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <inputSpec>
-                                ${basedir}/src/main/resources/specs/marqeta_v3_swagger.json
-                            </inputSpec>
+                            <inputSpec>${basedir}/src/main/resources/specs/marqeta_v3_swagger.json</inputSpec>
                             <apiPackage>com.backbase.marqeta.clients.api</apiPackage>
                             <modelPackage>com.backbase.marqeta.clients.model</modelPackage>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.backbase.codegen</groupId>
-                <artifactId>raml-api-maven-plugin-1-0</artifactId>
-                <executions>
-                    <execution>
-                        <id>product-summary-presentation-spec</id>
-                        <goals>
-                            <goal>raml-api-generator</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>
-                                <groupId>com.backbase.dbs.productsummary</groupId>
-                                <artifactId>product-summary-presentation-spec</artifactId>
-                                <version>${product-summary-presentation-spec.version}</version>
-                                <inputFiles>
-                                    <inputFile>api.raml</inputFile>
-                                    <inputFile>service-api.raml</inputFile>
-                                </inputFiles>
-                            </inputSpec>
-                            <outputFile>target/generated-sources/</outputFile>
-                            <serviceId>arrangement-manager</serviceId>
-                            <packageName>productsummary</packageName>
-                            <basePackageName>com.backbase.presentation</basePackageName>
-                            <generateApi>false</generateApi>
-                            <generateClients>true</generateClients>
                         </configuration>
                     </execution>
                 </executions>

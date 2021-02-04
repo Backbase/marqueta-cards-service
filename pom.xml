@@ -27,9 +27,7 @@
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <spec.dependencies.path>${project.build.directory}/dependencies</spec.dependencies.path>
         <mambu.clients.version>1.0.1-cr.11</mambu.clients.version>
-        <boat-maven-plugin.version>0.11.4</boat-maven-plugin.version>
         <cards-management-api.version>2.2.0</cards-management-api.version>
-        <arrangement-service-api.version>2.0.6</arrangement-service-api.version>
         <mapstruct.version>1.3.1.Final</mapstruct.version>
         <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
         <user-manager-service-api.version>2.2.0</user-manager-service-api.version>

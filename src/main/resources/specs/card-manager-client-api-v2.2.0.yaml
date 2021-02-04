@@ -1,0 +1,1921 @@
+openapi: 3.0.3
+info:
+  title: Cards
+  version: 2.2.0
+  description: Cards Client API
+servers:
+  - description: Prism mock server
+    url: 'http://localhost:4010'
+tags:
+  - name: cards
+  - name: travel-notices
+paths:
+  /client-api/v2/cards:
+    summary: Cards
+    description: Resource for managing cards
+    get:
+      operationId: getCards
+      summary: Retrieve a list of cards based on various criteria associated with the user.
+      description: Retrieve a list of cards based on various criteria associated with the user
+      parameters:
+        - description: A list of card identifiers
+          example:
+            - b4ca0d4c-b767-11e8-96f8-529269fb1459
+            - bc134ed8-b767-11e8-96f8-529269fb1459
+          in: query
+          name: ids
+          required: false
+          schema:
+            items:
+              type: string
+            type: array
+        - description: The card status
+          example:
+            - Active
+            - Inactive
+          in: query
+          name: status
+          required: false
+          schema:
+            items:
+              type: string
+            type: array
+        - description: An array of card types
+          example:
+            - Credit
+            - Debit
+          in: query
+          name: types
+          required: false
+          schema:
+            items:
+              type: string
+            type: array
+      responses:
+        '200':
+          description: 'A list of cards, where each card has a specific set of fields'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItemList'
+              examples:
+                sara:
+                  summary: Sara examples are used to demo features and are always the first example
+                  value:
+                    - id: sara-card-1
+                      brand: mastercard
+                      type: Credit
+                      subType: ATM
+                      name: Gold Card
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Sara Williams
+                      expiryDate:
+                        year: '2022'
+                        month: '12'
+                      currency: USD
+                      maskedNumber: '5235'
+                    - id: sara-card-2
+                      brand: visa
+                      type: Credit
+                      subType: ATM
+                      name: Green Card
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Sara Williams
+                      expiryDate:
+                        year: '2022'
+                        month: '01'
+                      currency: USD
+                      maskedNumber: '5236'
+                    - id: sara-card-3
+                      brand: mastercard
+                      type: Credit
+                      subType: ATM
+                      name: Gold Card
+                      status: Inactive
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Sara Williams
+                      expiryDate:
+                        year: '2022'
+                        month: '12'
+                      currency: USD
+                      maskedNumber: '5237'
+                      delivery:
+                        transitSteps:
+                          - name: Ordered
+                            status: SUCCESS
+                            stepDateTime: '2020-05-04T12:52:20.906+00:00'
+                          - name: Processed
+                            status: PENDING
+                          - name: In Transit
+                            status: PENDING
+                          - name: Delivered
+                            status: PENDING
+                    - id: sara-card-4
+                      brand: mastercard
+                      type: Debit
+                      subType: ATM
+                      name: Black Card
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Sara Williams
+                      expiryDate:
+                        year: '2022'
+                        month: '12'
+                      currency: USD
+                      maskedNumber: '6235'
+                    - id: sara-card-5
+                      brand: visa
+                      type: Debit
+                      subType: ATM
+                      name: Blue Card
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Sara Williams
+                      expiryDate:
+                        year: '2022'
+                        month: '12'
+                      currency: USD
+                      maskedNumber: '6236'
+                elon:
+                  summary: Elon examples are used for scenarios with a lot of high tier cards
+                  value:
+                    - id: elon-card-1
+                      brand: mastercard
+                      type: Credit
+                      subType: ATM
+                      name: World Elite
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Elon
+                      expiryDate:
+                        year: '2050'
+                        month: '12'
+                      currency: EUR
+                      maskedNumber: '5235'
+                      delivery:
+                        transitSteps:
+                          - name: Ordered
+                            status: SUCCESS
+                            stepDateTime: '2019-06-19T12:52:20.906Z'
+                          - name: Processed
+                            status: PENDING
+                          - name: In Transit
+                            status: PENDING
+                          - name: Delivered
+                            status: PENDING
+                            stepDateTime: '2019-06-20T14:21:25.001Z'
+                    - id: elon-card-2
+                      brand: visa
+                      type: Credit
+                      subType: ATM
+                      name: Infinite Privilege
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Elon
+                      expiryDate:
+                        year: '2045'
+                        month: '01'
+                      currency: EUR
+                      maskedNumber: '6782'
+                    - id: elon-card-3
+                      brand: american_express
+                      type: Debit
+                      subType: ATM
+                      name: Reserve
+                      status: Cancelled
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: UnderReplacement
+                        reason: Lost
+                        replacedById: '4'
+                      holder:
+                        name: Elon
+                      expiryDate:
+                        year: '2048'
+                        month: '06'
+                      currency: EUR
+                      maskedNumber: '1262'
+                    - id: elon-card-4
+                      brand: american_express
+                      type: Debit
+                      subType: ATM
+                      name: Reserve
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Elon
+                      expiryDate:
+                        year: '2048'
+                        month: '07'
+                      currency: EUR
+                      maskedNumber: '1289'
+                    - id: elon-card-5
+                      brand: mastercard
+                      type: Debit
+                      subType: ATM
+                      name: Platinum
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Elon
+                      expiryDate:
+                        year: '2050'
+                        month: '11'
+                      currency: EUR
+                      maskedNumber: '4627'
+                      delivery:
+                        transitSteps:
+                          - name: Ordered
+                            status: SUCCESS
+                            stepDateTime: '2019-06-19T12:52:20.906Z'
+                          - name: Processed
+                            status: SUCCESS
+                            stepDateTime: '2019-06-20T14:32:20.906Z'
+                          - name: In Transit
+                            status: SUCCESS
+                            stepDateTime: '2019-06-20T15:12:20.906Z'
+                          - name: Delivered
+                            status: SUCCESS
+                            stepDateTime: '2019-06-21T11:28:25.001Z'
+                    - id: elon-card-6
+                      brand: american_express
+                      type: Credit
+                      subType: ATM
+                      name: Reserve
+                      status: Active
+                      lockStatus: LOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Elon
+                      expiryDate:
+                        year: '2047'
+                        month: '03'
+                      currency: EUR
+                      maskedNumber: '8291'
+                john:
+                  summary: John examples are used for average scenarios and most edge cases
+                  value:
+                    - id: john-card-1
+                      brand: visa
+                      type: Credit
+                      subType: ATM
+                      name: Gold
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: John Doe
+                      expiryDate:
+                        year: '2030'
+                        month: '06'
+                      currency: EUR
+                      maskedNumber: '5827'
+                      delivery:
+                        transitSteps:
+                          - name: Ordered
+                            status: SUCCESS
+                            stepDateTime: '2019-06-19T12:52:20.906Z'
+                          - name: Processed
+                            status: SUCCESS
+                          - name: In Transit
+                            status: SUCCESS
+                          - name: Delivered
+                            status: SUCCESS
+                      limits:
+                        - id: john-limit-1
+                          channel: ATM
+                          frequency: DAILY
+                          amount: 3000
+                          maxAmount: 9000
+                          minAmount: 0
+                        - id: john-limit-2
+                          channel: ONLINE
+                          frequency: DAILY
+                          amount: 20000
+                          maxAmount: 9000
+                          minAmount: 0
+                    - id: john-card-2
+                      brand: mastercard
+                      type: Debit
+                      subType: ATM
+                      name: Gold
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: John Doe
+                      expiryDate:
+                        year: '2031'
+                        month: '02'
+                      currency: EUR
+                      maskedNumber: '8299'
+                kim:
+                  summary: Kim examples are used for low volumes of data and more obscure edge cases
+                  value:
+                    - id: kim-card-1
+                      brand: mastercard
+                      type: Debit
+                      subType: ATM
+                      name: Copper
+                      status: Active
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Kim Sook
+                      expiryDate:
+                        year: '2027'
+                        month: '03'
+                      currency: EUR
+                      maskedNumber: '9292'
+                    - id: kim-card-2
+                      brand: visa
+                      type: Debit
+                      subType: ATM
+                      name: Iron
+                      status: Inactive
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Kim Sook
+                      expiryDate:
+                        year: '2010'
+                        month: '04'
+                      currency: EUR
+                      maskedNumber: '9494'
+                    - id: kim-card-3
+                      brand: visa
+                      type: Debit
+                      subType: ATM
+                      name: Iron
+                      status: Expired
+                      lockStatus: UNLOCKED
+                      replacement:
+                        status: NotUnderReplacement
+                      holder:
+                        name: Kim Sook
+                      expiryDate:
+                        year: '2010'
+                        month: '04'
+                      currency: EUR
+                      maskedNumber: '9494'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  '/client-api/v2/cards/{id}':
+    summary: '/{id}'
+    description: No description available
+    parameters:
+      - description: Generated parameter by Raml2OpenAPI. Please specify the URI parameter in RAML
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getCardById
+      summary: Retrieve a card by id.
+      description: Retrieve a card by id
+      responses:
+        '200':
+          description: 'A list of cards, where each card has a specific set of fields'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItem'
+              examples:
+                sara:
+                  value:
+                    id: sara-card-1
+                    brand: mastercard
+                    type: Credit
+                    subType: ATM
+                    name: Gold Card
+                    status: Active
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: Sara Williams
+                    expiryDate:
+                      year: '2022'
+                      month: '12'
+                    currency: USD
+                    maskedNumber: '5235'
+                    limits:
+                      - id: sara-limit-1
+                        channel: ATM
+                        frequency: DAILY
+                        amount: 3000
+                        maxAmount: 10000
+                        minAmount: 0
+                      - id: sara-limit-2
+                        channel: ONLINE
+                        frequency: DAILY
+                        amount: 2000
+                        maxAmount: 10000
+                        minAmount: 0
+                elon:
+                  value:
+                    id: elon-card-1
+                    brand: mastercard
+                    type: Credit
+                    subType: ATM
+                    name: World Elite
+                    status: Active
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: Elon
+                    expiryDate:
+                      year: '2050'
+                      month: '12'
+                    currency: EUR
+                    maskedNumber: '5235'
+                    delivery:
+                      transitSteps:
+                        - name: Ordered
+                          status: SUCCESS
+                          stepDateTime: '2019-06-19T12:52:20.906Z'
+                        - name: Processed
+                          status: PENDING
+                        - name: In Transit
+                          status: PENDING
+                        - name: Delivered
+                          status: PENDING
+                          stepDateTime: '2019-06-20T14:21:25.001Z'
+                    limits:
+                      - id: elon-limit-1
+                        channel: ATM
+                        frequency: DAILY
+                        amount: 500000
+                        maxAmount: 100000
+                        minAmount: 0
+                      - id: elon-limit-2
+                        channel: ONLINE
+                        frequency: DAILY
+                        amount: 1000000
+                        maxAmount: 800000
+                        minAmount: 10000
+                john:
+                  value:
+                    id: john-card-1
+                    brand: visa
+                    type: Credit
+                    subType: ATM
+                    name: Gold
+                    status: Active
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: John Doe
+                    expiryDate:
+                      year: '2030'
+                      month: '06'
+                    currency: EUR
+                    maskedNumber: '5827'
+                    delivery:
+                      transitSteps:
+                        - name: Ordered
+                          status: SUCCESS
+                          stepDateTime: '2019-06-19T12:52:20.906Z'
+                        - name: Processed
+                          status: SUCCESS
+                        - name: In Transit
+                          status: SUCCESS
+                        - name: Delivered
+                          status: SUCCESS
+                    limits:
+                      - id: john-limit-1
+                        channel: ATM
+                        frequency: DAILY
+                        amount: 5000
+                        maxAmount: 1000
+                        minAmount: 0
+                      - id: john-limit-2
+                        channel: ONLINE
+                        frequency: DAILY
+                        amount: 20000
+                        maxAmount: 9000
+                        minAmount: 0
+                kim:
+                  value:
+                    id: kim-card-1
+                    brand: mastercard
+                    type: Debit
+                    subType: ATM
+                    name: Copper
+                    status: Inactive
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: Kim Sook
+                    expiryDate:
+                      year: '2027'
+                      month: '03'
+                    currency: EUR
+                    maskedNumber: '9292'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  '/client-api/v2/cards/{id}/lock-status':
+    summary: '/{id}/lock-status'
+    description: No description available
+    parameters:
+      - description: Generated parameter by Raml2OpenAPI. Please specify the URI parameter in RAML
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: updateLockStatus
+      summary: Allow to update lock status of the card.
+      description: Allow to update lock status of the card.
+      requestBody:
+        description: Allow to update lock status of the card.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LockStatusPost'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItem'
+              examples:
+                sara:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/sara/value'
+                elon:
+                  value:
+                    id: elon-card-6
+                    brand: american_express
+                    type: Credit
+                    subType: ATM
+                    name: Reserve
+                    status: Active
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: Elon
+                    expiryDate:
+                      year: '2047'
+                      month: '03'
+                    currency: EUR
+                    maskedNumber: '8291'
+                john:
+                  value:
+                    id: john-card-1
+                    brand: visa
+                    type: Credit
+                    subType: ATM
+                    name: Gold
+                    status: Active
+                    lockStatus: LOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: John Doe
+                    expiryDate:
+                      year: '2030'
+                      month: '06'
+                    currency: EUR
+                    maskedNumber: '5827'
+                    delivery:
+                      transitSteps:
+                        - name: Ordered
+                          status: SUCCESS
+                          stepDateTime: '2019-06-19T12:52:20.906Z'
+                        - name: Processed
+                          status: SUCCESS
+                        - name: In Transit
+                          status: SUCCESS
+                        - name: Delivered
+                          status: SUCCESS
+                    limits:
+                      - id: john-limit-1
+                        channel: ATM
+                        frequency: DAILY
+                        amount: 5000
+                        maxAmount: 1000
+                        minAmount: 0
+                      - id: john-limit-2
+                        channel: ONLINE
+                        frequency: DAILY
+                        amount: 20000
+                        maxAmount: 9000
+                        minAmount: 0
+                kim:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/kim/value'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  '/client-api/v2/cards/{id}/replacement':
+    summary: '/{id}/replacement'
+    description: No description available
+    parameters:
+      - description: Generated parameter by Raml2OpenAPI. Please specify the URI parameter in RAML
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: requestReplacement
+      summary: Allow to request a replacement of the card.
+      description: Allow to request a replacement of the card.
+      requestBody:
+        content:
+          application/json:
+            example:
+              replacementReason: Stolen
+            schema:
+              $ref: '#/components/schemas/RequestReplacementPost'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItem'
+              examples:
+                sara:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/sara/value'
+                elon:
+                  description: damaged card
+                  value:
+                    id: elon-card-1
+                    brand: mastercard
+                    type: Credit
+                    subType: ATM
+                    name: World Elite
+                    status: Active
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: ReplacementRequested
+                      reason: Damaged
+                    holder:
+                      name: Elon
+                    expiryDate:
+                      year: '2050'
+                      month: '12'
+                    currency: EUR
+                    maskedNumber: '5235'
+                    delivery:
+                      transitSteps:
+                        - name: Ordered
+                          status: SUCCESS
+                          stepDateTime: '2019-06-19T12:52:20.906Z'
+                        - name: Processed
+                          status: PENDING
+                john:
+                  description: stolen card
+                  value:
+                    id: john-card-1
+                    brand: visa
+                    type: Credit
+                    subType: ATM
+                    name: Gold
+                    status: Inactive
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: ReplacementRequested
+                      reason: Stolen
+                    holder:
+                      name: John Doe
+                    expiryDate:
+                      year: '2030'
+                      month: '06'
+                    currency: EUR
+                    maskedNumber: '5827'
+                    delivery:
+                      transitSteps:
+                        - name: Ordered
+                          status: SUCCESS
+                          stepDateTime: '2019-06-19T12:52:20.906Z'
+                        - name: Processed
+                          status: SUCCESS
+                        - name: In Transit
+                          status: SUCCESS
+                        - name: Delivered
+                          status: SUCCESS
+                kim:
+                  description: lost card
+                  value:
+                    id: kim-card-1
+                    brand: mastercard
+                    type: Debit
+                    subType: ATM
+                    name: Copper
+                    status: Inactive
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: ReplacementRequested
+                      reason: Lost
+                    holder:
+                      name: Kim Sook
+                    expiryDate:
+                      year: '2027'
+                      month: '03'
+                    currency: EUR
+                    maskedNumber: '9292'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  '/client-api/v2/cards/{id}/activation':
+    summary: '/{id}/activation'
+    description: No description available
+    parameters:
+      - description: Generated parameter by Raml2OpenAPI. Please specify the URI parameter in RAML
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: activate
+      summary: Activates an inactive card.
+      description: Activates an inactive card.
+      requestBody:
+        description: Activates an inactive card.
+        content:
+          application/json:
+            example:
+              token: This-Is-A-Secret-Code-Typed-By-The-Customer
+            schema:
+              $ref: '#/components/schemas/ActivatePost'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItem'
+              examples:
+                sara:
+                  value:
+                    id: sara-card-3
+                    brand: mastercard
+                    type: Credit
+                    subType: ATM
+                    name: Gold Card
+                    status: Inactive
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: Sara Williams
+                    expiryDate:
+                      year: '2022'
+                      month: '12'
+                    currency: USD
+                    maskedNumber: '5237'
+                    delivery:
+                      transitSteps:
+                        - name: Ordered
+                          status: SUCCESS
+                          stepDateTime: '2020-05-04T12:52:20.906+00:00'
+                        - name: Processed
+                          status: PENDING
+                        - name: In Transit
+                          status: PENDING
+                        - name: Delivered
+                          status: PENDING
+                    limits:
+                      - id: sara-limit-1
+                        channel: ATM
+                        frequency: DAILY
+                        amount: 3000
+                        maxAmount: 10000
+                        minAmount: 0
+                      - id: sara-limit-2
+                        channel: ONLINE
+                        frequency: DAILY
+                        amount: 2000
+                        maxAmount: 10000
+                        minAmount: 0
+                elon:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/elon/value'
+                john:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/john/value'
+                kim:
+                  value:
+                    id: kim-card-2
+                    brand: mastercard
+                    type: Debit
+                    subType: ATM
+                    name: Copper
+                    status: Active
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: Kim Sook
+                    expiryDate:
+                      year: '2027'
+                      month: '03'
+                    currency: EUR
+                    maskedNumber: '9292'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  '/client-api/v2/cards/{id}/pin/reset':
+    summary: '/{id}/pin/reset'
+    description: No description available
+    parameters:
+      - description: Generated parameter by Raml2OpenAPI. Please specify the URI parameter in RAML
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: resetPin
+      summary: Request to reset the pin.
+      description: Request to reset the pin.
+      requestBody:
+        description: Request to reset the pin.
+        content:
+          application/json:
+            example:
+              token: This-Is-A-Secret-Code-Typed-By-The-Customer
+              pin: '0123'
+            schema:
+              $ref: '#/components/schemas/ResetPinPost'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItem'
+              examples:
+                sara:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/sara/value'
+                elon:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/elon/value'
+                john:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/john/value'
+                kim:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/kim/value'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  '/client-api/v2/cards/{id}/pin/request':
+    parameters:
+      - description: Unique ID of the card that will receive a new PIN
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: requestPin
+      summary: Requests a new PIN for the specified card
+      description: Users may request a new PIN for a card when they forget it for example
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestPinPost'
+            example:
+              token: This-Is-A-Secret-Code-Typed-By-The-Customer
+      responses:
+        '200':
+          description: If the request has been registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItem'
+              examples:
+                sara:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/sara/value'
+                elon:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/elon/value'
+                john:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/john/value'
+                kim:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/kim/value'
+        '403':
+          description: If the current user doesn't have permission to request a new PIN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: If the card couldn't be found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: If an unexpected error has happened
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  '/client-api/v2/cards/{id}/limits':
+    summary: '/{id}/limits'
+    description: No description available
+    parameters:
+      - description: Generated parameter by Raml2OpenAPI. Please specify the URI parameter in RAML
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      operationId: changeLimits
+      summary: Change multiple limits at once for a specific card.
+      description: Change multiple limits at once for a specific card.
+      requestBody:
+        description: Change multiple limits at once for a specific card.
+        content:
+          application/json:
+            example:
+              - id: '001'
+                amount: 2000
+              - id: '002'
+                amount: 500
+            schema:
+              $ref: '#/components/schemas/ChangeLimitsPost'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardItem'
+              examples:
+                sara:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/sara/value'
+                elon:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/elon/value'
+                john:
+                  value:
+                    id: john-card-1
+                    brand: visa
+                    type: Credit
+                    subType: ATM
+                    name: Gold
+                    status: Active
+                    lockStatus: UNLOCKED
+                    replacement:
+                      status: NotUnderReplacement
+                    holder:
+                      name: John Doe
+                    expiryDate:
+                      year: '2030'
+                      month: '06'
+                    currency: EUR
+                    maskedNumber: '5827'
+                    delivery:
+                      transitSteps:
+                        - name: Ordered
+                          status: SUCCESS
+                          stepDateTime: '2019-06-19T12:52:20.906Z'
+                        - name: Processed
+                          status: SUCCESS
+                        - name: In Transit
+                          status: SUCCESS
+                        - name: Delivered
+                          status: SUCCESS
+                    limits:
+                      - id: john-limit-1
+                        channel: ATM
+                        frequency: WEEKLY
+                        amount: 1000
+                        maxAmount: 9000
+                        minAmount: 0
+                      - id: john-limit-2
+                        channel: ONLINE
+                        frequency: DAILY
+                        amount: 20000
+                        maxAmount: 9000
+                        minAmount: 0
+                kim:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1cards~1%7Bid%7D/get/responses/200/content/application~1json/examples/kim/value'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - cards
+  /client-api/v2/travel-notices:
+    summary: /travel-notices
+    description: No description available
+    get:
+      operationId: getTravelNotices
+      summary: 'Sorted list of travel notices, the client must honor the provided order.'
+      description: 'Sorted list of travel notices, the client must honor the provided order'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelNoticeList'
+              examples:
+                sara:
+                  value:
+                    - id: sara-travel-notice-1
+                      cardIds:
+                        - sara-card-1
+                        - sara-card-4
+                      departureDate: '2020-01-09'
+                      arrivalDate: '2020-01-18'
+                      destinations:
+                        - country: MEX
+                        - country: USA
+                          region: US-TX
+                    - id: sara-travel-notice-2
+                      cardIds:
+                        - sara-card-1
+                        - sara-card-2
+                        - sara-card-4
+                        - sara-card-5
+                      departureDate: '2019-12-10'
+                      arrivalDate: '2019-12-23'
+                      destinations:
+                        - country: JPN
+                        - country: USA
+                          region: US-CA
+                      contact:
+                        phoneNumber: +1 646 432 3000
+                elon:
+                  value:
+                    - id: elon-travel-notice-1
+                      cardIds:
+                        - elon-card-1
+                      departureDate: '2020-05-06'
+                      arrivalDate: '2020-05-10'
+                      destinations:
+                        - country: USA
+                          region: US-TX
+                        - country: MEX
+                    - id: elon-travel-notice-2
+                      cardIds:
+                        - elon-card-1
+                        - elon-card-2
+                        - elon-card-3
+                        - elon-card-4
+                      departureDate: '2019-12-10'
+                      arrivalDate: '2019-12-23'
+                      destinations:
+                        - country: JPN
+                        - country: USA
+                          region: US-CA
+                      contact:
+                        phoneNumber: +1 646 432 3000
+                    - id: elon-travel-notice-3
+                      cardIds:
+                        - elon-card-4
+                      departureDate: '2019-07-23'
+                      arrivalDate: '2020-08-11'
+                      destinations:
+                        - country: KHM
+                        - country: KOR
+                        - country: IND
+                      contact:
+                        phoneNumber: +1 646 432 3000
+                john:
+                  value:
+                    - id: john-travel-notice-1
+                      cardIds:
+                        - john-card-1
+                        - john-card-2
+                      departureDate: '2020-01-09'
+                      arrivalDate: '2020-01-18'
+                      destinations:
+                        - country: NL
+                      contact:
+                        phoneNumber: +1 646 432 3000
+                kim:
+                  value: [ ]
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - travel-notices
+    post:
+      operationId: createTravelNotice
+      summary: Create a new travel notice.
+      description: Create a new travel notice
+      requestBody:
+        description: Create a new travel notice
+        content:
+          application/json:
+            example:
+              id: elon-travel-notice-1
+              cardIds:
+                - elon-card-1
+                - elon-card-6
+              departureDate: '2020-05-06'
+              arrivalDate: '2020-05-10'
+              destinations:
+                - country: USA
+                  region: US-TX
+                - country: MEX
+              contact:
+                phoneNumber: +1 646 432 3000
+            schema:
+              $ref: '#/components/schemas/TravelNotice'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelNotice'
+              examples:
+                sara:
+                  value:
+                    id: sara-travel-notice-1
+                    cardIds:
+                      - sara-card-1
+                    departureDate: '2020-05-06'
+                    arrivalDate: '2020-05-10'
+                    destinations:
+                      - country: USA
+                        region: US-TX
+                elon:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1travel-notices/post/requestBody/content/application~1json/example'
+                john:
+                  value:
+                    id: john-travel-notice-1
+                    cardIds:
+                      - john-card-1
+                      - john-card-2
+                    departureDate: '2020-01-09'
+                    arrivalDate: '2020-01-18'
+                    destinations:
+                      - country: NL
+                    contact:
+                      phoneNumber: +1 646 432 3000
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - travel-notices
+  '/client-api/v2/travel-notices/{id}':
+    summary: '/{id}'
+    description: No description available
+    parameters:
+      - description: Generated parameter by Raml2OpenAPI. Please specify the URI parameter in RAML
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    delete:
+      operationId: deleteTravelNoticeById
+      summary: Delete a travel notice.
+      description: Delete a travel notice
+      responses:
+        '204':
+          description: Travel notice has been deleted successfully
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - travel-notices
+    get:
+      operationId: getTravelNoticeById
+      summary: Read a travel notice.
+      description: Read a travel notice
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelNotice'
+              examples:
+                sara:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1travel-notices/post/responses/200/content/application~1json/examples/sara/value'
+                elon:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1travel-notices/post/requestBody/content/application~1json/example'
+                john:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1travel-notices/post/responses/200/content/application~1json/examples/john/value'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - travel-notices
+    put:
+      operationId: updateTravelNotice
+      summary: Update a travel notice.
+      description: Update a travel notice
+      requestBody:
+        description: Update a travel notice
+        content:
+          application/json:
+            example:
+              $ref: '#/paths/~1client-api~1v2~1travel-notices/post/requestBody/content/application~1json/example'
+            schema:
+              $ref: '#/components/schemas/TravelNotice'
+      responses:
+        '200':
+          description: No description available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelNotice'
+              examples:
+                sara:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1travel-notices/post/responses/200/content/application~1json/examples/sara/value'
+                elon:
+                  value:
+                    id: elon-travel-notice-1
+                    cardIds:
+                      - elon-card-1
+                      - elon-card-6
+                    departureDate: '2020-05-06'
+                    arrivalDate: '2020-05-10'
+                    destinations:
+                      - country: USA
+                        region: US-TX
+                      - country: MEX
+                    contact:
+                      phoneNumber: Other_Number
+                john:
+                  value:
+                    $ref: '#/paths/~1client-api~1v2~1travel-notices/post/responses/200/content/application~1json/examples/john/value'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenError'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      tags:
+        - travel-notices
+components:
+  schemas:
+    ActivatePost:
+      type: object
+      additionalProperties: false
+      properties:
+        token:
+          description: Token supplied by user to authorize the activation
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - token
+    CardItemList:
+      type: array
+      items:
+        $ref: '#/components/schemas/CardItem'
+    CardItem:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          description: A unique identifier for the card object
+          type: string
+        brand:
+          description: Brand name of the card
+          type: string
+        type:
+          description: 'Credit or Debit card. For example: Credit, Debit'
+          type: string
+        subType:
+          description: Various types of Credit and Debit cards
+          type: string
+        name:
+          description: The name that can be assigned by the bank to label the card
+          type: string
+        status:
+          description: 'Operating/usage status of card. For example: Inactive, Active, Cancelled, Expired'
+          type: string
+        lockStatus:
+          description: Lock Status of card
+          $ref: '#/components/schemas/LockStatus'
+        replacement:
+          $ref: '#/components/schemas/Replacement'
+        delivery:
+          $ref: '#/components/schemas/Delivery'
+        holder:
+          $ref: '#/components/schemas/CardHolder'
+        expiryDate:
+          $ref: '#/components/schemas/YearMonth'
+        currency:
+          description: The alpha-3 code (complying with ISO 4217) of the currency that qualifies the amount
+          pattern: '^[A-Z]{3}$'
+          type: string
+        maskedNumber:
+          description: The integrator must mask the PAN number as per the PCI-DSS compliance.
+          type: string
+        limits:
+          items:
+            $ref: '#/components/schemas/CardLimit'
+          type: array
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - brand
+        - id
+        - maskedNumber
+        - status
+        - type
+    Replacement:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          description: 'Replacement status of card. For example: NotUnderReplacement (default value), ReplacementRequested, Replacing, Replaced'
+          type: string
+        reason:
+          description: 'Reason why replacement of card was requested: Lost, Stolen, Damaged'
+          type: string
+        replacedById:
+          description: A unique identifier for the card object which will replace the current card. Cannot be present when replacingId is present!
+          type: string
+        replacingId:
+          description: A unique identifier for the card object which will be replaced by the current card. Cannot be present when replacedById is present!
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - status
+    Delivery:
+      type: object
+      additionalProperties: false
+      properties:
+        transitSteps:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryTransitStep'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - transitSteps
+    CardHolder:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          description: The card holder name
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - name
+    YearMonth:
+      type: object
+      additionalProperties: false
+      properties:
+        year:
+          description: Year format YYYY. (Ex. 2013)
+          pattern: '^[0-9]{4}$'
+          type: string
+        month:
+          description: Month format MM. (Ex. 03)
+          pattern: '0[1-9]|1[012]'
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+    CardLimit:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          description: A unique identifier for the limit object
+          type: string
+        channel:
+          description: 'Name of the channel of this limit, e.g. ATM, POS, ONLINE (for ATM withdrawals, terminal payments or online payments).'
+          type: string
+        frequency:
+          description: 'Defines the frequency of this limit, e.g. DAILY (default), WEEKLY, MONTHLY.'
+          type: string
+        amount:
+          description: 'The actual limit amount, customizable by customer.'
+          type: number
+        maxAmount:
+          description: The maximum limit amount for this channel and frequency.
+          type: number
+        minAmount:
+          description: 'The minimum limit amount for this channel and frequency, default: 0.00'
+          type: number
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - amount
+        - id
+        - maxAmount
+    DeliveryTransitStep:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          description: Name of the step.
+          type: string
+        status:
+          description: Status of this step.
+          enum:
+            - SUCCESS
+            - FAILED
+            - PENDING
+          type: string
+        stepDateTime:
+          description: 'DateTime in UTC ISO8601, defines when the step will probably happen (a.k.a status=PENDING and stepDateTime &gt; now()) or when step has already happened. CONVENTION: when time is 00:00:00.000Z it means that it''s date-only information'
+          format: date-time
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - name
+        - status
+    ChangeLimitsPost:
+      type: array
+      items:
+        $ref: '#/components/schemas/ChangeLimitsPostItem'
+    ChangeLimitsPostItem:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          description: A unique identifier for the limit object
+          type: string
+        amount:
+          description: The limit amount.
+          type: number
+        frequency:
+          description: 'Defines the frequency of this limit, e.g. DAILY (default), WEEKLY, MONTHLY.'
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - amount
+        - id
+    LockStatus:
+      type: string
+      description: Lock Status of card
+      enum:
+        - LOCKED
+        - UNLOCKED
+    LockStatusPost:
+      type: object
+      additionalProperties: false
+      example:
+        lockStatus: LOCKED
+      properties:
+        lockStatus:
+          description: Lock Status of card
+          $ref: '#/components/schemas/LockStatus'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - lockStatus
+    RequestReplacementPost:
+      type: object
+      additionalProperties: false
+      properties:
+        replacementReason:
+          description: 'Reason to request replacement of card: Lost, Stolen, Damaged'
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - replacementReason
+    ResetPinPost:
+      type: object
+      additionalProperties: false
+      properties:
+        token:
+          description: Token supplied by user to authorize the reset
+          type: string
+        pin:
+          description: The new pin number.
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - token
+    RequestPinPost:
+      type: object
+      additionalProperties: false
+      properties:
+        token:
+          description: Token supplied by user to authorize the request
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - token
+    TravelNoticeList:
+      type: array
+      items:
+        $ref: '#/components/schemas/TravelNotice'
+    TravelNotice:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          description: A unique identifier for the travel notice
+          type: string
+        cardIds:
+          description: Card IDs for which the travel notice applies
+          items:
+            type: string
+          type: array
+        departureDate:
+          description: Departure date for the travel notice
+          type: string
+        arrivalDate:
+          description: Arrival date for the travel notice
+          type: string
+        destinations:
+          description: Destinations for the travel notice
+          items:
+            $ref: '#/components/schemas/Destination'
+          type: array
+        contact:
+          $ref: '#/components/schemas/Contact'
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - arrivalDate
+        - cardIds
+        - departureDate
+        - destinations
+    Destination:
+      type: object
+      additionalProperties: false
+      properties:
+        country:
+          description: Country code of the destination (ISO 3166-1 alpha-3 format is suggested)
+          type: string
+        region:
+          description: 'State code of the destination if and only if the country is United States or Canada. (ISO 3166-2:US state codes for US and ISO 3166‑2:CA province codes for Canada)'
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - country
+    Contact:
+      type: object
+      additionalProperties: false
+      properties:
+        phoneNumber:
+          description: Phone number for the contact
+          type: string
+        additions:
+          description: Additional properties
+          type: object
+          additionalProperties:
+            type: string
+    ErrorItem:
+      title: ErrorItem
+      type: object
+      properties:
+        message:
+          description: Any further information.
+          type: string
+        key:
+          description: '{capability-name}.api.{api-key-name}. For generated validation errors this is the path in the document the error resolves to. e.g. object name + ''.'' + field'
+          type: string
+        context:
+          description: Context can be anything used to construct localised messages.
+          type: object
+          additionalProperties:
+            type: string
+    BadRequestError:
+      title: BadRequestError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+      required:
+        - message
+    NotFoundError:
+      title: NotFoundError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    ForbiddenError:
+      title: ForbiddenError
+      type: object
+      properties:
+        message:
+          description: Any further information
+          type: string
+        errors:
+          description: Detailed error information
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    InternalServerError:
+      title: InternalServerError
+      type: object
+      description: Represents HTTP 500 Internal Server Error
+      properties:
+        message:
+          description: Further Information
+          type: string

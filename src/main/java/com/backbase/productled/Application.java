@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@Import(value = {com.backbase.buildingblocks.backend.communication.http.HttpCommunicationConfiguration.class})
+@Import(value = {com.backbase.buildingblocks.communication.http.HttpCommunicationConfiguration.class})
 public class Application extends SpringBootServletInitializer {
 
     public static void main(final String[] args) {

@@ -33,6 +33,10 @@
         <user-manager-service-api.version>2.2.0</user-manager-service-api.version>
         <backbase.specs.url>https://repo.backbase.com/specs</backbase.specs.url>
 
+        <!-- Plugin version -->
+        <wagon-maven-plugin.version>2.0.2</wagon-maven-plugin.version>
+        <boat-maven-plugin.version>0.14.0</boat-maven-plugin.version>
+
         <!-- Sonar -->
         <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>
         <sonar.organization>${SONAR_ORGANIZATION}</sonar.organization>
@@ -106,6 +110,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
@@ -134,7 +139,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>wagon-maven-plugin</artifactId>
-                <version>2.0.0</version>
+                <version>${wagon-maven-plugin.version}</version>
                 <configuration>
                     <serverId>Backbase Repository</serverId>
                 </configuration>
@@ -168,6 +173,7 @@
             <plugin>
                 <groupId>com.backbase.oss</groupId>
                 <artifactId>boat-maven-plugin</artifactId>
+                <version>${boat-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>generate-code-from-cards-management-api-client-v2</id>

@@ -1,7 +1,7 @@
 # cards-presentation-service
 
 Generated using `core-service-archetype` - Community
-guide: https://community.backbase.com/documentation/ServiceSDK/11-3-0/create_a_core_service
+guide: https://community.backbase.com/documentation/ServiceSDK/12-0-0/create_a_core_service
 
 This service is an implementation of `cards-presenation-spec`
 

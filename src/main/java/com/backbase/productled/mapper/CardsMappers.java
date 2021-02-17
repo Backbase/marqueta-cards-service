@@ -126,7 +126,7 @@ public interface CardsMappers {
     default YearMonth getExpiryDate(CardResponse cardResponse) {
         return new YearMonth()
             .year(String.valueOf(cardResponse.getExpirationTime().getYear()))
-            .month(String.valueOf(cardResponse.getExpirationTime().getMonthValue()));
+            .month(String.format("%02d", cardResponse.getExpirationTime().getMonthValue()));
 
     }
 

@@ -312,7 +312,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.status", is("Inactive")))
             .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
             .andExpect(jsonPath("$.expiryDate.year", is("2025")))
-            .andExpect(jsonPath("$.expiryDate.month", is("1")))
+            .andExpect(jsonPath("$.expiryDate.month", is("01")))
             .andExpect(jsonPath("$.currency", is("USD")))
             .andExpect(jsonPath("$.maskedNumber", is("8119")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));

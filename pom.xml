@@ -202,7 +202,6 @@
                                 <useClassLevelBeanValidation>true</useClassLevelBeanValidation>
                                 <useTags>true</useTags>
                                 <java8>true</java8>
-                                <bigDecimalAsString>true</bigDecimalAsString>
                                 <useOptional>false</useOptional>
                                 <apiPackage>com.backbase.presentation.card.rest.spec.v2.cards</apiPackage>
                                 <modelPackage>com.backbase.presentation.card.rest.spec.v2.cards</modelPackage>

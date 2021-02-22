@@ -82,7 +82,7 @@ public class TravelNoticeIT {
     public void setUp() throws IOException {
 
         when(userManagementApi.getUserById(Mockito.any(), Mockito.any()))
-            .thenReturn(new GetUser().putAdditionsItem("marqetaUserToken", "1be8bb0b-dcdd-4219-81ab-565621d3707c"));
+            .thenReturn(new GetUser().externalId("1be8bb0b-dcdd-4219-81ab-565621d3707c"));
 
         when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getCardResponse.json"),
@@ -187,10 +187,10 @@ public class TravelNoticeIT {
             .andExpect(jsonPath("$.arrivalDate", is("2021-01-31")))
             .andExpect(jsonPath("$.cardIds[0]", is("4694a2c0-8838-4f1b-9c3b-1bb1ea8eb829")));
 
-
         // When
         ObjectMapper om = Mockito.spy(new ObjectMapper());
-        Mockito.when(om.writeValueAsString(Mockito.any())).thenThrow(new JsonProcessingException("") {});
+        Mockito.when(om.writeValueAsString(Mockito.any())).thenThrow(new JsonProcessingException("") {
+        });
 
         // then
         mvc.perform(post("/client-api/v2/travel-notices",

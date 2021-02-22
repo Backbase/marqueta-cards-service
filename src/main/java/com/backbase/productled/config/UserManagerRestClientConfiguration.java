@@ -1,8 +1,8 @@
 package com.backbase.productled.config;
 
 
-import static com.backbase.buildingblocks.backend.communication.http.HttpCommunicationConfiguration.INTERCEPTORS_ENABLED_HEADER;
-import static com.backbase.buildingblocks.backend.communication.http.HttpCommunicationConfiguration.INTER_SERVICE_REST_TEMPLATE_BEAN_NAME;
+import static com.backbase.buildingblocks.communication.http.HttpCommunicationConfiguration.INTERCEPTORS_ENABLED_HEADER;
+import static com.backbase.buildingblocks.communication.http.HttpCommunicationConfiguration.INTER_SERVICE_REST_TEMPLATE_BEAN_NAME;
 
 import com.backbase.dbs.user.manager.api.service.ApiClient;
 import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;

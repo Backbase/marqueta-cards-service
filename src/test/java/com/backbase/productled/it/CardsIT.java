@@ -100,13 +100,15 @@ public class CardsIT {
     @Before
     public void setUp() throws IOException {
 
-        when(cardsApi.getCardsUserToken(Mockito.eq("1be8bb0b-dcdd-4219-81ab-565621d3707c"), eq(null), eq(null), eq(null), eq(null)))
+        when(cardsApi
+            .getCardsUserToken(Mockito.eq("1be8bb0b-dcdd-4219-81ab-565621d3707c"), eq(null), eq(null), eq(null),
+                eq(null)))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getUserTokenResponse.json"),
                 CardListResponse.class));
 
         when(userManagementApi.getUserById(Mockito.any(), Mockito.any()))
             .thenReturn(new com.backbase.dbs.user.manager.api.service.v2.model.GetUser()
-                .putAdditionsItem("marqetaUserToken", "1be8bb0b-dcdd-4219-81ab-565621d3707c"));
+                .externalId("1be8bb0b-dcdd-4219-81ab-565621d3707c"));
 
         when(depositAccountsApi.getAllCards(eq("091000021")))
             .thenReturn(singletonList(new Card().referenceToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")));
@@ -133,9 +135,9 @@ public class CardsIT {
 
         // When
         ResultActions result = mvc.perform(get("/client-api/v2/cards")
-            .param("ids","aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
-            .param("types","Debit")
-            .param("status","Active")
+            .param("ids", "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+            .param("types", "Debit")
+            .param("status", "Active")
             .header("Authorization", TEST_JWT)).andDo(print());
 
         // Then
@@ -157,31 +159,31 @@ public class CardsIT {
             .andExpect(jsonPath("$.[0].limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
             .andExpect(jsonPath("$.[0].limits[0].channel", is("online")))
             .andExpect(jsonPath("$.[0].limits[0].frequency", is("DAILY")))
-            .andExpect(jsonPath("$.[0].limits[0].amount", is("5000")))
-            .andExpect(jsonPath("$.[0].limits[0].maxAmount", is("10000")))
-            .andExpect(jsonPath("$.[0].limits[0].minAmount", is("0")))
+            .andExpect(jsonPath("$.[0].limits[0].amount", is(5000)))
+            .andExpect(jsonPath("$.[0].limits[0].maxAmount", is(10000)))
+            .andExpect(jsonPath("$.[0].limits[0].minAmount", is(0)))
             .andExpect(jsonPath("$.[0].limits[1].id", is("0cfe3139-7792-4894-ba75-79e7aef7fe9c")))
             .andExpect(jsonPath("$.[0].limits[1].channel", is("atm")))
             .andExpect(jsonPath("$.[0].limits[1].frequency", is("DAILY")))
-            .andExpect(jsonPath("$.[0].limits[1].amount", is("5000")))
-            .andExpect(jsonPath("$.[0].limits[1].maxAmount", is("10000")))
-            .andExpect(jsonPath("$.[0].limits[1].minAmount", is("0")));
+            .andExpect(jsonPath("$.[0].limits[1].amount", is(5000)))
+            .andExpect(jsonPath("$.[0].limits[1].maxAmount", is(10000)))
+            .andExpect(jsonPath("$.[0].limits[1].minAmount", is(0)));
 
         // When and Then
         mvc.perform(get("/client-api/v2/cards")
-            .param("ids","aeeff27f-94a3-4687-8fd6-1f94cf26b2e5")
+            .param("ids", "aeeff27f-94a3-4687-8fd6-1f94cf26b2e5")
             .header("Authorization", TEST_JWT)).andDo(print())
             .andExpect(status().isOk());
 
         // When and Then
         mvc.perform(get("/client-api/v2/cards")
-            .param("types","Debit1")
+            .param("types", "Debit1")
             .header("Authorization", TEST_JWT)).andDo(print())
             .andExpect(status().isOk());
 
         // When and Then
         mvc.perform(get("/client-api/v2/cards")
-            .param("status","Active1")
+            .param("status", "Active1")
             .header("Authorization", TEST_JWT)).andDo(print())
             .andExpect(status().isOk());
 
@@ -214,15 +216,15 @@ public class CardsIT {
             .andExpect(jsonPath("$.limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
             .andExpect(jsonPath("$.limits[0].channel", is("online")))
             .andExpect(jsonPath("$.limits[0].frequency", is("DAILY")))
-            .andExpect(jsonPath("$.limits[0].amount", is("5000")))
-            .andExpect(jsonPath("$.limits[0].maxAmount", is("10000")))
-            .andExpect(jsonPath("$.limits[0].minAmount", is("0")))
+            .andExpect(jsonPath("$.limits[0].amount", is(5000)))
+            .andExpect(jsonPath("$.limits[0].maxAmount", is(10000)))
+            .andExpect(jsonPath("$.limits[0].minAmount", is(0)))
             .andExpect(jsonPath("$.limits[1].id", is("0cfe3139-7792-4894-ba75-79e7aef7fe9c")))
             .andExpect(jsonPath("$.limits[1].channel", is("atm")))
             .andExpect(jsonPath("$.limits[1].frequency", is("DAILY")))
-            .andExpect(jsonPath("$.limits[1].amount", is("5000")))
-            .andExpect(jsonPath("$.limits[1].maxAmount", is("10000")))
-            .andExpect(jsonPath("$.limits[1].minAmount", is("0")));
+            .andExpect(jsonPath("$.limits[1].amount", is(5000)))
+            .andExpect(jsonPath("$.limits[1].maxAmount", is(10000)))
+            .andExpect(jsonPath("$.limits[1].minAmount", is(0)));
     }
 
     @Test
@@ -310,7 +312,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.status", is("Inactive")))
             .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
             .andExpect(jsonPath("$.expiryDate.year", is("2025")))
-            .andExpect(jsonPath("$.expiryDate.month", is("1")))
+            .andExpect(jsonPath("$.expiryDate.month", is("01")))
             .andExpect(jsonPath("$.currency", is("USD")))
             .andExpect(jsonPath("$.maskedNumber", is("8119")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
@@ -374,7 +376,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")))
             .andExpect(jsonPath("$.limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
-            .andExpect(jsonPath("$.limits[0].amount", is("5000")));
+            .andExpect(jsonPath("$.limits[0].amount", is(5000)));
     }
 
     @Test
@@ -407,7 +409,7 @@ public class CardsIT {
             .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")))
             .andExpect(jsonPath("$.limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
-            .andExpect(jsonPath("$.limits[0].amount", is("5000")));
+            .andExpect(jsonPath("$.limits[0].amount", is(5000)));
     }
 
     @Test

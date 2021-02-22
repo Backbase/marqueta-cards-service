@@ -1,13 +1,14 @@
 # cards-presentation-service
 
 Generated using `core-service-archetype` - Community
-guide: https://community.backbase.com/documentation/ServiceSDK/11-3-0/create_a_core_service
+guide: https://community.backbase.com/documentation/ServiceSDK/12-0-0/create_a_core_service
 
 This service is an implementation of `cards-presenation-spec`
+
 - https://stash.backbase.com/projects/CARDS/repos/cards-presentation-spec
 
-This service is an Implementation of Cards Presentation to communicate with Marqeta to retrieve cards 
-and Travel notice information.
+This service is an Implementation of Cards Presentation to communicate with Marqeta to retrieve cards and Travel notice
+information.
 
 ## Getting started
 
@@ -15,11 +16,11 @@ Components overview:
 
 - Controller/API -`CardsApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and
   post to Marqeta using the restful API. Implements controller interface from spec - `CardsApi`
-  
-  `TravelNoticesApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and
-  post to Marqeta using the restful API. Implements controller interface from spec - `TravelNoticesApi`
-  
-- Configuration - `MarqetaRestClientConfiguration`, `UserManagerRestClientConfiguration`: 
+
+  `TravelNoticesApiController`: Controller class to receive HTTP requests from `cards-presentation-service` and post to
+  Marqeta using the restful API. Implements controller interface from spec - `TravelNoticesApi`
+
+- Configuration - `MarqetaRestClientConfiguration`, `UserManagerRestClientConfiguration`:
   configuration classes to load properties from config file and initialize Marqeta and user Manager Rest client.
 - Mapper - `CardMapper`: Map models from Mambu <-> DBS.
 - Service - `CardsService`, `TravelNoticeService`: Orchestrate the business to Marqeta and map response to DBS model.
@@ -38,7 +39,7 @@ custom:
       enabled: true
       app:
         image:
-          tag: "1.0.0-SNAPSHOT"
+          tag: "1.0.1-SNAPSHOT"
           repository: cards-presentation-service
       database: false
       livenessProbe:
@@ -88,7 +89,7 @@ To run the service in development mode, use:
 
 To run the service from the built binaries, use:
 
-- `java -jar target/cards-presentation-service-1.0.0-SNAPSHOT.jar`
+- `java -jar target/cards-presentation-service-1.0.1-SNAPSHOT.jar`
 
 #### JWT config
 

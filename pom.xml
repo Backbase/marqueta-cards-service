@@ -16,13 +16,13 @@
 
     <groupId>com.backbase.productled</groupId>
     <artifactId>cards-presentation-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.0</version>
     <packaging>war</packaging>
     <name>Backbase :: cards presentation service</name>
 
     <properties>
         <java.version>11</java.version>
-        <docker.repo.url>${DOCKER_REPO_URL}</docker.repo.url>
+        <docker.repo.url>${DEVOPS_CICD_ECR_BASE_URL}</docker.repo.url>
         <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <spec.dependencies.path>${project.build.directory}/dependencies</spec.dependencies.path>

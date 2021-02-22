@@ -1,0 +1,108 @@
+name: Release and Hotfix Start
+
+###
+#
+# Initiates release process from issues
+#
+# Trigger: issues opened with release or hotfix labels
+#
+###
+
+on:
+  issues:
+    types: [ opened ]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    if: contains(join(github.event.issue.labels.*.name, ' '), 'release:') || contains(join(github.event.issue.labels.*.name, ' '), 'bug:hotfix')
+    strategy:
+      matrix:
+        java: [11]
+    name: Initiates release or hotfix process from issues
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BB_MAVEN_USERNAME: ${{ secrets.BB_MAVEN_USERNAME }}
+      BB_MAVEN_PASSWORD: ${{ secrets.BB_MAVEN_PASSWORD }}
+      GLOBAL_USER: ${{ secrets.GLOBAL_USER }}
+      GLOBAL_EMAIL: ${{ secrets.GLOBAL_EMAIL }}
+
+    steps:
+      - id: flow-type
+        run: |
+          echo ::set-output name=release::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:') }}
+          echo ::set-output name=release_minor::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:minor') }}
+          echo ::set-output name=release_major::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:major') }}
+          echo ::set-output name=hotfix::${{ contains(join(github.event.issue.labels.*.name, ' '), 'bug:hotfix') }}
+      - uses: actions/checkout@v2
+        if: steps.flow-type.outputs.release == 'true'
+        with:
+          ref: develop
+      - uses: actions/checkout@v2
+        if: steps.flow-type.outputs.hotfix == 'true'
+        with:
+          ref: master
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Setup java
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v9
+        with:
+          repositories: '[{ "id": "Backbase Repository", "url": "https://repo.backbase.com/repo" }]'
+          plugin_repositories: '[{ "id": "Backbase Repository", "url": "https://repo.backbase.com/repo" }]'
+          servers: '[{ "id": "Backbase Repository", "username": "${BB_MAVEN_USERNAME}", "password": "${BB_MAVEN_PASSWORD}" }]'
+
+      - name: Set git username and email
+        run: |
+          git config --global user.email ${GLOBAL_EMAIL}
+          git config --global user.name ${GLOBAL_USER}
+
+      # Bump the version using semantic versioning
+      # Release: major | minor | patch
+      # Hotfix: patch
+      - name: Bump Project Version
+        id: target
+        run: |
+          MAJOR=$( mvn help:evaluate -Dexpression=project.artifact.selectedVersion.majorVersion -q -DforceStdout )
+          MINOR=$( mvn help:evaluate -Dexpression=project.artifact.selectedVersion.minorVersion -q -DforceStdout )
+          INCREMENTAL=$( mvn help:evaluate -Dexpression=project.artifact.selectedVersion.incrementalVersion -q -DforceStdout )
+          if ${{ steps.flow-type.outputs.release_minor }} == 'true'
+          then
+            MINOR=`expr $MINOR + 1`
+            NEW_VERSION=$MAJOR.$MINOR
+          elif ${{ steps.flow-type.outputs.release_major }} == 'true'
+          then
+            MAJOR=`expr $MAJOR + 1`
+            NEW_VERSION=$MAJOR.$MINOR
+          elif ${{ steps.flow-type.outputs.hotfix }} == 'true'
+          then
+            MINOR=`expr $MINOR + 1`
+            BRANCH_PREFIX=hotfix
+            NEW_VERSION=$MAJOR.$MINOR
+          fi
+          echo ::set-output name=version::`echo $NEW_VERSION`
+          echo ::set-output name=branch_name::`echo $NEW_VERSION.$INCREMENTAL`
+
+      - name: Start new release
+        run: |
+          if ${{ steps.flow-type.outputs.release }} == 'true'
+          then
+            mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.branch_name }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-release
+          fi
+
+      - name: Start new Hotfix
+        run: |
+          if ${{ steps.flow-type.outputs.hotfix }} == 'true'
+          then
+            mvn -B gitflow:hotfix-start -DpushRemote=true -DhotfixName=${{ github.event.inputs.hotfixName }}
+          fi

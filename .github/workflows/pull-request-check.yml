@@ -38,7 +38,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-
       - name: Maven Setup settings.xml with BB credentials
         uses: whelk-io/maven-settings-xml-action@v4
         with:

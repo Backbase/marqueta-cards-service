@@ -7,7 +7,6 @@ name: Release and Hotfix Start
 # Trigger: issues opened with release or hotfix labels
 #
 ###
-
 on:
   issues:
     types: [ opened ]
@@ -65,7 +64,6 @@ jobs:
         run: |
           git config --global user.email "bot@backbase.com"
           git config --global user.name "Release BOT"
-
       # Bump the version using semantic versioning
       # Release: major | minor | patch
       # Hotfix: patch
@@ -83,20 +81,14 @@ jobs:
           then
             MAJOR=`expr $MAJOR + 1`
             NEW_VERSION=$MAJOR.$MINOR
-          elif ${{ steps.flow-type.outputs.hotfix }} == 'true'
-          then
-            MINOR=`expr $MINOR + 1`
-            BRANCH_PREFIX=hotfix
-            NEW_VERSION=$MAJOR.$MINOR
           fi
           echo ::set-output name=version::`echo $NEW_VERSION`
-          echo ::set-output name=branch_name::`echo $NEW_VERSION.$INCREMENTAL`
 
       - name: Start new release
         run: |
           if ${{ steps.flow-type.outputs.release }} == 'true'
           then
-            mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.branch_name }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-release
+            mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.version }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-release
           fi
 
       - name: Start new Hotfix

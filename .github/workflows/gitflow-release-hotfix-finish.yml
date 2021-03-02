@@ -34,7 +34,7 @@ jobs:
     # Set flow type
     steps:
       - id: flow-type
-        run:  |
+        run: |
           echo ::set-output name=release::${{ startsWith(github.event.pull_request.head.ref, 'release/') }}
           echo ::set-output name=hotfix::${{ startsWith(github.event.pull_request.head.ref, 'hotfix/') }}
       - uses: actions/checkout@v2
@@ -72,7 +72,8 @@ jobs:
           git config --global user.email "bot@backbase.com"
           git config --global user.name "Release BOT"
 
-      # Open PR if it's a hotfix
+
+      # Create a PR : target branch - develop
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3

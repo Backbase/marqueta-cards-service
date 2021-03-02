@@ -72,6 +72,7 @@ jobs:
           git config --global user.email "bot@backbase.com"
           git config --global user.name "Release BOT"
 
+
       # Create a PR : target branch - develop
       - name: Create Pull Request
         id: cpr
@@ -82,6 +83,7 @@ jobs:
           title: ${{ steps.target.outputs.version }}
           reviewers: ${{ github.event.issue.user.login }}
           commit-message: Automated PR
+
 
       # If it's a release(major & minor) reset incrementalVersion for next dev lifecycle - target branch - develop
       # else if it's a hotfix merge bump the incremental version - target branch - develop

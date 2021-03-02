@@ -25,6 +25,7 @@
         <docker.repo.url>${DEVOPS_CICD_ECR_BASE_URL}</docker.repo.url>
         <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
+        <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
         <spec.dependencies.path>${project.build.directory}/dependencies</spec.dependencies.path>
         <mambu.clients.version>1.0.1-cr.14</mambu.clients.version>
         <cards-management-api.version>2.2.0</cards-management-api.version>

@@ -18,6 +18,7 @@ jobs:
       matrix:
         java: [11]
     name: Start new feature
+    timeout-minutes: 30
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

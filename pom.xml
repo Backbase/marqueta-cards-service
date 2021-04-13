@@ -3,9 +3,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- The simplest way to build a service with service-sdk-starter-core 
-        is to use it as a parent in your project’s POM file, and alternative If you 
-        don’t want to use service-sdk-starter-core as your project’s parent, you 
+    <!-- The simplest way to build a service with service-sdk-starter-core
+        is to use it as a parent in your project’s POM file, and alternative If you
+        don’t want to use service-sdk-starter-core as your project’s parent, you
         can declare it as a dependency instead, see pom-as-dependency.xml -->
     <parent>
         <groupId>com.backbase.buildingblocks</groupId>
@@ -26,16 +26,17 @@
         <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
-        <spec.dependencies.path>${project.build.directory}/dependencies</spec.dependencies.path>
-        <mambu.clients.version>LATEST</mambu.clients.version>
-        <cards-management-api.version>2.2.0</cards-management-api.version>
-        <mapstruct.version>1.3.1.Final</mapstruct.version>
-        <open-api-specs-dir>${project.build.directory}/specs</open-api-specs-dir>
-        <user-manager-service-api.version>2.2.0</user-manager-service-api.version>
-        <backbase.specs.url>https://repo.backbase.com/specs</backbase.specs.url>
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <lombok.version>1.18.18</lombok.version>
+        <jsr305.version>3.0.2</jsr305.version>
+        <springfox-core.version>3.0.0</springfox-core.version>
+        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <swagger-annotations.version>1.6.2</swagger-annotations.version>
+        <open-api-specs-dir>${project.build.directory}/yaml</open-api-specs-dir>
+        <user-manager.version>2.0.82.2</user-manager.version>
+        <card-manager.version>2.10</card-manager.version>
 
         <!-- Plugin version -->
-        <wagon-maven-plugin.version>2.0.2</wagon-maven-plugin.version>
         <boat-maven-plugin.version>0.14.0</boat-maven-plugin.version>
 
         <!-- Sonar -->
@@ -44,18 +45,6 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.backbase.mambu</groupId>
-                <artifactId>mambu-clients</artifactId>
-                <version>${mambu.clients.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -67,6 +56,10 @@
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.backbase.buildingblocks</groupId>
+            <artifactId>production-support</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
@@ -74,18 +67,39 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
             <artifactId>auth-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.backbase.mambu</groupId>
-            <artifactId>mambu-deposit-accounts-client</artifactId>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-core</artifactId>
+            <version>${springfox-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>${jsr305.version}</version>
         </dependency>
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
@@ -138,35 +152,49 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>${wagon-maven-plugin.version}</version>
-                <configuration>
-                    <serverId>Backbase Repository</serverId>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>download-cards-management-api-spec</id>
-                        <goals>
-                            <goal>download-single</goal>
-                        </goals>
+                        <id>unpack-card-manager</id>
                         <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
                         <configuration>
-                            <url>${backbase.specs.url}/card-manager</url>
-                            <fromFile>card-manager-client-api-v${cards-management-api.version}.yaml</fromFile>
-                            <toDir>${open-api-specs-dir}/card-manager</toDir>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.backbase.dbs.cards</groupId>
+                                    <artifactId>card-manager</artifactId>
+                                    <version>${card-manager.version}</version>
+                                    <classifier>api</classifier>
+                                    <type>zip</type>
+                                    <outputDirectory>${open-api-specs-dir}</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/*.yaml, **/*.json</includes>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>download-user-manager-service-api-spec</id>
-                        <goals>
-                            <goal>download-single</goal>
-                        </goals>
+                        <id>unpack-user-manager</id>
                         <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
                         <configuration>
-                            <url>${backbase.specs.url}/user-manager</url>
-                            <fromFile>user-manager-service-api-v${user-manager-service-api.version}.yaml</fromFile>
-                            <toDir>${open-api-specs-dir}/user-manager</toDir>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.backbase.dbs.user</groupId>
+                                    <artifactId>user-manager</artifactId>
+                                    <version>${user-manager.version}</version>
+                                    <classifier>api</classifier>
+                                    <type>zip</type>
+                                    <outputDirectory>${open-api-specs-dir}</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/*.yaml, **/*.json</includes>
                         </configuration>
                     </execution>
                 </executions>
@@ -184,7 +212,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>
-                                ${open-api-specs-dir}/card-manager/card-manager-client-api-v${cards-management-api.version}.yaml
+                                ${open-api-specs-dir}/card-manager/card-manager-client-api-v*.yaml
                             </inputSpec>
                             <output>${project.build.directory}/generated-sources</output>
                             <generateSupportingFiles>true</generateSupportingFiles>
@@ -218,7 +246,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <inputSpec>
-                                ${open-api-specs-dir}/user-manager/user-manager-service-api-v${user-manager-service-api.version}.yaml
+                                ${open-api-specs-dir}/user-manager/user-manager-service-api-v*.yaml
                             </inputSpec>
                             <apiPackage>com.backbase.dbs.user.manager.api.service.v2</apiPackage>
                             <modelPackage>com.backbase.dbs.user.manager.api.service.v2.model</modelPackage>

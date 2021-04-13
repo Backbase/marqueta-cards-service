@@ -173,18 +173,6 @@ public class MarqetaServiceTest {
         Assert.assertEquals(USER_TOKEN, response.getUserToken());
     }
 
-    @Test(expected = NotFoundException.class)
-    public void testCreateCardWhenNotFoundException() {
-
-        // given
-        CardRequest cardRequest = new CardRequest();
-        Mockito.when(cardsApi.postCards(false, false, cardRequest))
-            .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-
-        // when
-        marqetaService.createCard(cardRequest);
-    }
-
     @Test(expected = BadRequestException.class)
     public void testCreateCardWhenBadRequestException() {
 

@@ -1,4 +1,4 @@
-package com.backbase.productled.repository;
+package com.backbase.productled.service;
 
 import com.backbase.buildingblocks.presentation.errors.BadRequestException;
 import com.backbase.buildingblocks.presentation.errors.InternalServerErrorException;
@@ -29,7 +29,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class MarqetaRepository {
+public class MarqetaService {
 
     private final CardsApi cardsApi;
 

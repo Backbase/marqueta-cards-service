@@ -8,8 +8,6 @@ import com.backbase.buildingblocks.presentation.errors.NotFoundException;
 import com.backbase.marqeta.clients.model.UserCardHolderResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.TravelNotice;
 import com.backbase.productled.mapper.CardsMappers;
-import com.backbase.productled.repository.MarqetaRepository;
-import com.backbase.productled.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -32,19 +30,19 @@ public class TravelNoticeService {
     private static final String TRAVEL_NOTICE_REGEX = "travelnotice-%s";
     private static final String TRAVEL_NOTICE = "travelnotice";
 
-    private final MarqetaRepository marqetaRepository;
+    private final MarqetaService marqetaService;
 
     private final CardsMappers cardsMappers;
 
     private final ObjectMapper objectMapper;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public TravelNotice createTravelNotice(TravelNotice travelNotice) {
         getMarqetaUserToken()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> getUserCardHolderUpdateModel(UUID.randomUUID().toString(), req, travelNotice))
-            .ifPresent(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
+            .ifPresent(model -> marqetaService.updateCardHolder(model.getToken(), model));
         return travelNotice;
     }
 
@@ -52,7 +50,7 @@ public class TravelNoticeService {
         getMarqetaUserToken()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> req.metadata(Collections.singletonMap(String.format(TRAVEL_NOTICE_REGEX, id), null)))
-            .ifPresent(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
+            .ifPresent(model -> marqetaService.updateCardHolder(model.getToken(), model));
     }
 
     public TravelNotice getTravelNoticeById(String id) {
@@ -78,7 +76,7 @@ public class TravelNoticeService {
         getMarqetaUserToken()
             .map(cardsMappers::mapUpdateCardHolderRequest)
             .map(req -> getUserCardHolderUpdateModel(id, req, travelNotice))
-            .ifPresent(model -> marqetaRepository.updateCardHolder(model.getToken(), model));
+            .ifPresent(model -> marqetaService.updateCardHolder(model.getToken(), model));
         return travelNotice;
     }
 
@@ -103,8 +101,8 @@ public class TravelNoticeService {
     }
 
     private Optional<UserCardHolderResponse> getMarqetaUserToken() {
-        return Optional.ofNullable(userRepository.getMarqetaUserToken())
-            .map(marqetaRepository::getCardHolder);
+        return Optional.ofNullable(userService.getMarqetaUserToken())
+            .map(marqetaService::getCardHolder);
     }
 
 }

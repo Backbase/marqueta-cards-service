@@ -1,4 +1,4 @@
-package com.backbase.productled.repository;
+package com.backbase.productled.service;
 
 import com.backbase.buildingblocks.backend.security.auth.config.SecurityContextUtil;
 import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserRepository {
+public class UserService {
 
     private final SecurityContextUtil securityContextUtil;
 

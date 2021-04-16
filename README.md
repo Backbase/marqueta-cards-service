@@ -99,8 +99,11 @@ Not applicable for 'cards-presentation-service'
 ---
 ## Customisation in project
 ### Configuration changes
+If project adopts Marqeta, only Marqeta configuration properties has to be changed.
 
 ### Component changes
+If project adopts different vendor than Marqeta, all services from `com.backbase.productled.service` package have to be replaced.
+
 ---
 ## Getting Started
 ### BaaS setup

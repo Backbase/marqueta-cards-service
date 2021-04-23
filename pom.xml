@@ -33,8 +33,8 @@
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <swagger-annotations.version>1.6.2</swagger-annotations.version>
         <open-api-specs-dir>${project.build.directory}/yaml</open-api-specs-dir>
-        <user-manager.version>2.0.82.2</user-manager.version>
-        <card-manager.version>2.10</card-manager.version>
+        <user-manager.version>2.0.98</user-manager.version>
+        <card-manager.version>2.17</card-manager.version>
 
         <!-- Plugin version -->
         <boat-maven-plugin.version>0.14.0</boat-maven-plugin.version>

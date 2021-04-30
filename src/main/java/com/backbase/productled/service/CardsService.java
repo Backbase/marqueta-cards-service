@@ -17,8 +17,6 @@ import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.mapper.CardsMappers;
-import com.backbase.productled.repository.MarqetaRepository;
-import com.backbase.productled.repository.UserRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -32,15 +30,15 @@ public class CardsService {
 
     private static final String TERMINATED = "TERMINATED";
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    private final MarqetaRepository marqetaRepository;
+    private final MarqetaService marqetaService;
 
     private final CardsMappers cardMapper;
 
     public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
-        return requireNonNull(marqetaRepository.getUserCards(
-            userRepository.getMarqetaUserToken())
+        return requireNonNull(marqetaService.getUserCards(
+            userService.getMarqetaUserToken())
             .getData()).stream()
             .filter(cardResponse -> !TERMINATED.equals(cardResponse.getState().toString()))
             .map(getCardResponseCardItemFunction())
@@ -51,24 +49,24 @@ public class CardsService {
     }
 
     public CardItem getCard(String id) {
-        return mapCardItem(marqetaRepository.getCardDetails(id));
+        return mapCardItem(marqetaService.getCardDetails(id));
     }
 
     public CardItem postLockStatus(String id, LockStatusPost lockStatusPost) {
-        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id,
+        marqetaService.postCardTransitions(cardMapper.mapCardTransitionRequest(id,
             lockStatusPost.getLockStatus() == LockStatus.UNLOCKED ? StateEnum.ACTIVE : StateEnum.SUSPENDED));
         return getCard(id);
     }
 
     public CardItem activateCard(String id, ActivatePost activatePost) {
         validateCvv(id, activatePost.getToken());
-        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.ACTIVE));
-        return mapCardItem(marqetaRepository.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id)));
+        marqetaService.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.ACTIVE));
+        return mapCardItem(marqetaService.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id)));
     }
 
     public CardItem resetPin(String id, ResetPinPost resetPinPost) {
         validateCvv(id, resetPinPost.getToken());
-        marqetaRepository.updatePin(getPin(id, resetPinPost));
+        marqetaService.updatePin(getPin(id, resetPinPost));
         return getCard(id);
     }
 
@@ -78,7 +76,7 @@ public class CardsService {
     }
 
     private void validateCvv(String cardToken, String cvv) {
-        if (!cvv.equals(marqetaRepository.getCardCvv(cardToken).getCvvNumber())) {
+        if (!cvv.equals(marqetaService.getCardCvv(cardToken).getCvvNumber())) {
             throw new BadRequestException()
                 .withErrors(Collections.singletonList(new Error().withMessage("cvv is incorrect")));
         }
@@ -86,16 +84,16 @@ public class CardsService {
 
     public CardItem requestReplacement(String id) {
         // change state of old card from Active to Terminated
-        marqetaRepository.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.TERMINATED));
+        marqetaService.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.TERMINATED));
         // create new Card
         return mapCardItem(
-            marqetaRepository.createCard(cardMapper.mapCreateCardRequest(marqetaRepository.getCardDetails(id))));
+            marqetaService.createCard(cardMapper.mapCreateCardRequest(marqetaService.getCardDetails(id))));
     }
 
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
         changeLimitsPostItem.forEach(item -> {
-            VelocityControlResponse velocityControlResponse = marqetaRepository.getCardLimitById(item.getId());
-            marqetaRepository.updateCardLimits(item.getId(),
+            VelocityControlResponse velocityControlResponse = marqetaService.getCardLimitById(item.getId());
+            marqetaService.updateCardLimits(item.getId(),
                 cardMapper.mapVelocityControlUpdateRequest(velocityControlResponse, item.getAmount()));
         });
 
@@ -104,17 +102,17 @@ public class CardsService {
 
     private Function<CardResponse, CardItem> getCardResponseCardItemFunction() {
         return cardResponse -> cardMapper
-            .mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
+            .mapCard(cardResponse, marqetaService.getCardLimits(cardResponse.getCardProductToken()));
     }
 
     private CardItem mapCardItem(CardResponse cardResponse) {
-        return cardMapper.mapCard(cardResponse, marqetaRepository.getCardLimits(cardResponse.getCardProductToken()));
+        return cardMapper.mapCard(cardResponse, marqetaService.getCardLimits(cardResponse.getCardProductToken()));
     }
 
     private PinRequest getPin(String id, ResetPinPost resetPinPost) {
         return new PinRequest()
             .controlToken(
-                marqetaRepository.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
+                marqetaService.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
             .pin(resetPinPost.getPin());
     }
 

@@ -1,4 +1,4 @@
-package com.backbase.productled.repository;
+package com.backbase.productled.service;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MarqetaRepositoryTest {
+public class MarqetaServiceTest {
 
     private static final String CARD_TOKEN = "aeeff27f-94a3-4687-9fd6-1f94cf26b2e";
     private static final String USER_TOKEN = "1be8bb0b-dcdd-4219-81ab-565621d3707c";
@@ -56,7 +56,7 @@ public class MarqetaRepositoryTest {
     private UsersApi usersApi;
 
     @InjectMocks
-    private MarqetaRepository marqetaRepository;
+    private MarqetaService marqetaService;
 
     @Test
     public void testGetCardDetails() {
@@ -65,7 +65,7 @@ public class MarqetaRepositoryTest {
         Mockito.when(cardsApi.getCardsToken(CARD_TOKEN, null, null)).thenReturn(new CardResponse().token(CARD_TOKEN));
 
         // when
-        CardResponse response = marqetaRepository.getCardDetails(CARD_TOKEN);
+        CardResponse response = marqetaService.getCardDetails(CARD_TOKEN);
 
         // then
         Assert.assertEquals(CARD_TOKEN, response.getToken());
@@ -79,7 +79,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.getCardDetails(CARD_TOKEN);
+        marqetaService.getCardDetails(CARD_TOKEN);
     }
 
     @Test(expected = BadRequestException.class)
@@ -90,7 +90,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.getCardDetails(CARD_TOKEN);
+        marqetaService.getCardDetails(CARD_TOKEN);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -101,7 +101,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.getCardDetails(CARD_TOKEN);
+        marqetaService.getCardDetails(CARD_TOKEN);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class MarqetaRepositoryTest {
                 .addDataItem(new CardResponse().token(CARD_TOKEN).userToken(USER_TOKEN)));
 
         // when
-        CardListResponse response = marqetaRepository.getUserCards(USER_TOKEN);
+        CardListResponse response = marqetaService.getUserCards(USER_TOKEN);
 
         // then
         Assert.assertNotNull(response.getCount());
@@ -132,7 +132,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.getUserCards(USER_TOKEN);
+        marqetaService.getUserCards(USER_TOKEN);
     }
 
     @Test(expected = BadRequestException.class)
@@ -143,7 +143,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.getUserCards(USER_TOKEN);
+        marqetaService.getUserCards(USER_TOKEN);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -154,7 +154,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.getUserCards(USER_TOKEN);
+        marqetaService.getUserCards(USER_TOKEN);
     }
 
     @Test
@@ -166,23 +166,11 @@ public class MarqetaRepositoryTest {
             .thenReturn(new CardResponse().token(CARD_TOKEN).userToken(USER_TOKEN));
 
         // when
-        CardResponse response = marqetaRepository.createCard(cardRequest);
+        CardResponse response = marqetaService.createCard(cardRequest);
 
         // then
         Assert.assertEquals(CARD_TOKEN, response.getToken());
         Assert.assertEquals(USER_TOKEN, response.getUserToken());
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void testCreateCardWhenNotFoundException() {
-
-        // given
-        CardRequest cardRequest = new CardRequest();
-        Mockito.when(cardsApi.postCards(false, false, cardRequest))
-            .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-
-        // when
-        marqetaRepository.createCard(cardRequest);
     }
 
     @Test(expected = BadRequestException.class)
@@ -194,7 +182,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.createCard(cardRequest);
+        marqetaService.createCard(cardRequest);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -206,7 +194,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.createCard(cardRequest);
+        marqetaService.createCard(cardRequest);
     }
 
     @Test
@@ -218,7 +206,7 @@ public class MarqetaRepositoryTest {
             .thenReturn(new CardResponse().token(CARD_TOKEN).userToken(USER_TOKEN));
 
         // when
-        CardResponse response = marqetaRepository.updateCard(CARD_TOKEN, cardUpdateRequest);
+        CardResponse response = marqetaService.updateCard(CARD_TOKEN, cardUpdateRequest);
 
         // then
         Assert.assertEquals(CARD_TOKEN, response.getToken());
@@ -234,7 +222,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.updateCard(CARD_TOKEN, cardUpdateRequest);
+        marqetaService.updateCard(CARD_TOKEN, cardUpdateRequest);
     }
 
     @Test(expected = BadRequestException.class)
@@ -246,7 +234,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.updateCard(CARD_TOKEN, cardUpdateRequest);
+        marqetaService.updateCard(CARD_TOKEN, cardUpdateRequest);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -258,7 +246,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.updateCard(CARD_TOKEN, cardUpdateRequest);
+        marqetaService.updateCard(CARD_TOKEN, cardUpdateRequest);
     }
 
     @Test(expected = NotFoundException.class)
@@ -270,7 +258,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.postCardTransitions(cardTransitionRequest);
+        marqetaService.postCardTransitions(cardTransitionRequest);
     }
 
     @Test(expected = BadRequestException.class)
@@ -282,7 +270,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.postCardTransitions(cardTransitionRequest);
+        marqetaService.postCardTransitions(cardTransitionRequest);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -294,7 +282,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.postCardTransitions(cardTransitionRequest);
+        marqetaService.postCardTransitions(cardTransitionRequest);
     }
 
     @Test
@@ -305,7 +293,7 @@ public class MarqetaRepositoryTest {
             .thenReturn(new CardResponse().token(CARD_TOKEN).userToken(USER_TOKEN).cvvNumber(CVV));
 
         // when
-        CardResponse response = marqetaRepository.getCardCvv(CARD_TOKEN);
+        CardResponse response = marqetaService.getCardCvv(CARD_TOKEN);
 
         // then
         Assert.assertEquals(CVV, response.getCvvNumber());
@@ -319,7 +307,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.getCardCvv(CARD_TOKEN);
+        marqetaService.getCardCvv(CARD_TOKEN);
     }
 
     @Test(expected = BadRequestException.class)
@@ -330,7 +318,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.getCardCvv(CARD_TOKEN);
+        marqetaService.getCardCvv(CARD_TOKEN);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -341,7 +329,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.getCardCvv(CARD_TOKEN);
+        marqetaService.getCardCvv(CARD_TOKEN);
     }
 
     @Test
@@ -353,7 +341,7 @@ public class MarqetaRepositoryTest {
             .thenReturn(new ControlTokenResponse().controlToken(PIN_CONTROL_TOKEN));
 
         // when
-        ControlTokenResponse response = marqetaRepository.getPinControlToken(controlTokenRequest);
+        ControlTokenResponse response = marqetaService.getPinControlToken(controlTokenRequest);
 
         // then
         Assert.assertEquals(PIN_CONTROL_TOKEN, response.getControlToken());
@@ -369,7 +357,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.getPinControlToken(controlTokenRequest);
+        marqetaService.getPinControlToken(controlTokenRequest);
     }
 
     @Test(expected = BadRequestException.class)
@@ -381,7 +369,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.getPinControlToken(controlTokenRequest);
+        marqetaService.getPinControlToken(controlTokenRequest);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -393,7 +381,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.getPinControlToken(controlTokenRequest);
+        marqetaService.getPinControlToken(controlTokenRequest);
     }
 
     @Test(expected = NotFoundException.class)
@@ -404,7 +392,7 @@ public class MarqetaRepositoryTest {
         doThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND)).when(pinsApi).putPins(pinRequest);
 
         // when
-        marqetaRepository.updatePin(pinRequest);
+        marqetaService.updatePin(pinRequest);
     }
 
     @Test(expected = BadRequestException.class)
@@ -415,7 +403,7 @@ public class MarqetaRepositoryTest {
         doThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST)).when(pinsApi).putPins(pinRequest);
 
         // when
-        marqetaRepository.updatePin(pinRequest);
+        marqetaService.updatePin(pinRequest);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -426,7 +414,7 @@ public class MarqetaRepositoryTest {
         doThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR)).when(pinsApi).putPins(pinRequest);
 
         // when
-        marqetaRepository.updatePin(pinRequest);
+        marqetaService.updatePin(pinRequest);
     }
 
     @Test(expected = BadRequestException.class)
@@ -437,7 +425,7 @@ public class MarqetaRepositoryTest {
         doThrow(new HttpClientErrorException(HttpStatus.PRECONDITION_FAILED)).when(pinsApi).putPins(pinRequest);
 
         // when
-        marqetaRepository.updatePin(pinRequest);
+        marqetaService.updatePin(pinRequest);
     }
 
     @Test(expected = NotFoundException.class)
@@ -448,7 +436,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         //when
-        marqetaRepository.getCardLimits(CARD_PRODUCT_TOKEN);
+        marqetaService.getCardLimits(CARD_PRODUCT_TOKEN);
     }
 
     @Test(expected = BadRequestException.class)
@@ -459,7 +447,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         //when
-        marqetaRepository.getCardLimits(CARD_PRODUCT_TOKEN);
+        marqetaService.getCardLimits(CARD_PRODUCT_TOKEN);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -470,7 +458,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         //when
-        marqetaRepository.getCardLimits(CARD_PRODUCT_TOKEN);
+        marqetaService.getCardLimits(CARD_PRODUCT_TOKEN);
     }
 
     @Test(expected = NotFoundException.class)
@@ -482,7 +470,7 @@ public class MarqetaRepositoryTest {
             .when(velocityControlsApi).putVelocitycontrolsToken(CARD_TOKEN, velocityControlUpdateRequest);
 
         // when
-        marqetaRepository.updateCardLimits(CARD_TOKEN, velocityControlUpdateRequest);
+        marqetaService.updateCardLimits(CARD_TOKEN, velocityControlUpdateRequest);
 
     }
 
@@ -495,7 +483,7 @@ public class MarqetaRepositoryTest {
             .when(velocityControlsApi).putVelocitycontrolsToken(CARD_TOKEN, velocityControlUpdateRequest);
 
         // when
-        marqetaRepository.updateCardLimits(CARD_TOKEN, velocityControlUpdateRequest);
+        marqetaService.updateCardLimits(CARD_TOKEN, velocityControlUpdateRequest);
 
     }
 
@@ -508,7 +496,7 @@ public class MarqetaRepositoryTest {
             .when(velocityControlsApi).putVelocitycontrolsToken(CARD_TOKEN, velocityControlUpdateRequest);
 
         // when
-        marqetaRepository.updateCardLimits(CARD_TOKEN, velocityControlUpdateRequest);
+        marqetaService.updateCardLimits(CARD_TOKEN, velocityControlUpdateRequest);
 
     }
 
@@ -520,7 +508,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.getCardLimitById(CARD_TOKEN);
+        marqetaService.getCardLimitById(CARD_TOKEN);
     }
 
     @Test(expected = BadRequestException.class)
@@ -531,7 +519,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.getCardLimitById(CARD_TOKEN);
+        marqetaService.getCardLimitById(CARD_TOKEN);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -542,7 +530,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.getCardLimitById(CARD_TOKEN);
+        marqetaService.getCardLimitById(CARD_TOKEN);
     }
 
     @Test(expected = NotFoundException.class)
@@ -553,7 +541,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 
         // when
-        marqetaRepository.getCardHolder(USER_TOKEN);
+        marqetaService.getCardHolder(USER_TOKEN);
 
     }
 
@@ -565,7 +553,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
         // when
-        marqetaRepository.getCardHolder(USER_TOKEN);
+        marqetaService.getCardHolder(USER_TOKEN);
 
     }
 
@@ -577,7 +565,7 @@ public class MarqetaRepositoryTest {
             .thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // when
-        marqetaRepository.getCardHolder(USER_TOKEN);
+        marqetaService.getCardHolder(USER_TOKEN);
 
     }
 
@@ -590,7 +578,7 @@ public class MarqetaRepositoryTest {
             .when(usersApi).putUsersToken(USER_TOKEN, userCardHolderUpdateModel);
 
         // when
-        marqetaRepository.updateCardHolder(USER_TOKEN, userCardHolderUpdateModel);
+        marqetaService.updateCardHolder(USER_TOKEN, userCardHolderUpdateModel);
 
     }
 
@@ -603,7 +591,7 @@ public class MarqetaRepositoryTest {
             .when(usersApi).putUsersToken(USER_TOKEN, userCardHolderUpdateModel);
 
         // when
-        marqetaRepository.updateCardHolder(USER_TOKEN, userCardHolderUpdateModel);
+        marqetaService.updateCardHolder(USER_TOKEN, userCardHolderUpdateModel);
 
     }
 
@@ -616,7 +604,7 @@ public class MarqetaRepositoryTest {
             .when(usersApi).putUsersToken(USER_TOKEN, userCardHolderUpdateModel);
 
         // when
-        marqetaRepository.updateCardHolder(USER_TOKEN, userCardHolderUpdateModel);
+        marqetaService.updateCardHolder(USER_TOKEN, userCardHolderUpdateModel);
 
     }
 

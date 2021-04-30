@@ -13,8 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
-import com.backbase.mambu.clients.api.DepositAccountsApi;
-import com.backbase.mambu.clients.model.Card;
 import com.backbase.marqeta.clients.api.CardTransitionsApi;
 import com.backbase.marqeta.clients.api.CardsApi;
 import com.backbase.marqeta.clients.api.PinsApi;
@@ -74,9 +72,6 @@ public class CardsIT {
             + "SJ9.O9TE28ygrHmDjItYK6wRis6wELD5Wtpi6ekeYfR1WqM";
 
     @MockBean
-    private DepositAccountsApi depositAccountsApi;
-
-    @MockBean
     private CardsApi cardsApi;
 
     @MockBean
@@ -109,9 +104,6 @@ public class CardsIT {
         when(userManagementApi.getUserById(Mockito.any(), Mockito.any()))
             .thenReturn(new com.backbase.dbs.user.manager.api.service.v2.model.GetUser()
                 .externalId("1be8bb0b-dcdd-4219-81ab-565621d3707c"));
-
-        when(depositAccountsApi.getAllCards(eq("091000021")))
-            .thenReturn(singletonList(new Card().referenceToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")));
 
         when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getCardResponse.json"),

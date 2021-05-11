@@ -405,27 +405,6 @@ public class CardsIT {
     }
 
     @Test
-    public void testResetPinWhenWrongCvv() throws Exception {
-
-        // Given
-        when(pinsApi.postPinsControltoken(Mockito.any()))
-            .thenReturn(new ControlTokenResponse().controlToken("test"));
-
-        Mockito.doNothing().when(pinsApi).putPins(Mockito.any());
-
-        // When
-        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/pin/reset",
-            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
-            .content(objectMapper
-                .writeValueAsString(new ResetPinPost().token("112").pin("7278")))
-            .contentType("application/json")
-            .header("Authorization", TEST_JWT)).andDo(print());
-
-        // Then
-        result.andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void testRequestPin() throws Exception {
 
         // When

@@ -59,27 +59,17 @@ public class CardsService {
     }
 
     public CardItem activateCard(String id, ActivatePost activatePost) {
-        validateCvv(id, activatePost.getToken());
         marqetaService.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.ACTIVE));
         return mapCardItem(marqetaService.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id)));
     }
 
     public CardItem resetPin(String id, ResetPinPost resetPinPost) {
-        validateCvv(id, resetPinPost.getToken());
         marqetaService.updatePin(getPin(id, resetPinPost));
         return getCard(id);
     }
 
     public CardItem requestPin(String id, RequestPinPost requestPin) {
-        validateCvv(id, requestPin.getToken());
         return getCard(id);
-    }
-
-    private void validateCvv(String cardToken, String cvv) {
-        if (!cvv.equals(marqetaService.getCardCvv(cardToken).getCvvNumber())) {
-            throw new BadRequestException()
-                .withErrors(Collections.singletonList(new Error().withMessage("cvv is incorrect")));
-        }
     }
 
     public CardItem requestReplacement(String id) {

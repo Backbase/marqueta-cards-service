@@ -96,8 +96,7 @@ public class CardsIT {
     public void setUp() throws IOException {
 
         when(cardsApi
-            .getCardsUserToken(Mockito.eq("1be8bb0b-dcdd-4219-81ab-565621d3707c"), eq(null), eq(null), eq(null),
-                eq(null)))
+            .getCardsUserToken("1be8bb0b-dcdd-4219-81ab-565621d3707c", null, null, null, null))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getUserTokenResponse.json"),
                 CardListResponse.class));
 

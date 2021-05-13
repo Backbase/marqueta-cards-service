@@ -4,12 +4,12 @@ name: Pull-Request-Check
 #   IMPORTANT TO KNOW
 #
 # - This workflow runs whenever new changes are pushed to an existing Pull Request
-# - Runs on 'master', 'develop', 'release/*' and 'hotfix/*' branches
+# - Runs on 'master', 'develop', 'release/*' and 'hotfix/*', 'bugfix/*' branches
 #
 
 on:
   pull_request:
-    branches: [ develop, master, release/*, hotfix/*]
+    branches: [ develop, master, release/*, hotfix/*, bugfix/*]
 jobs:
   compile:
     runs-on: ubuntu-latest

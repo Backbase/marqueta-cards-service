@@ -109,12 +109,6 @@ jobs:
               git push
           fi
 
-      # Delete support branch
-      - name: Delete ${{ github.event.pull_request.head.ref }}
-        run: |
-          git fetch
-          git push origin --delete ${{ github.event.pull_request.head.ref }}
-
       # Update master version
       - uses: actions/checkout@v2
         with:

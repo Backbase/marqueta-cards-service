@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         java: [ 11 ]
-    name: Build project with Java ${{ matrix.java }}
+    name: Make a release
     timeout-minutes: 30
     env:
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
@@ -36,7 +36,7 @@ jobs:
     # Set flow type
     steps:
       - id: flow-type
-        run: |
+        run:  |
           echo ::set-output name=release::${{ startsWith(github.event.pull_request.head.ref, 'release/') }}
           echo ::set-output name=hotfix::${{ startsWith(github.event.pull_request.head.ref, 'hotfix/') }}
       - uses: actions/checkout@v2
@@ -75,63 +75,14 @@ jobs:
           git config --global user.email "bot@backbase.com"
           git config --global user.name "Release BOT"
 
-
-      # Create a PR : target branch - develop
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v3
-        with:
-          branch: develop
-          base: ${{ github.event.pull_request.head.ref }}
-          title: ${{ steps.target.outputs.version }}
-          reviewers: ${{ github.event.issue.user.login }}
-          commit-message: Automated PR
-
-
-      # If it's a release(major & minor) reset incrementalVersion for next dev lifecycle - target branch - develop
-      # else if it's a hotfix merge bump the incremental version - target branch - develop
-      - uses: actions/checkout@v2
-        with:
-          ref: develop
-      - name: Update develop version
-        run: |
-          if ${{ steps.flow-type.outputs.release }} == 'true'
-          then
-            mvn build-helper:parse-version versions:set -DnewVersion=\${{ steps.target.outputs.major_minor }}.0-SNAPSHOT versions:commit
-              git add --all
-              git commit -m "update version"
-              git push
-          elif ${{ steps.flow-type.outputs.hotfix }} == 'true'
-          then
-            mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit
-              git add --all
-              git commit -m "update version"
-              git push
-          fi
-
       # Update master version
       - uses: actions/checkout@v2
         with:
           ref: master
       - name: Update master version
+        if: steps.flow-type.outputs.release == 'true'
         run: |
-          if ${{ steps.flow-type.outputs.release }} == 'true'
-          then
-            mvn build-helper:parse-version versions:set -DnewVersion=\${{ steps.target.outputs.version }} versions:commit
-              git add --all
-              git commit --allow-empty -m "update version"
-              git push
-          fi
-
-      # Tag master
-      # Todo: extract product version from project and use it for tagging - eg 2021.01-0.3.1
-      - uses: actions/checkout@v2
-        with:
-          ref: master
-      - name: Add tag
-        run: |
-          git tag -a ${RELEASE_VERSION_PREFIX}-${{ steps.target.outputs.version }} -m "Release ${RELEASE_VERSION_PREFIX}-${{ steps.target.outputs.version }}"
-          git push origin ${RELEASE_VERSION_PREFIX}-${{ steps.target.outputs.version }}
+          mvn build-helper:parse-version versions:set -DnewVersion=\${{ steps.target.outputs.version }} versions:commit
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -146,5 +97,50 @@ jobs:
           echo "::set-output name=username::AWS"
           echo "::set-output name=password::`aws ecr get-login-password --region ${{ secrets.DEVOPS_CICD_AWS_REGION }}`"
 
+      # Only for release. For hotfix it's done in hotfix-version-update workflow
       - name: Build docker image
+        if: steps.flow-type.outputs.release == 'true'
         run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+
+      - name: Push updated version to origin/master
+        if: steps.flow-type.outputs.release == 'true'
+        run: |
+          git add --all
+          git commit --allow-empty -m "update version - release"
+          git push
+
+      # Tag master
+      # Todo: extract product version from project and use it for tagging - eg 2021.01-0.3.1
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Add tag
+        run: |
+          git tag -a ${RELEASE_VERSION_PREFIX}-${{ steps.target.outputs.version }} -m "Release ${RELEASE_VERSION_PREFIX}-${{ steps.target.outputs.version }}"
+          git push origin ${RELEASE_VERSION_PREFIX}-${{ steps.target.outputs.version }}
+
+      # If it's a release(major & minor) reset incrementalVersion for next dev lifecycle - target branch - develop
+      # else if it's a hotfix merge bump the incremental version - target branch - develop
+      - uses: actions/checkout@v2
+        with:
+          ref: develop
+      - name: Update develop version
+        run: |
+          if ${{ steps.flow-type.outputs.release }} == 'true'
+          then
+            mvn build-helper:parse-version versions:set -DnewVersion=\${{ steps.target.outputs.major_minor }}.0-SNAPSHOT versions:commit
+            git add --all
+            git commit -m "update version - next development version"
+            git push
+          elif ${{ steps.flow-type.outputs.hotfix }} == 'true'
+          then
+            mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit
+            git add --all
+            git commit -m "update version - next development version"
+            git push
+          fi
+
+      - name: Delete ${{ github.event.pull_request.head.ref }} branch
+        run: |
+          git fetch
+          git push origin --delete ${{ github.event.pull_request.head.ref }}

@@ -21,6 +21,7 @@ jobs:
     name: Initiates release or hotfix process from issues
     timeout-minutes: 30
     env:
+      DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BB_USERNAME: ${{ secrets.BB_USERNAME }}
       BB_PASSWORD: ${{ secrets.BB_PASSWORD }}
@@ -34,10 +35,12 @@ jobs:
           echo ::set-output name=release_minor::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:minor') }}
           echo ::set-output name=release_major::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:major') }}
           echo ::set-output name=hotfix::${{ contains(join(github.event.issue.labels.*.name, ' '), 'bug:hotfix') }}
+
       - uses: actions/checkout@v2
         if: steps.flow-type.outputs.release == 'true'
         with:
           ref: develop
+
       - uses: actions/checkout@v2
         if: steps.flow-type.outputs.hotfix == 'true'
         with:
@@ -62,10 +65,12 @@ jobs:
           repositories: '[{ "id": "Backbase Repository", "url": "https://repo.backbase.com/repo" }, { "id": "github", "url": "https://maven.pkg.github.com/${GITHUB_REPOSITORY_OWNER}/mambu-clients" }]'
           plugin_repositories: '[{ "id": "Backbase Repository", "url": "https://repo.backbase.com/repo" }]'
           servers: '[{ "id": "Backbase Repository", "username": "${BB_USERNAME}", "password": "${BB_PASSWORD}" }, { "id": "github", "username": "${BB_GITHUB_PACKAGES_USER}", "password": "${BB_GITHUB_PACKAGES_PAT}" }]'
+
       - name: Set git username and email
         run: |
           git config --global user.email "bot@backbase.com"
           git config --global user.name "Release BOT"
+
       # Bump the version using semantic versioning
       # Release: major | minor | patch
       # Hotfix: patch
@@ -83,19 +88,55 @@ jobs:
           then
             MAJOR=`expr $MAJOR + 1`
             NEW_VERSION=$MAJOR.$MINOR
+          elif ${{ steps.flow-type.outputs.hotfix }} == 'true'
+          then
+            INCREMENTAL=`expr $INCREMENTAL + 1`
+            NEW_VERSION=$MAJOR.$MINOR.$INCREMENTAL
           fi
           echo ::set-output name=version::`echo $NEW_VERSION`
 
-      - name: Start new release
+      - name: Start new Release
+        if: steps.flow-type.outputs.release == 'true'
         run: |
-          if ${{ steps.flow-type.outputs.release }} == 'true'
-          then
-            mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.version }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-release
-          fi
+          mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.version }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-release
 
       - name: Start new Hotfix
+        if: steps.flow-type.outputs.hotfix == 'true'
         run: |
-          if ${{ steps.flow-type.outputs.hotfix }} == 'true'
-          then
-            mvn -B gitflow:hotfix-start -DpushRemote=true -DhotfixName=${{ github.event.inputs.hotfixName }}
-          fi
+          mvn -B gitflow:hotfix-start -DpushRemote=true -DhotfixName=${{ github.event.inputs.hotfixName }} -DhotfixVersion=${{ steps.target.outputs.version }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEVOPS_CICD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEVOPS_CICD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.DEVOPS_CICD_AWS_REGION }}
+
+      - name: Get AWS ECR credentials
+        id: ecr-credentials
+        run: |
+          echo "::set-output name=username::AWS"
+          echo "::set-output name=password::`aws ecr get-login-password --region ${{ secrets.DEVOPS_CICD_AWS_REGION }}`"
+
+      - name: Build docker image
+        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+
+      - name: Create Pull Request - release
+        id: cpr-release
+        if: steps.flow-type.outputs.release == 'true'
+        uses: thomaseizinger/create-pull-request@master
+        with:
+          head: 'release/${{ steps.target.outputs.version }}'
+          base: master
+          title: "Next release: ${{ steps.target.outputs.version }}"
+          body: "Closes #${{ github.event.issue.number }}"
+
+      - name: Create Pull Request - hotfix
+        id: cpr-hotfix
+        if: steps.flow-type.outputs.hotfix == 'true'
+        uses: thomaseizinger/create-pull-request@master
+        with:
+          head: 'hotfix/${{ steps.target.outputs.version }}'
+          base: master
+          title: "Hotfix: ${{ steps.target.outputs.version }}"
+          body: "Closes #${{ github.event.issue.number }}"

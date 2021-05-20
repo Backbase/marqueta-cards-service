@@ -56,11 +56,6 @@ jobs:
       - name: Baseline project version
         run: |
           mvn build-helper:parse-version versions:set -DnewVersion=0.0.1 versions:commit
-           git config --global user.email "bot@backbase.com"
-           git config --global user.name "Github Actions BOT"
-           git add --all
-           git commit --allow-empty -m "Baseline Version"
-           git push
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -77,3 +72,9 @@ jobs:
 
       - name: Build docker image
         run: mvn clean package -Pdocker-image,no-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+
+      - name: Push updated version to origin/master
+        run: |
+          git add --all
+          git commit --allow-empty -m "update version - release"
+          git push

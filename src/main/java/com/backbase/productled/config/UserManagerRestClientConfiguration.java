@@ -35,7 +35,7 @@ public class UserManagerRestClientConfiguration {
 
     @Bean("userManagerApiClient")
     public ApiClient apiClient() {
-        ApiClient apiClient = new ApiClient(restTemplate);
+        var apiClient = new ApiClient(restTemplate);
         apiClient.setBasePath(getBasePath());
         apiClient.addDefaultHeader(INTERCEPTORS_ENABLED_HEADER, Boolean.TRUE.toString());
         return apiClient;

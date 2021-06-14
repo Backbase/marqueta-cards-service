@@ -96,8 +96,7 @@ public class CardsIT {
     public void setUp() throws IOException {
 
         when(cardsApi
-            .getCardsUserToken(Mockito.eq("1be8bb0b-dcdd-4219-81ab-565621d3707c"), eq(null), eq(null), eq(null),
-                eq(null)))
+            .getCardsUserToken("1be8bb0b-dcdd-4219-81ab-565621d3707c", null, null, null, null))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getUserTokenResponse.json"),
                 CardListResponse.class));
 
@@ -402,27 +401,6 @@ public class CardsIT {
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")))
             .andExpect(jsonPath("$.limits[0].id", is("d5f5e333-9463-4050-b554-9d0d1119d64e")))
             .andExpect(jsonPath("$.limits[0].amount", is(5000)));
-    }
-
-    @Test
-    public void testResetPinWhenWrongCvv() throws Exception {
-
-        // Given
-        when(pinsApi.postPinsControltoken(Mockito.any()))
-            .thenReturn(new ControlTokenResponse().controlToken("test"));
-
-        Mockito.doNothing().when(pinsApi).putPins(Mockito.any());
-
-        // When
-        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/pin/reset",
-            "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
-            .content(objectMapper
-                .writeValueAsString(new ResetPinPost().token("112").pin("7278")))
-            .contentType("application/json")
-            .header("Authorization", TEST_JWT)).andDo(print());
-
-        // Then
-        result.andExpect(status().isBadRequest());
     }
 
     @Test

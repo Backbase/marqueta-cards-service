@@ -2,22 +2,16 @@ package com.backbase.productled.service;
 
 import static java.util.Objects.requireNonNull;
 
-import com.backbase.buildingblocks.presentation.errors.BadRequestException;
-import com.backbase.buildingblocks.presentation.errors.Error;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
 import com.backbase.marqeta.clients.model.PinRequest;
-import com.backbase.marqeta.clients.model.VelocityControlResponse;
-import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
-import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.mapper.CardsMappers;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -58,28 +52,18 @@ public class CardsService {
         return getCard(id);
     }
 
-    public CardItem activateCard(String id, ActivatePost activatePost) {
-        validateCvv(id, activatePost.getToken());
+    public CardItem activateCard(String id) {
         marqetaService.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.ACTIVE));
         return mapCardItem(marqetaService.updateCard(id, cardMapper.mapUpdateCardRequestForActivation(id)));
     }
 
     public CardItem resetPin(String id, ResetPinPost resetPinPost) {
-        validateCvv(id, resetPinPost.getToken());
         marqetaService.updatePin(getPin(id, resetPinPost));
         return getCard(id);
     }
 
-    public CardItem requestPin(String id, RequestPinPost requestPin) {
-        validateCvv(id, requestPin.getToken());
+    public CardItem requestPin(String id) {
         return getCard(id);
-    }
-
-    private void validateCvv(String cardToken, String cvv) {
-        if (!cvv.equals(marqetaService.getCardCvv(cardToken).getCvvNumber())) {
-            throw new BadRequestException()
-                .withErrors(Collections.singletonList(new Error().withMessage("cvv is incorrect")));
-        }
     }
 
     public CardItem requestReplacement(String id) {
@@ -92,7 +76,7 @@ public class CardsService {
 
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {
         changeLimitsPostItem.forEach(item -> {
-            VelocityControlResponse velocityControlResponse = marqetaService.getCardLimitById(item.getId());
+            var velocityControlResponse = marqetaService.getCardLimitById(item.getId());
             marqetaService.updateCardLimits(item.getId(),
                 cardMapper.mapVelocityControlUpdateRequest(velocityControlResponse, item.getAmount()));
         });

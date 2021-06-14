@@ -49,7 +49,7 @@ public class MarqetaRestClientConfiguration {
     @Bean
     @Qualifier("marqetaApiClient")
     public ApiClient marqetaApiClient() {
-        ApiClient apiClient = new ApiClient();
+        var apiClient = new ApiClient();
         apiClient.setUsername(username);
         apiClient.setPassword(password);
         apiClient.setBasePath(baseUrl);

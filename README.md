@@ -98,11 +98,12 @@ Configuration properties used by Stream to interact with Backbase services (DBS,
 Not applicable for 'cards-presentation-service'
 ---
 ## Customisation in project
+CVV validation is not done as part this project due to testing complexity but can be added using marqeta getCvv api if required.
 ### Configuration changes
 If project adopts Marqeta, only Marqeta configuration properties has to be changed.
 
 ### Component changes
-If project adopts different vendor than Marqeta, all services from `com.backbase.productled.service` package have to be replaced.
+If project adopts a different vendor than Marqeta, all services from `com.backbase.productled.service` package have to be replaced.
 
 ---
 ## Getting Started

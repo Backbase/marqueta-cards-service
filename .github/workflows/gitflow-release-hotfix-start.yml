@@ -105,6 +105,37 @@ jobs:
         run: |
           mvn -B gitflow:hotfix-start -DpushRemote=true -DhotfixName=${{ github.event.inputs.hotfixName }} -DhotfixVersion=${{ steps.target.outputs.version }}
 
+      ##
+      #
+      # KEEP CHANGELOG
+      #
+      # These steps update the log file with the list provided in the
+      # issue.
+      #
+      - name: Write to CHANGELOG.md
+        env:
+          delimiter: /## \[Unreleased\]/
+          file: CHANGELOG.md
+        run: |
+          HEAD=`sed '${{ env.delimiter }}q' ${{ env.file }}`
+          CONTENT=`sed -n '${{ env.delimiter }},${${{ env.delimiter }}!p;}' ${{ env.file }}`
+          echo -e """$HEAD\n\n${{ github.event.issue.body }}\n$CONTENT""" > ${{ env.file }}
+      - name: Update CHANGELOG.md
+        uses: thomaseizinger/keep-a-changelog-new-release@1.2.1
+        with:
+          version: ${{ steps.target.outputs.version }}
+
+      - name: Commit changelog
+        id: make-commit
+        run: |
+          git add .
+          git commit --message "Prepare release ${{ steps.target.outputs.version }}"
+      # Push changelog updates
+      - name: Push new branch
+        run: |
+          git fetch
+          git push origin release/${{ steps.target.outputs.version }}
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

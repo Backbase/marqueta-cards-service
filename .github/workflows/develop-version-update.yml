@@ -47,7 +47,7 @@ jobs:
 
       - name: Bump patch snapshot version
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-snapshot versions:commit
+          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

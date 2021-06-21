@@ -98,7 +98,7 @@ jobs:
           echo "::set-output name=password::`aws ecr get-login-password --region ${{ secrets.DEVOPS_CICD_AWS_REGION }}`"
 
       # Only for release. For hotfix it's done in hotfix-version-update workflow
-      - name: Build docker image
+      - name: Build docker image - release
         if: steps.flow-type.outputs.release == 'true'
         run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
 
@@ -106,7 +106,7 @@ jobs:
         if: steps.flow-type.outputs.release == 'true'
         run: |
           git add --all
-          git commit --allow-empty -m "update version - release"
+          git commit --allow-empty -m "Update version - release"
           git push
 
       # Tag master
@@ -129,16 +129,21 @@ jobs:
           if ${{ steps.flow-type.outputs.release }} == 'true'
           then
             mvn build-helper:parse-version versions:set -DnewVersion=\${{ steps.target.outputs.major_minor }}.0-SNAPSHOT versions:commit
-            git add --all
-            git commit -m "update version - next development version"
-            git push
           elif ${{ steps.flow-type.outputs.hotfix }} == 'true'
           then
             mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit
-            git add --all
-            git commit -m "update version - next development version"
-            git push
           fi
+
+      - name: Build docker image - new develop version
+        if: steps.flow-type.outputs.release == 'true'
+        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+
+      - name: Push updated version to origin/develop
+        if: steps.flow-type.outputs.release == 'true'
+        run: |
+          git add --all
+          git commit --allow-empty -m "Update version - develop"
+          git push
 
       - name: Delete ${{ github.event.pull_request.head.ref }} branch
         run: |

@@ -2,7 +2,7 @@
 name: Minor Release
 about: Release a new version of the app
 title: Release version X.Y.Z
-labels: release
+labels: release:minor
 assignees: ''
 
 ---

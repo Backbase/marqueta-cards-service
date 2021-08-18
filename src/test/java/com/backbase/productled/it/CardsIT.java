@@ -4,6 +4,7 @@ package com.backbase.productled.it;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -100,7 +101,7 @@ public class CardsIT {
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getUserTokenResponse.json"),
                 CardListResponse.class));
 
-        when(userManagementApi.getUserById(Mockito.any(), Mockito.any()))
+        when(userManagementApi.getUserById(any(), any()))
             .thenReturn(new com.backbase.dbs.user.manager.api.service.v2.model.GetUser()
                 .externalId("1be8bb0b-dcdd-4219-81ab-565621d3707c"));
 
@@ -112,12 +113,15 @@ public class CardsIT {
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/showCvv.json"),
                 CardResponse.class));
 
-        when(cardTransitionsApi.postCardtransitions(Mockito.any())).thenReturn(new CardTransitionResponse());
+        when(cardTransitionsApi.postCardtransitions(any())).thenReturn(new CardTransitionResponse());
 
         when(velocityControlsApi
-            .getVelocitycontrols("b1e4b06c-06f2-49c8-9c28-016ace3154ad", null, null, null, null, null))
+            .getVelocitycontrols(any(), any(), any(), any(), any(), any()))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getVelocityResponse.json"),
                 com.backbase.marqeta.clients.model.VelocityControlListResponse.class));
+
+
+
 
     }
 
@@ -177,6 +181,14 @@ public class CardsIT {
             .param("status", "Active1")
             .header("Authorization", TEST_JWT)).andDo(print())
             .andExpect(status().isOk());
+
+        // When and Then
+        mvc.perform(get("/client-api/v2/cards")
+            .header("Authorization", TEST_JWT)).andDo(print())
+            .andExpect(jsonPath("$.*", hasSize(2)))
+            .andExpect(jsonPath("$.[0].id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
+            .andExpect(jsonPath("$.[1].id", is("53972158-9830-4817-a2c8-0bea42348bcf")));
+
 
     }
 
@@ -283,7 +295,7 @@ public class CardsIT {
     public void testRequestReplacement() throws Exception {
 
         // Given
-        when(cardsApi.postCards(Mockito.eq(false), Mockito.eq(false), Mockito.any()))
+        when(cardsApi.postCards(Mockito.eq(false), Mockito.eq(false), any()))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/postCardResponse.json"),
                 CardResponse.class));
 
@@ -313,7 +325,7 @@ public class CardsIT {
     public void testActivation() throws Exception {
 
         // Given
-        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), Mockito.any(CardUpdateRequest.class)))
+        when(cardsApi.putCardsToken(eq("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5"), any(CardUpdateRequest.class)))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/cardUnlockedResponse.json"),
                 CardResponse.class));
 
@@ -342,7 +354,7 @@ public class CardsIT {
     public void testChangeLimits() throws Exception {
 
         // Given
-        when(velocityControlsApi.putVelocitycontrolsToken(eq("acdca953-f539-412f-9c03-e49f3c7f7b5e"), Mockito.any()))
+        when(velocityControlsApi.putVelocitycontrolsToken(eq("acdca953-f539-412f-9c03-e49f3c7f7b5e"), any()))
             .thenReturn(new VelocityControlResponse());
 
         // When
@@ -374,10 +386,10 @@ public class CardsIT {
     public void testResetPin() throws Exception {
 
         // Given
-        when(pinsApi.postPinsControltoken(Mockito.any()))
+        when(pinsApi.postPinsControltoken(any()))
             .thenReturn(new ControlTokenResponse().controlToken("test"));
 
-        Mockito.doNothing().when(pinsApi).putPins(Mockito.any());
+        Mockito.doNothing().when(pinsApi).putPins(any());
 
         // When
         ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/pin/reset",

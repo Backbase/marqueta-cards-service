@@ -65,6 +65,37 @@
         "subType": "ATM",
         "type": "Debit"
       }
+    },
+    {
+      "created_time": "2021-01-13T15:35:17Z",
+      "last_modified_time": "2021-01-19T13:59:10Z",
+      "token": "53972158-9830-4817-a2c8-0bea42348bcf",
+      "user_token": "1be8bb0b-dcdd-4219-81ab-565621d3707c",
+      "card_product_token": "c61dcbf8-766c-47e6-921f-f64a550873e4",
+      "last_four": "1918",
+      "pan": "111111______1918",
+      "expiration": "0125",
+      "expiration_time": "2025-01-31T23:59:59Z",
+      "barcode": "22909247603751233363",
+      "pin_is_set": false,
+      "state": "TERMINATED",
+      "state_reason": "Terminated card",
+      "fulfillment_status": "DIGITALLY_PRESENTED",
+      "instrument_type": "VIRTUAL_PAN",
+      "expedite": false,
+      "metadata": {
+        "atmMaxAmount": "10000",
+        "atmMinAmount": "0",
+        "brand": "mastercard",
+        "cardHolderName": "Paolo",
+        "currency": "USD",
+        "lockStatus": "UNLOCKED",
+        "onlineMaxAmount": "10000",
+        "onlineMinAmount": "0",
+        "replacementStatus": "NotUnderReplacement",
+        "subType": "ATM",
+        "type": "Debit"
+      }
     }
   ]
 }

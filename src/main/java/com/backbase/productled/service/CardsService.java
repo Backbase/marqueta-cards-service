@@ -12,7 +12,9 @@ import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.mapper.CardsMappers;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -31,10 +33,15 @@ public class CardsService {
     private final CardsMappers cardMapper;
 
     public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
-        return requireNonNull(marqetaService.getUserCards(
-            userService.getMarqetaUserToken())
-            .getData()).stream()
-            .filter(cardResponse -> !TERMINATED.equals(cardResponse.getState().toString()))
+        List<CardResponse> allCards = requireNonNull(marqetaService.getUserCards(
+                userService.getMarqetaUserToken())
+            .getData());
+
+        List<CardResponse> filteredCards = getNonTerminatedCards(allCards);
+        Optional<CardResponse> recentlyTerminatedCard = getRecentlyTerminatedCard(allCards);
+        recentlyTerminatedCard.ifPresent(filteredCards::add);
+
+        return filteredCards.stream()
             .map(getCardResponseCardItemFunction())
             .filter(cardItem -> (ids == null || ids.contains(cardItem.getId())))
             .filter(cardItem -> (status == null || status.contains(cardItem.getStatus())))
@@ -98,6 +105,18 @@ public class CardsService {
             .controlToken(
                 marqetaService.getPinControlToken(new ControlTokenRequest().cardToken(id)).getControlToken())
             .pin(resetPinPost.getPin());
+    }
+
+    private Optional<CardResponse> getRecentlyTerminatedCard(List<CardResponse> allCards) {
+        return allCards.stream()
+            .filter(cardResponse -> TERMINATED.equals(cardResponse.getState().toString()))
+            .max(Comparator.comparing(CardResponse::getLastModifiedTime));
+    }
+
+    private List<CardResponse> getNonTerminatedCards(List<CardResponse> allCards) {
+        return allCards.stream()
+            .filter(cardResponse -> !TERMINATED.equals(cardResponse.getState().toString()))
+            .collect(Collectors.toList());
     }
 
 }

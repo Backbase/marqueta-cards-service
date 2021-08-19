@@ -14,6 +14,7 @@ final class MapperConstants {
     static final String PROCESSED = "Processed";
     static final String IN_TRANSIT = "In Transit";
     static final String DELIVERED = "Delivered";
+    static final String CANCELLED = "Cancelled";
 
     private MapperConstants() {
     }

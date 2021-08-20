@@ -309,15 +309,15 @@ public class CardsIT {
 
         // Then
         result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is("31b29920-540e-4d52-8f0a-c3aada72399b")))
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
             .andExpect(jsonPath("$.type", is("Debit")))
             .andExpect(jsonPath("$.subType", is("ATM")))
-            .andExpect(jsonPath("$.status", is("Inactive")))
+            .andExpect(jsonPath("$.status", is("Active")))
             .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
-            .andExpect(jsonPath("$.expiryDate.year", is("2025")))
-            .andExpect(jsonPath("$.expiryDate.month", is("01")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
+            .andExpect(jsonPath("$.expiryDate.month", is("12")))
             .andExpect(jsonPath("$.currency", is("USD")))
-            .andExpect(jsonPath("$.maskedNumber", is("8119")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 

@@ -147,8 +147,10 @@ public interface CardsMappers {
                         .stepDateTime(OffsetDateTime.now().minusMinutes(30)),
                     new DeliveryTransitStep().name(PROCESSED).status(StatusEnum.SUCCESS)
                         .stepDateTime(OffsetDateTime.now().minusMinutes(25)),
-                    new DeliveryTransitStep().name(IN_TRANSIT).status(StatusEnum.PENDING),
-                    new DeliveryTransitStep().name(DELIVERED).status(StatusEnum.PENDING)));
+                    new DeliveryTransitStep().name(IN_TRANSIT).status(StatusEnum.SUCCESS)
+                        .stepDateTime(OffsetDateTime.now().minusMinutes(15)),
+                    new DeliveryTransitStep().name(DELIVERED).status(StatusEnum.SUCCESS)
+                        .stepDateTime(OffsetDateTime.now().minusMinutes(5))));
         }
         return null;
     }

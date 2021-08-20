@@ -20,6 +20,7 @@ import com.backbase.marqeta.clients.api.PinsApi;
 import com.backbase.marqeta.clients.api.VelocityControlsApi;
 import com.backbase.marqeta.clients.model.CardListResponse;
 import com.backbase.marqeta.clients.model.CardResponse;
+import com.backbase.marqeta.clients.model.CardResponse.StateEnum;
 import com.backbase.marqeta.clients.model.CardTransitionResponse;
 import com.backbase.marqeta.clients.model.CardUpdateRequest;
 import com.backbase.marqeta.clients.model.ControlTokenResponse;
@@ -298,6 +299,9 @@ public class CardsIT {
         when(cardsApi.postCards(Mockito.eq(false), Mockito.eq(false), any()))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/postCardResponse.json"),
                 CardResponse.class));
+        when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
+            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getCardResponse.json"),
+                CardResponse.class).state(StateEnum.TERMINATED));
 
         // When
         ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/replacement",
@@ -309,15 +313,15 @@ public class CardsIT {
 
         // Then
         result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is("31b29920-540e-4d52-8f0a-c3aada72399b")))
+            .andExpect(jsonPath("$.id", is("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")))
             .andExpect(jsonPath("$.type", is("Debit")))
             .andExpect(jsonPath("$.subType", is("ATM")))
-            .andExpect(jsonPath("$.status", is("Inactive")))
+            .andExpect(jsonPath("$.status", is("Cancelled")))
             .andExpect(jsonPath("$.lockStatus", is("UNLOCKED")))
-            .andExpect(jsonPath("$.expiryDate.year", is("2025")))
-            .andExpect(jsonPath("$.expiryDate.month", is("01")))
+            .andExpect(jsonPath("$.expiryDate.year", is("2024")))
+            .andExpect(jsonPath("$.expiryDate.month", is("12")))
             .andExpect(jsonPath("$.currency", is("USD")))
-            .andExpect(jsonPath("$.maskedNumber", is("8119")))
+            .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
     }
 

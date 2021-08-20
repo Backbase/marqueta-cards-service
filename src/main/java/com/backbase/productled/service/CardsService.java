@@ -77,8 +77,8 @@ public class CardsService {
         // change state of old card from Active to Terminated
         marqetaService.postCardTransitions(cardMapper.mapCardTransitionRequest(id, StateEnum.TERMINATED));
         // create new Card
-        return mapCardItem(
-            marqetaService.createCard(cardMapper.mapCreateCardRequest(marqetaService.getCardDetails(id))));
+        marqetaService.createCard(cardMapper.mapCreateCardRequest(marqetaService.getCardDetails(id)));
+        return getCard(id);
     }
 
     public CardItem changeLimits(String id, List<ChangeLimitsPostItem> changeLimitsPostItem) {

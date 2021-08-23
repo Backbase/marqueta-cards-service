@@ -2,6 +2,7 @@ package com.backbase.productled.mapper;
 
 import static com.backbase.productled.mapper.MapperConstants.ACTIVE;
 import static com.backbase.productled.mapper.MapperConstants.ATM;
+import static com.backbase.productled.mapper.MapperConstants.CANCELLED;
 import static com.backbase.productled.mapper.MapperConstants.CARD_HOLDER_NAME;
 import static com.backbase.productled.mapper.MapperConstants.DELIVERED;
 import static com.backbase.productled.mapper.MapperConstants.INACTIVE;
@@ -102,8 +103,10 @@ public interface CardsMappers {
     default String getStatus(CardResponse cardResponse) {
         if (Arrays.asList(StateEnum.ACTIVE, StateEnum.SUSPENDED).contains(cardResponse.getState())) {
             return ACTIVE;
+        } else if(StateEnum.UNACTIVATED == cardResponse.getState()) {
+            return INACTIVE;
         }
-        return INACTIVE;
+        return CANCELLED;
     }
 
     @Named("getLockStatus")
@@ -144,8 +147,10 @@ public interface CardsMappers {
                         .stepDateTime(OffsetDateTime.now().minusMinutes(30)),
                     new DeliveryTransitStep().name(PROCESSED).status(StatusEnum.SUCCESS)
                         .stepDateTime(OffsetDateTime.now().minusMinutes(25)),
-                    new DeliveryTransitStep().name(IN_TRANSIT).status(StatusEnum.PENDING),
-                    new DeliveryTransitStep().name(DELIVERED).status(StatusEnum.PENDING)));
+                    new DeliveryTransitStep().name(IN_TRANSIT).status(StatusEnum.SUCCESS)
+                        .stepDateTime(OffsetDateTime.now().minusMinutes(15)),
+                    new DeliveryTransitStep().name(DELIVERED).status(StatusEnum.SUCCESS)
+                        .stepDateTime(OffsetDateTime.now().minusMinutes(5))));
         }
         return null;
     }

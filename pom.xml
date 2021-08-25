@@ -9,7 +9,7 @@
         can declare it as a dependency instead, see pom-as-dependency.xml -->
     <parent>
         <groupId>com.backbase.buildingblocks</groupId>
-        <version>12.0.0</version>
+        <version>13.1.0</version>
         <artifactId>service-sdk-starter-core</artifactId>
         <relativePath/>
     </parent>
@@ -22,22 +22,22 @@
 
     <properties>
         <java.version>11</java.version>
+        <!-- Docker configuration -->
         <docker.repo.url>${DEVOPS_CICD_ECR_BASE_URL}</docker.repo.url>
         <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
         <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
+
+        <!-- Dependencies properties -->
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <lombok.version>1.18.18</lombok.version>
         <jsr305.version>3.0.2</jsr305.version>
         <springfox-core.version>3.0.0</springfox-core.version>
-        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
-        <swagger-annotations.version>1.6.2</swagger-annotations.version>
         <open-api-specs-dir>${project.build.directory}/yaml</open-api-specs-dir>
-        <user-manager.version>2.0.98</user-manager.version>
-        <card-manager.version>2.17</card-manager.version>
+        <backbase-bom.version>2021.07</backbase-bom.version>
 
         <!-- Plugin version -->
-        <boat-maven-plugin.version>0.14.0</boat-maven-plugin.version>
+        <boat-maven-plugin.version>0.14.8</boat-maven-plugin.version>
+        <gitflow-maven-plugin.version>1.15.1</gitflow-maven-plugin.version>
 
         <!-- Sonar -->
         <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>
@@ -45,6 +45,19 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <SIG_SECRET_KEY>JWTSecretKeyDontUseInProduction!</SIG_SECRET_KEY>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.backbase</groupId>
+                <artifactId>backbase-bom</artifactId>
+                <version>${backbase-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -67,7 +80,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -76,7 +88,6 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>${swagger-annotations.version}</version>
         </dependency>
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
@@ -85,7 +96,6 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>${jackson-databind-nullable.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -104,6 +114,11 @@
         <dependency>
             <groupId>com.backbase.buildingblocks</groupId>
             <artifactId>service-sdk-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -166,7 +181,6 @@
                                 <artifactItem>
                                     <groupId>com.backbase.dbs.cards</groupId>
                                     <artifactId>card-manager</artifactId>
-                                    <version>${card-manager.version}</version>
                                     <classifier>api</classifier>
                                     <type>zip</type>
                                     <outputDirectory>${open-api-specs-dir}</outputDirectory>
@@ -187,7 +201,6 @@
                                 <artifactItem>
                                     <groupId>com.backbase.dbs.user</groupId>
                                     <artifactId>user-manager</artifactId>
-                                    <version>${user-manager.version}</version>
                                     <classifier>api</classifier>
                                     <type>zip</type>
                                     <outputDirectory>${open-api-specs-dir}</outputDirectory>
@@ -271,7 +284,7 @@
             <plugin>
                 <groupId>com.amashchenko.maven.plugin</groupId>
                 <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.15.1</version>
+                <version>${gitflow-maven-plugin.version}</version>
                 <configuration>
                     <installProject>false</installProject>
                     <verbose>false</verbose>

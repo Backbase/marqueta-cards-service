@@ -6,6 +6,9 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Import;
 
+/**
+ * Initializer class for Cards Spring Boot Application
+ */
 @SpringBootApplication
 @EnableDiscoveryClient
 @Import(value = {com.backbase.buildingblocks.communication.http.HttpCommunicationConfiguration.class})

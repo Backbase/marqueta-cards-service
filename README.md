@@ -6,47 +6,40 @@
 - 'cards-presentation-service' has been generated using `core-service-archetype` - [Community guide](https://community.backbase.com/documentation/ServiceSDK/latest/create_a_core_service)
 - This service implements logic for the UI components (Widget/Journey) to view and manage bank customer cards. Service integrates with [Marqeta](https://www.marqeta.com) card issuer.
 - The service is implementation of `card-manager-client-api` - https://repo.backbase.com/specs/card-manager/
-- Refer to [workflow guide](https://github.com/baas-devops-reference/docs/tree/master/backend) for Backend CI Workflow documentation
+- Refer to [workflow guide](../../../docs/tree/master/backend) for Backend CI Workflow documentation
 
 ---
 ## Repository Description
 ### Project Structure
-Explanation of the project structrue:
+The project structure for each custom integration service follows the pattern as described below :
+
 ```
-|- .github --> All GitHub Actions files
-  |- ISSUE_TEMPLATE --> Templates for 'major','minor','patch' releases
-  |- workflows --> GitHub Actions workflows for CI
-|- src --> Source and Unit Test files
-  |- main
-    |- java/com/backbase/productled
-      |- config
-        |- MarqetaRestClientConfiguration.java --> Initializes and injects Marqeta beans using configuration properties
-        |- UserManagerRestClientConfiguration.java --> Initializes and injects user-manager client
-      |- controller
-        |- CardsApiController.java --> Controller class to receive HTTP requests for card management services
-        |- TravelNoticesApiController.java --> Controller class to receive HTTP requests for managing travel notices
-      |- mapper
-        |- CardsMappers.java --> Maps models between Marqeta <-> DBS
-        |- MapperConstants.java --> Constants used by CardsMappers
-      |- service
-        |- CardsService.java - Service interacts with MarqetaService providing neccesary validations
-        |- MarqetaService.java - Service executes Marquetas client methods and handles errors
-        |- TravelNoticeService.java - Service handles logic related with Travel Notices and interacts with MarquetaService
-        |- UserService.java - Service fetches user details using user-manager-api
-      |- utils
-        |- FrequencyEnum.java - Enum providing mapping of frequency values between DBS and Marqueta 
-      |- Application.java - Initializer class for Cards Spring Boot Application
-  |- test
-    |- java/com/backbase/productled
-      |- it
-        |- CardsIT.java
-        |- TravelNoticeIT.java
-      |- service
-        |- MarqetaServiceTest.java
-        |- ApplicationTest.java
-|- pom.xml
-|- .gitignore
+.
+├── .github                       # All GitHub Actions files
+│   ├── ISSUE_TEMPLATE            # Templates for 'major','minor','patch' releases
+│   └── workflows                 # GitHub Actions workflows for CI
+├── src                           # Source and Unit Test files
+    ├── main                      # Application container projects
+    │   ├── java/com/backbase/productled
+    │   │   ├── api               # Controller classes
+    │   │   │   └── ...
+    │   │   ├── config            # Configuration classes
+    │   │   │   └── ...
+    │   │   ├── mapper            # Model classes
+    │   │   │   └── ...
+    │   │   └── service           # Service classes
+    │   │       └── ...
+    │   └── resources             # All resource files except core classes
+    │       └── ...
+    └── test                      # JUnit test file
+        └── ...
 ```
+
+To view individual classes for this repository, select relevant branch from the GitHub UI and then press ‘.'
+This will open the GitHub Web Editor.Alternatively, you can also access the Web Editor by changing .com to .dev in the URL.
+
+Expand each file in the Web Editor for explanation and purpose.
+
 ## Repository Configurations
 ### DSC (basic-installation.yml) configuration
 

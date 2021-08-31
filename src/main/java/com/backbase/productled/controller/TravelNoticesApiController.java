@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller class to receive HTTP requests for managing travel notices
+ */
 @RestController
 @AllArgsConstructor
 public class TravelNoticesApiController implements TravelNoticesApi {

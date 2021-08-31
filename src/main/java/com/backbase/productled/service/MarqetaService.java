@@ -28,6 +28,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+/**
+ * Service executes Marquetas client methods and handles errors
+ */
 @Service
 @AllArgsConstructor
 @Slf4j

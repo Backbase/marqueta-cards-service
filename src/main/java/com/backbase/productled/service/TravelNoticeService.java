@@ -22,6 +22,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service handles logic related with Travel Notices and interacts with MarquetaService
+ */
 @Service
 @AllArgsConstructor
 @Slf4j

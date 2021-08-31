@@ -1,5 +1,8 @@
 package com.backbase.productled.mapper;
 
+/**
+ * Constants used by CardsMappers
+ */
 final class MapperConstants {
 
     static final String REPLACEMENT_REASON = "replacementReason";

@@ -31,17 +31,18 @@ jobs:
     steps:
       - id: flow-type
         run: |
-          echo ::set-output name=release::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:') }}
           echo ::set-output name=release_minor::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:minor') }}
           echo ::set-output name=release_major::${{ contains(join(github.event.issue.labels.*.name, ' '), 'release:major') }}
           echo ::set-output name=hotfix::${{ contains(join(github.event.issue.labels.*.name, ' '), 'bug:hotfix') }}
 
-      - uses: actions/checkout@v2
-        if: steps.flow-type.outputs.release == 'true'
+      - name: Checkout develop
+        uses: actions/checkout@v2
+        if: steps.flow-type.outputs.release_major == 'true' || steps.flow-type.outputs.release_minor == 'true'
         with:
           ref: develop
 
-      - uses: actions/checkout@v2
+      - name: Checkout master
+        uses: actions/checkout@v2
         if: steps.flow-type.outputs.hotfix == 'true'
         with:
           ref: master
@@ -71,15 +72,43 @@ jobs:
           git config --global user.email "bot@backbase.com"
           git config --global user.name "Release BOT"
 
-      # Bump the version using semantic versioning
-      # Release: major | minor | patch
-      # Hotfix: patch
-      - name: Bump Project Version
+      - name: Determine new project version
         id: target
         run: |
-          MAJOR=$( mvn help:evaluate -Dexpression=project.artifact.selectedVersion.majorVersion -q -DforceStdout )
-          MINOR=$( mvn help:evaluate -Dexpression=project.artifact.selectedVersion.minorVersion -q -DforceStdout )
-          INCREMENTAL=$( mvn help:evaluate -Dexpression=project.artifact.selectedVersion.incrementalVersion -q -DforceStdout )
+          echo "::group::Extracting project version"
+          version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          oldIFS=IFS
+          if [ ${{ steps.flow-type.outputs.hotfix }} == 'true' ]; then
+            echo ::set-output name=oldVersion::`echo $version`
+            IFS='.'
+            read -ra semVerTokens <<< "$version"
+            if [ ${#semVerTokens[@]} -ne 3 ]; then
+              echo "Wrong semVerTokens array size: ${#semVerTokens[@]}";
+              exit 1;
+            fi
+          else
+            IFS='-'
+            read -ra versionTokens <<< "$version"
+            if [ ${#versionTokens[@]} -ne 2 ]; then
+              echo "Wrong versionTokens array size: ${#versionTokens[@]}";
+              exit 1;
+            fi
+
+            IFS='.'
+            read -ra semVerTokens <<< "${versionTokens[0]}"
+            if [ ${#semVerTokens[@]} -ne 3 ]; then
+              echo "Wrong semVerTokens array size: ${#semVerTokens[@]}";
+              exit 1;
+            fi
+          fi
+          IFS=oldIFS
+
+          MAJOR=${semVerTokens[0]}
+          MINOR=${semVerTokens[1]}
+          PATCH=${semVerTokens[2]}
+          echo "::endgroup::"
+
+          echo "::group::Determine new project version"
           if ${{ steps.flow-type.outputs.release_minor }} == 'true'
           then
             MINOR=`expr $MINOR + 1`
@@ -87,18 +116,20 @@ jobs:
           elif ${{ steps.flow-type.outputs.release_major }} == 'true'
           then
             MAJOR=`expr $MAJOR + 1`
-            NEW_VERSION=$MAJOR.$MINOR
+            NEW_VERSION=$MAJOR.0
           elif ${{ steps.flow-type.outputs.hotfix }} == 'true'
           then
-            INCREMENTAL=`expr $INCREMENTAL + 1`
-            NEW_VERSION=$MAJOR.$MINOR.$INCREMENTAL
+            PATCH=`expr $PATCH + 1`
+            NEW_VERSION=$MAJOR.$MINOR.$PATCH
           fi
+          echo "New project version: $NEW_VERSION"
           echo ::set-output name=version::`echo $NEW_VERSION`
+          echo "::endgroup::"
 
       - name: Start new Release
-        if: steps.flow-type.outputs.release == 'true'
+        if: steps.flow-type.outputs.release_major == 'true' || steps.flow-type.outputs.release_minor == 'true'
         run: |
-          mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.version }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-release
+          mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.version }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-RC
 
       - name: Start new Hotfix
         if: steps.flow-type.outputs.hotfix == 'true'
@@ -125,16 +156,11 @@ jobs:
         with:
           version: ${{ steps.target.outputs.version }}
 
-      - name: Commit changelog
-        id: make-commit
+      - name: Commit and push CHANGELOG.md
         run: |
           git add .
-          git commit --message "Prepare release ${{ steps.target.outputs.version }}"
-      # Push changelog updates
-      - name: Push new branch
-        run: |
-          git fetch
-          git push origin release/${{ steps.target.outputs.version }}
+          git commit --message "Update changelog for ${{ steps.target.outputs.version }} release"
+          git push origin
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -153,21 +179,23 @@ jobs:
         run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
 
       - name: Create Pull Request - release
-        id: cpr-release
-        if: steps.flow-type.outputs.release == 'true'
+        if: steps.flow-type.outputs.release_major == 'true' || steps.flow-type.outputs.release_minor == 'true'
         uses: thomaseizinger/create-pull-request@master
         with:
           head: 'release/${{ steps.target.outputs.version }}'
           base: master
           title: "Next release: ${{ steps.target.outputs.version }}"
           body: "Closes #${{ github.event.issue.number }}"
+          reviewers: ${{ github.event.issue.user.login }}
+          labels: ${{ join(github.event.issue.labels.*.name, ',') }}
 
       - name: Create Pull Request - hotfix
-        id: cpr-hotfix
         if: steps.flow-type.outputs.hotfix == 'true'
         uses: thomaseizinger/create-pull-request@master
         with:
           head: 'hotfix/${{ steps.target.outputs.version }}'
           base: master
-          title: "Hotfix: ${{ steps.target.outputs.version }}"
+          title: "Hotfix to version: ${{ steps.target.outputs.oldVersion }}"
           body: "Closes #${{ github.event.issue.number }}"
+          reviewers: ${{ github.event.issue.user.login }}
+          labels: ${{ join(github.event.issue.labels.*.name, ',') }}

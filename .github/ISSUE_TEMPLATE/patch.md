@@ -2,7 +2,7 @@
 name: Hotfix
 about: Release a new version of the app for a hotfix
 title: Release hotfix version X.Y.Z
-labels: hotfix
+labels: bug:hotfix
 assignees: ''
 
 ---

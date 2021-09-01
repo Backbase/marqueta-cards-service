@@ -12,7 +12,7 @@ on:
 jobs:
   compile:
     runs-on: ubuntu-latest
-    if: github.event.base_ref == null && github.event.before == '0000000000000000000000000000000000000000'
+    if: (github.event.base_ref == null && github.event.before == '0000000000000000000000000000000000000000') || (startsWith(github.event.pull_request.head.ref, 'feature/') && github.event.pull_request.number == '1')
     strategy:
       matrix:
         java: [11]
@@ -53,9 +53,13 @@ jobs:
           git config --global user.email "bot@backbase.com"
           git config --global user.name "Github Actions BOT"
 
-      - name: Baseline project version
+      - name: Baseline project version on master
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=0.0.1 versions:commit
+          mvn build-helper:parse-version versions:set -DnewVersion=0.1.0 versions:commit
+
+      - name: Overwrite CHANGELOG.md
+        run: |
+          echo "# Changelog\n\n## [Unreleased]" > CHANGELOG.md
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -76,5 +80,19 @@ jobs:
       - name: Push updated version to origin/master
         run: |
           git add --all
-          git commit --allow-empty -m "update version - release"
+          git commit --allow-empty -m "Version updated after first commit: 0.1.0"
           git push
+
+      - name: Create develop branch
+        run: |
+          git checkout -b develop
+
+      - name: Baseline project version on develop
+        run: |
+          mvn build-helper:parse-version versions:set -DnewVersion=0.1.0-0.0 versions:commit
+
+      - name: Push develop branch to origin
+        run: |
+          git add --all
+          git commit -m "Initial develop version: 0.1.0-0.0"
+          git push origin develop

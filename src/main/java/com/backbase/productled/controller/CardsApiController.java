@@ -16,6 +16,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller class to receive HTTP requests for card management services
+ */
 @RestController
 @AllArgsConstructor
 public class CardsApiController implements CardsApi {

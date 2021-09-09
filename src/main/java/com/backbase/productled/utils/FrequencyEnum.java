@@ -1,5 +1,8 @@
 package com.backbase.productled.utils;
 
+/**
+ * Enum providing mapping of frequency values between DBS and Marqueta
+ */
 public enum FrequencyEnum {
     DAILY("DAILY", "DAY"),
 

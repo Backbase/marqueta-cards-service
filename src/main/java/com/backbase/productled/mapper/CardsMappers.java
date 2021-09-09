@@ -42,6 +42,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+/**
+ * Maps models between Marqeta <-> DBS
+ */
 @Mapper(componentModel = "spring")
 public interface CardsMappers {
 

@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service interacts with MarqetaService providing necessary validations
+ */
 @Service
 @AllArgsConstructor
 public class CardsService {

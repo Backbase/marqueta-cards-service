@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.10] - 2021-10-14
+
+### What has Changed
+
+-   Upgraded to 2021.09
+
 ## [0.9] - 2021-09-09
 
 ### New/Improved
@@ -14,7 +20,9 @@
 
 -   BB bom addition in dependency management to retrieve latest product/spec version
 
-[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.9...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.10...HEAD
+
+[0.10]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.9...0.10
 
 [0.9]: https://github.com/baas-devops-reference/cards-presentation-service/compare/5154031768bc4e9b0337569b0079a4265f81480e...0.9
 

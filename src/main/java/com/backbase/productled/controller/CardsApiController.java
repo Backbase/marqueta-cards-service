@@ -10,6 +10,7 @@ import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.service.CardsService;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -39,7 +40,7 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> updateLockStatus(String id, @Valid LockStatusPost lockStatusPost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.postLockStatus(id, lockStatusPost));
+        return ResponseEntity.ok(cardsService.postLockStatus(id, lockStatusPost.getLockStatus().getValue()));
     }
 
     @Override
@@ -51,7 +52,9 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> changeLimits(String id, @Valid List<ChangeLimitsPostItem> changeLimitsPostItem,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.changeLimits(id, changeLimitsPostItem));
+        var limits = changeLimitsPostItem.stream().collect(Collectors.toMap(ChangeLimitsPostItem::getId,
+            ChangeLimitsPostItem::getAmount));
+        return ResponseEntity.ok(cardsService.changeLimits(id, limits));
     }
 
     @Override

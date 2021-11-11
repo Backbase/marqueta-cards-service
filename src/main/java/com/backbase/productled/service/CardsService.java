@@ -2,6 +2,7 @@ package com.backbase.productled.service;
 
 import static java.util.Objects.requireNonNull;
 
+import com.backbase.buildingblocks.presentation.errors.NotFoundException;
 import com.backbase.marqeta.clients.model.CardResponse;
 import com.backbase.marqeta.clients.model.CardTransitionRequest.StateEnum;
 import com.backbase.marqeta.clients.model.ControlTokenRequest;
@@ -55,7 +56,7 @@ public class CardsService {
 
     public CardItem getCard(String userId, String id) {
         var cardItems = getCards(userId, List.of(id), null, null);
-        return Optional.ofNullable(cardItems).get().get(0);
+        return Optional.ofNullable(cardItems).orElseThrow(NotFoundException::new).get(0);
     }
 
     public CardItem postLockStatus(String userId, String id, String lockStatus) {

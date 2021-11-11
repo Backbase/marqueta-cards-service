@@ -3,7 +3,6 @@ package com.backbase.productled.service;
 
 import static java.util.Objects.requireNonNull;
 
-import com.backbase.buildingblocks.backend.security.auth.config.SecurityContextUtil;
 import com.backbase.buildingblocks.presentation.errors.InternalServerErrorException;
 import com.backbase.buildingblocks.presentation.errors.NotFoundException;
 import com.backbase.marqeta.clients.model.UserCardHolderResponse;
@@ -41,8 +40,6 @@ public class TravelNoticeService {
     private final ObjectMapper objectMapper;
 
     private final UserService userService;
-
-    private final SecurityContextUtil securityContextUtil;
 
     public TravelNotice createTravelNotice(TravelNotice travelNotice) {
         getMarqetaUserToken()
@@ -107,7 +104,7 @@ public class TravelNoticeService {
     }
 
     private Optional<UserCardHolderResponse> getMarqetaUserToken() {
-        return Optional.ofNullable(userService.getMarqetaUserToken(securityContextUtil.getInternalId().orElse(null)))
+        return Optional.ofNullable(userService.getMarqetaUserToken(null))
             .map(marqetaService::getCardHolder);
     }
 

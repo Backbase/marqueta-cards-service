@@ -34,15 +34,13 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<List<CardItem>> getCards(@Valid List<String> ids, @Valid List<String> status,
         @Valid List<String> types, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(
-            cardsService.getCards(ids, status, types));
+        return ResponseEntity.ok(cardsService.getCards(ids, status, types));
     }
 
     @Override
     public ResponseEntity<CardItem> updateLockStatus(String id, @Valid LockStatusPost lockStatusPost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.postLockStatus(id,
-            lockStatusPost.getLockStatus().getValue()));
+        return ResponseEntity.ok(cardsService.postLockStatus(id, lockStatusPost.getLockStatus().getValue()));
     }
 
     @Override
@@ -56,8 +54,7 @@ public class CardsApiController implements CardsApi {
         HttpServletRequest httpServletRequest) {
         var limits = changeLimitsPostItem.stream().collect(Collectors.toMap(ChangeLimitsPostItem::getId,
             ChangeLimitsPostItem::getAmount));
-        return ResponseEntity.ok(
-            cardsService.changeLimits(id, limits));
+        return ResponseEntity.ok(cardsService.changeLimits(id, limits));
     }
 
     @Override
@@ -75,8 +72,7 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> resetPin(String id, @Valid ResetPinPost resetPinPost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(
-            cardsService.resetPin(id, resetPinPost));
+        return ResponseEntity.ok(cardsService.resetPin(id, resetPinPost));
     }
 
 }

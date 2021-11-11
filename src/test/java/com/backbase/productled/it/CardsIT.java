@@ -120,10 +120,6 @@ public class CardsIT {
             .getVelocitycontrols(any(), any(), any(), any(), any(), any()))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getVelocityResponse.json"),
                 com.backbase.marqeta.clients.model.VelocityControlListResponse.class));
-
-
-
-
     }
 
     @Test
@@ -235,9 +231,9 @@ public class CardsIT {
     public void testLockCard() throws Exception {
 
         // Given
-        when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
-            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/cardLockedResponse.json"),
-                CardResponse.class));
+        when(cardsApi.getCardsUserToken("1be8bb0b-dcdd-4219-81ab-565621d3707c", null, null, null, null))
+            .thenReturn(new CardListResponse().addDataItem(objectMapper
+                .readValue(new File("src/test/resources/response/cardLockedResponse.json"), CardResponse.class)));
 
         // When
         ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/lock-status",
@@ -299,9 +295,9 @@ public class CardsIT {
         when(cardsApi.postCards(Mockito.eq(false), Mockito.eq(false), any()))
             .thenReturn(objectMapper.readValue(new File("src/test/resources/response/postCardResponse.json"),
                 CardResponse.class));
-        when(cardsApi.getCardsToken("aeeff27f-94a3-4687-9fd6-1f94cf26b2e5", null, null))
-            .thenReturn(objectMapper.readValue(new File("src/test/resources/response/getCardResponse.json"),
-                CardResponse.class).state(StateEnum.TERMINATED));
+        when(cardsApi.getCardsUserToken("1be8bb0b-dcdd-4219-81ab-565621d3707c", null, null, null, null))
+            .thenReturn(new CardListResponse().addDataItem(objectMapper.readValue(new File("src/test/resources/response/getCardResponse.json"),
+                CardResponse.class).state(StateEnum.TERMINATED)));
 
         // When
         ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/replacement",

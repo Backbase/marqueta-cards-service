@@ -161,4 +161,6 @@ public interface CardsMappers {
     @Mapping(target = "amountLimit.", source = "amount")
     VelocityControlUpdateRequest mapVelocityControlUpdateRequest(VelocityControlResponse velocityControlResponse,
         BigDecimal amount);
+
+    com.backbase.presentation.card.api.service.v2.model.CardItem mapToServiceCardItem(CardItem cardItem);
 }

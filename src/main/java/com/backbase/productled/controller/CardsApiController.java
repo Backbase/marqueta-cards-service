@@ -1,5 +1,6 @@
 package com.backbase.productled.controller;
 
+import com.backbase.buildingblocks.backend.security.auth.config.SecurityContextUtil;
 import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.CardsApi;
@@ -10,6 +11,7 @@ import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
 import com.backbase.productled.service.CardsService;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -25,21 +27,25 @@ public class CardsApiController implements CardsApi {
 
     private final CardsService cardsService;
 
+    private final SecurityContextUtil securityContextUtil;
+
     @Override
     public ResponseEntity<CardItem> getCardById(String id, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.getCard(id));
+        return ResponseEntity.ok(cardsService.getCard(securityContextUtil.getInternalId().orElse(null), id));
     }
 
     @Override
     public ResponseEntity<List<CardItem>> getCards(@Valid List<String> ids, @Valid List<String> status,
         @Valid List<String> types, HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.getCards(ids, status, types));
+        return ResponseEntity.ok(
+            cardsService.getCards(securityContextUtil.getInternalId().orElse(null), ids, status, types));
     }
 
     @Override
     public ResponseEntity<CardItem> updateLockStatus(String id, @Valid LockStatusPost lockStatusPost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.postLockStatus(id, lockStatusPost));
+        return ResponseEntity.ok(cardsService.postLockStatus(securityContextUtil.getInternalId().orElse(null), id,
+            lockStatusPost.getLockStatus().getValue()));
     }
 
     @Override
@@ -51,25 +57,29 @@ public class CardsApiController implements CardsApi {
     @Override
     public ResponseEntity<CardItem> changeLimits(String id, @Valid List<ChangeLimitsPostItem> changeLimitsPostItem,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.changeLimits(id, changeLimitsPostItem));
+        var limits = changeLimitsPostItem.stream().collect(Collectors.toMap(ChangeLimitsPostItem::getId,
+            ChangeLimitsPostItem::getAmount));
+        return ResponseEntity.ok(
+            cardsService.changeLimits(securityContextUtil.getInternalId().orElse(null), id, limits));
     }
 
     @Override
     public ResponseEntity<CardItem> requestPin(String id, @Valid RequestPinPost requestPin,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.requestPin(id));
+        return ResponseEntity.ok(cardsService.requestPin(securityContextUtil.getInternalId().orElse(null), id));
     }
 
     @Override
     public ResponseEntity<CardItem> requestReplacement(String id, @Valid RequestReplacementPost requestReplacementPost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.requestReplacement(id));
+        return ResponseEntity.ok(cardsService.requestReplacement(securityContextUtil.getInternalId().orElse(null), id));
     }
 
     @Override
     public ResponseEntity<CardItem> resetPin(String id, @Valid ResetPinPost resetPinPost,
         HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(cardsService.resetPin(id, resetPinPost));
+        return ResponseEntity.ok(
+            cardsService.resetPin(securityContextUtil.getInternalId().orElse(null), id, resetPinPost));
     }
 
 }

@@ -88,10 +88,10 @@ public class CardsService {
     }
 
     public CardItem changeLimits(String userId, String id, Map<String, BigDecimal> changeLimitsPostItem) {
-        changeLimitsPostItem.entrySet().forEach(item -> {
-            var velocityControlResponse = marqetaService.getCardLimitById(item.getKey());
-            marqetaService.updateCardLimits(item.getKey(),
-                cardMapper.mapVelocityControlUpdateRequest(velocityControlResponse, item.getValue()));
+        changeLimitsPostItem.forEach((key, value) -> {
+            var velocityControlResponse = marqetaService.getCardLimitById(key);
+            marqetaService.updateCardLimits(key,
+                cardMapper.mapVelocityControlUpdateRequest(velocityControlResponse, value));
         });
 
         return getCard(userId, id);
@@ -125,4 +125,31 @@ public class CardsService {
             .collect(Collectors.toList());
     }
 
+    public CardItem getCard(String id) {
+        return getCard(null, id);
+    }
+
+    public List<CardItem> getCards(List<String> ids, List<String> status, List<String> types) {
+        return getCards(null, ids, status, types);
+    }
+
+    public CardItem postLockStatus(String id, String value) {
+        return postLockStatus(null, id, value);
+    }
+
+    public CardItem changeLimits(String id, Map<String, BigDecimal> limits) {
+        return changeLimits(null, id, limits);
+    }
+
+    public CardItem requestPin(String id) {
+        return requestPin(null, id);
+    }
+
+    public CardItem requestReplacement(String id) {
+        return requestReplacement(null, id);
+    }
+
+    public CardItem resetPin(String id, ResetPinPost resetPinPost) {
+        return resetPin(null, id, resetPinPost);
+    }
 }

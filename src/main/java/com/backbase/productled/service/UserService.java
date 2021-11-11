@@ -18,11 +18,14 @@ public class UserService {
 
     private final UserManagementApi userManagementApi;
 
+    private final SecurityContextUtil securityContextUtil;
+
     public String getMarqetaUserToken(String userId) {
         log.info("Calling user manager for to retrieve marqeta user token");
+        userId = StringUtils.isEmpty(userId) ? securityContextUtil.getInternalId().orElse(null) : userId;
         return Objects.requireNonNull(
             userManagementApi.getUserById(userId, false)
-            .getExternalId());
+                .getExternalId());
     }
 
 }

@@ -55,7 +55,7 @@ jobs:
 
       - name: Baseline project version on master
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=0.1.0 versions:commit
+          mvn build-helper:parse-version versions:set -DnewVersion=0.1.0 versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Overwrite CHANGELOG.md
         run: |
@@ -75,7 +75,7 @@ jobs:
           echo "::set-output name=password::`aws ecr get-login-password --region ${{ secrets.DEVOPS_CICD_AWS_REGION }}`"
 
       - name: Build docker image
-        run: mvn clean package -Pdocker-image,no-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+        run: mvn clean package -Pdocker-image,no-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Push updated version to origin/master
         run: |
@@ -89,7 +89,7 @@ jobs:
 
       - name: Baseline project version on develop
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=0.1.0-0.0 versions:commit
+          mvn build-helper:parse-version versions:set -DnewVersion=0.1.0-0.0 versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Push develop branch to origin
         run: |

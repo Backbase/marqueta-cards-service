@@ -16,6 +16,7 @@ jobs:
     name: Build project with Java ${{ matrix.java }}
     timeout-minutes: 30
     env:
+      GITHUB_PROJECT: ${{ github.event.repository.name }}
       DEVOPS_CICD_ECR_BASE_URL: ${{ secrets.DEVOPS_CICD_ECR_BASE_URL }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BB_USERNAME: ${{ secrets.BB_USERNAME }}
@@ -31,7 +32,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-            ${{ runner.os }}-
 
       - name: Setup java ${{ matrix.java }}
         uses: actions/setup-java@v1
@@ -84,7 +84,7 @@ jobs:
           echo "::endgroup::"
 
           echo "::set-output name=newVersion::'${versionParts[0]}-${metadataParts[0]}.${metadataParts[1]}'"
-          mvn versions:set -DnewVersion="${versionParts[0]}-${metadataParts[0]}.${metadataParts[1]}" versions:commit
+          mvn versions:set -DnewVersion="${versionParts[0]}-${metadataParts[0]}.${metadataParts[1]}" versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -100,7 +100,7 @@ jobs:
           echo "::set-output name=password::`aws ecr get-login-password --region ${{ secrets.DEVOPS_CICD_AWS_REGION }}`"
 
       - name: Build docker image
-        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+        run: mvn --batch-mode clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Push updated version to origin
         if: startsWith(github.event.pull_request.head.ref, 'feature/') || startsWith(github.event.pull_request.head.ref, 'bugfix/')

@@ -45,7 +45,7 @@ jobs:
       - name: Bump release version
         id: version-bump
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-RC versions:commit
+          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-RC versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
           echo ::set-output name=newVersion::`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`
 
       - name: Configure AWS credentials
@@ -62,7 +62,7 @@ jobs:
           echo "::set-output name=password::`aws ecr get-login-password --region ${{ secrets.DEVOPS_CICD_AWS_REGION }}`"
 
       - name: Build docker image
-        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Push updated version to origin
         run: |

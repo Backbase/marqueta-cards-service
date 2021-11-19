@@ -5,6 +5,7 @@ import com.backbase.dbs.user.manager.api.service.v2.UserManagementApi;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,15 +16,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserService {
 
-    private final SecurityContextUtil securityContextUtil;
-
     private final UserManagementApi userManagementApi;
 
-    public String getMarqetaUserToken() {
+    private final SecurityContextUtil securityContextUtil;
+
+    public String getMarqetaUserToken(String userId) {
         log.info("Calling user manager for to retrieve marqeta user token");
+        userId = StringUtils.isEmpty(userId) ? securityContextUtil.getInternalId().orElse(null) : userId;
         return Objects.requireNonNull(
-            userManagementApi.getUserById(securityContextUtil.getInternalId().orElse(null), false))
-            .getExternalId();
+            userManagementApi.getUserById(userId, false)
+                .getExternalId());
     }
 
 }

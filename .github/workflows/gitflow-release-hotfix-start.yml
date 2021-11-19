@@ -129,12 +129,12 @@ jobs:
       - name: Start new Release
         if: steps.flow-type.outputs.release_major == 'true' || steps.flow-type.outputs.release_minor == 'true'
         run: |
-          mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.version }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-RC
+          mvn -B gitflow:release-start -DpushRemote=true -DbranchName=${{ steps.target.outputs.version }} -DreleaseVersion=${{ steps.target.outputs.version }}.0-RC -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Start new Hotfix
         if: steps.flow-type.outputs.hotfix == 'true'
         run: |
-          mvn -B gitflow:hotfix-start -DpushRemote=true -DhotfixName=${{ github.event.inputs.hotfixName }} -DhotfixVersion=${{ steps.target.outputs.version }}
+          mvn -B gitflow:hotfix-start -DpushRemote=true -DhotfixName=${{ github.event.inputs.hotfixName }} -DhotfixVersion=${{ steps.target.outputs.version }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       ##
       #
@@ -176,7 +176,7 @@ jobs:
           echo "::set-output name=password::`aws ecr get-login-password --region ${{ secrets.DEVOPS_CICD_AWS_REGION }}`"
 
       - name: Build docker image
-        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Create Pull Request - release
         if: steps.flow-type.outputs.release_major == 'true' || steps.flow-type.outputs.release_minor == 'true'

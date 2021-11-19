@@ -7,7 +7,6 @@ logging:
     com.backbase: INFO
     org.springframework: INFO
 
-
 backbase:
   usermanager:
     client:

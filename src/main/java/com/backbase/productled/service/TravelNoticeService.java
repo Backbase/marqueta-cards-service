@@ -104,7 +104,7 @@ public class TravelNoticeService {
     }
 
     private Optional<UserCardHolderResponse> getMarqetaUserToken() {
-        return Optional.ofNullable(userService.getMarqetaUserToken())
+        return Optional.ofNullable(userService.getMarqetaUserToken(null))
             .map(marqetaService::getCardHolder);
     }
 

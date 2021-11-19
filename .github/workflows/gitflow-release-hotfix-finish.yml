@@ -85,7 +85,7 @@ jobs:
       - name: Update master version
         if: steps.flow-type.outputs.release == 'true'
         run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=\${{ steps.target.outputs.version }} versions:commit
+          mvn build-helper:parse-version versions:set -DnewVersion=\${{ steps.target.outputs.version }} versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -103,7 +103,7 @@ jobs:
       # Only for release. For hotfix it's done in hotfix-version-update workflow
       - name: Build docker image - release
         if: steps.flow-type.outputs.release == 'true'
-        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }}
+        run: mvn clean package -Pdocker-image -Pno-scs -Dmaven.test.skip -Djib.to.auth.username=${{ steps.ecr-credentials.outputs.username }}  -Djib.to.auth.password=${{ steps.ecr-credentials.outputs.password }} -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Push updated version to origin/master
         if: steps.flow-type.outputs.release == 'true'
@@ -194,7 +194,7 @@ jobs:
 
       - name: Set new develop version - ${{ needs.release.outputs.release-version }}-${{ steps.develop-version.outputs.metadata }}
         run: |
-          mvn versions:set -DnewVersion="${{ needs.release.outputs.release-version }}-${{ steps.develop-version.outputs.metadata }}" versions:commit
+          mvn versions:set -DnewVersion="${{ needs.release.outputs.release-version }}-${{ steps.develop-version.outputs.metadata }}" versions:commit -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
       - name: Set git username and email
         run: |

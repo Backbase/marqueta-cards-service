@@ -9,7 +9,7 @@
         can declare it as a dependency instead, see pom-as-dependency.xml -->
     <parent>
         <groupId>com.backbase.buildingblocks</groupId>
-        <version>13.2.1</version>
+        <version>13.3.1</version>
         <artifactId>service-sdk-starter-core</artifactId>
         <relativePath/>
     </parent>
@@ -33,7 +33,7 @@
         <jsr305.version>3.0.2</jsr305.version>
         <springfox-core.version>3.0.0</springfox-core.version>
         <open-api-specs-dir>${project.build.directory}/yaml</open-api-specs-dir>
-        <backbase-bom.version>2021.09</backbase-bom.version>
+        <backbase-bom.version>2021.10</backbase-bom.version>
 
         <!-- Plugin version -->
         <boat-maven-plugin.version>0.14.9</boat-maven-plugin.version>

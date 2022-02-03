@@ -36,7 +36,7 @@
         <backbase-bom.version>2022.01-LTS</backbase-bom.version>
 
         <!-- Plugin version -->
-        <boat-maven-plugin.version>0.15.2</boat-maven-plugin.version>
+        <boat-maven-plugin.version>0.15.4</boat-maven-plugin.version>
         <gitflow-maven-plugin.version>1.17.0</gitflow-maven-plugin.version>
 
         <!-- Sonar -->

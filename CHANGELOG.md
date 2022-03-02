@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.16] - 2022-03-02
+
+### Bug Fixes
+
+-   PROMO-3317 : Version bug fix
+
 ## [0.15] - 2022-02-25
 
 ### New/Improved
@@ -50,7 +56,9 @@
 
 -   BB bom addition in dependency management to retrieve latest product/spec version
 
-[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.15...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.16...HEAD
+
+[0.16]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.15...0.16
 
 [0.15]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.14...0.15
 

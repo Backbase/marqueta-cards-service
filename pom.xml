@@ -16,7 +16,7 @@
 
     <groupId>com.backbase.productled</groupId>
     <artifactId>cards-presentation-service</artifactId>
-    <version>0.17.0-RC</version>
+    <version>0.17.0</version>
     <packaging>war</packaging>
     <name>Backbase :: cards presentation service</name>
 

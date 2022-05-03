@@ -9,14 +9,14 @@
         can declare it as a dependency instead, see pom-as-dependency.xml -->
     <parent>
         <groupId>com.backbase.buildingblocks</groupId>
-        <version>14.0.0</version>
+        <version>14.1.0</version>
         <artifactId>service-sdk-starter-core</artifactId>
         <relativePath/>
     </parent>
 
     <groupId>com.backbase.productled</groupId>
     <artifactId>cards-presentation-service</artifactId>
-    <version>0.16.0</version>
+    <version>0.17.0-RC</version>
     <packaging>war</packaging>
     <name>Backbase :: cards presentation service</name>
 
@@ -33,11 +33,11 @@
         <jsr305.version>3.0.2</jsr305.version>
         <springfox-core.version>3.0.0</springfox-core.version>
         <open-api-specs-dir>${project.build.directory}/yaml</open-api-specs-dir>
-        <backbase-bom.version>2022.01-LTS</backbase-bom.version>
+        <backbase-bom.version>2022.02</backbase-bom.version>
 
         <!-- Plugin version -->
         <boat-maven-plugin.version>0.15.4</boat-maven-plugin.version>
-        <gitflow-maven-plugin.version>1.17.0</gitflow-maven-plugin.version>
+        <gitflow-maven-plugin.version>1.18.0</gitflow-maven-plugin.version>
 
         <!-- Sonar -->
         <sonar.projectKey>${SONAR_PROJECT_KEY}</sonar.projectKey>

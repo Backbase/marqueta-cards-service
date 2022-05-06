@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.17.1] - 2022-05-06
+
+### Bug Fixes
+
+-   Fixed pr workflow if condition.
+
 ## [0.17] - 2022-05-03
 
 ### What has Changed
@@ -62,7 +68,9 @@
 
 -   BB bom addition in dependency management to retrieve latest product/spec version
 
-[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.17...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.17.1...HEAD
+
+[0.17.1]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.17...0.17.1
 
 [0.17]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.16...0.17
 

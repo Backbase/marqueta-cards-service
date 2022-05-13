@@ -26,9 +26,12 @@ import com.backbase.marqeta.clients.model.CardUpdateRequest;
 import com.backbase.marqeta.clients.model.ControlTokenResponse;
 import com.backbase.marqeta.clients.model.VelocityControlResponse;
 import com.backbase.presentation.card.rest.spec.v2.cards.ActivatePost;
+import com.backbase.presentation.card.rest.spec.v2.cards.AddAuthorizedUserPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ChangeLimitsPostItem;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatus;
 import com.backbase.presentation.card.rest.spec.v2.cards.LockStatusPost;
+import com.backbase.presentation.card.rest.spec.v2.cards.Name;
+import com.backbase.presentation.card.rest.spec.v2.cards.PersonalInformation;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestPinPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.RequestReplacementPost;
 import com.backbase.presentation.card.rest.spec.v2.cards.ResetPinPost;
@@ -37,6 +40,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -47,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -319,6 +325,18 @@ public class CardsIT {
             .andExpect(jsonPath("$.currency", is("USD")))
             .andExpect(jsonPath("$.maskedNumber", is("2053")))
             .andExpect(jsonPath("$.replacement.status", is("NotUnderReplacement")));
+    }
+
+    @Test
+    public void testAddAuthorizedUser() throws Exception {
+        ResultActions result = mvc.perform(post("/client-api/v2/cards/{id}/authorized-user",
+                "aeeff27f-94a3-4687-9fd6-1f94cf26b2e5")
+                .content(objectMapper.writeValueAsString(new AddAuthorizedUserPost()
+                    .personalInformation(new PersonalInformation().dateOfBirth(LocalDate.of(1992,04, 25)))
+                    .name(new Name().firstName("JOHN").lastName("PETER"))))
+                .contentType("application/json")
+                .header("Authorization", TEST_JWT)).andDo(print());
+        result.andExpect(status().is(HttpStatus.NOT_IMPLEMENTED.value()));
     }
 
     @Test

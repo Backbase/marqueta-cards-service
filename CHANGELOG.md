@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.18] - 2022-05-13
+
+### What has Changed
+
+-   Upgrade BOM to 2022.04
+
 ## [0.17.1] - 2022-05-06
 
 ### Bug Fixes
@@ -68,7 +74,9 @@
 
 -   BB bom addition in dependency management to retrieve latest product/spec version
 
-[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.17.1...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.18...HEAD
+
+[0.18]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.17.1...0.18
 
 [0.17.1]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.17...0.17.1
 

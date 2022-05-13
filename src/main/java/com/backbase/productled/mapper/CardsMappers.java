@@ -63,6 +63,7 @@ public interface CardsMappers {
     @Mapping(target = "limits", expression = "java(cardLimits.getData().stream().map(velocityControlResponse -> {return new com.backbase.presentation.card.rest.spec.v2.cards.CardLimit().id(velocityControlResponse.getToken()).amount(velocityControlResponse.getAmountLimit().setScale(0, java.math.BigDecimal.ROUND_DOWN)).frequency(com.backbase.productled.utils.FrequencyEnum.fromValue(velocityControlResponse.getVelocityWindow().getValue()).getValue()).channel(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase()).minAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase().concat(\"MinAmount\")))).setScale(0, java.math.BigDecimal.ROUND_DOWN)).maxAmount(java.math.BigDecimal.valueOf(Long.parseLong(cardResponse.getMetadata().get(getChannel(velocityControlResponse.getIncludeWithdrawals()).toLowerCase().concat(\"MaxAmount\")))).setScale(0, java.math.BigDecimal.ROUND_DOWN));}).collect(java.util.stream.Collectors.toList()))")
     @Mapping(target = "delivery", source = "cardResponse", qualifiedByName = "getDelivery")
     @Mapping(target = "additions", ignore = true)
+    @Mapping(target = "ownership", ignore = true)
     CardItem mapCard(CardResponse cardResponse, VelocityControlListResponse cardLimits);
 
     default String getChannel(Boolean withdrawalsWindow) {

@@ -2,6 +2,7 @@ package com.backbase.productled.controller;
 
 import com.backbase.presentation.card.api.service.v2.CardsApi;
 import com.backbase.presentation.card.api.service.v2.model.ActivatePost;
+import com.backbase.presentation.card.api.service.v2.model.AddAuthorizedUserPost;
 import com.backbase.presentation.card.api.service.v2.model.CardItem;
 import com.backbase.presentation.card.api.service.v2.model.ChangeLimitsPostItem;
 import com.backbase.presentation.card.api.service.v2.model.LockStatusPost;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,12 @@ public class CardsServiceApiController implements CardsApi {
         HttpServletRequest httpServletRequest) {
         var cardItem = cardsService.activateCard(id);
         return ResponseEntity.ok(cardsMappers.mapToServiceCardItem(cardItem));
+    }
+
+    @Override
+    public ResponseEntity<Void> addAuthorizedUser(String userId, String id, AddAuthorizedUserPost addAuthorizedUserPost,
+        HttpServletRequest httpServletRequest) {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED.value()).build();
     }
 
     @Override

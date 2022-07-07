@@ -25,7 +25,7 @@
         <!-- Docker configuration -->
         <docker.repo.url>${DEVOPS_CICD_ECR_BASE_URL}</docker.repo.url>
         <docker.image.name>${docker.repo.url}/${project.artifactId}</docker.image.name>
-        <jib.to.image>${docker.image.name}:${backbase-bom.version}-${project.version}</jib.to.image>
+        <jib.to.image>${docker.image.name}:${project.version}</jib.to.image>
         <docker.distroless.war.latest.skip>true</docker.distroless.war.latest.skip>
 
         <!-- Dependencies properties -->

@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.22] - 2022-07-22
+
+### What has Changed
+
+-   support for both ACR/ECR
+-   after release build version has been reset to 0
+
 ## [0.21] - 2022-07-14
 
 ### What has Changed
@@ -93,7 +100,9 @@
 
 -   BB bom addition in dependency management to retrieve latest product/spec version
 
-[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.21...HEAD
+[Unreleased]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.22...HEAD
+
+[0.22]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.21...0.22
 
 [0.21]: https://github.com/baas-devops-reference/cards-presentation-service/compare/0.20...0.21
 

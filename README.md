@@ -6,7 +6,6 @@
 - 'marqueta-cards-service' has been generated using `core-service-archetype` - [Community guide](https://community.backbase.com/documentation/ServiceSDK/latest/create_a_core_service)
 - This service implements logic for the UI components (Widget/Journey) to view and manage bank customer cards. Service integrates with [Marqeta](https://www.marqeta.com) card issuer.
 - The service is implementation of `card-manager-client-api` - https://repo.backbase.com/specs/card-manager/
-- Refer to [workflow guide](../../../docs/tree/master/backend) for Backend CI Workflow documentation
 
 ---
 ## Repository Description

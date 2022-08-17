@@ -44,22 +44,8 @@ Expand each file in the Web Editor for explanation and purpose.
 ### DSC (basic-installation.yml) configuration
 
 ```yaml
-custom:
-  enabled: true
-  services:
-    marqueta-cards-service:
-      enabled: true
-      app:
-        image:
-          tag: "1.0.1-SNAPSHOT"
-          repository: marqueta-cards-service
-      database: false
-      livenessProbe:
-        enabled: true
-      readinessProbe:
-        enabled: true
+
       env:
-        BACKBASE_COMMUNICATION_HTTP_ACCESS-TOKEN-URI: "http://token-converter:8080/oauth/token"
         marqeta.username:
           valueFrom:
             secretKeyRef:
@@ -100,13 +86,7 @@ If project adopts a different vendor than Marqeta, all services from `com.backba
 
 ---
 ## Getting Started
-### BaaS setup
 
-- [ ] Step 1: Modify https://github.com/baas-devops-reference/ref-self-service/blob/main/self-service.tfvars by adding to `ecr` list name of new repository: `marqueta-cards-service'
-- [ ] Step 2: Checkout the following repository: https://github.com/baas-devops-reference/ref-applications-live/blob/main/runtimes/dev/basic-installation.yaml apply your deployment configurations example see _DSC (basic-installation.yml) configuration_ above.
-- [ ] Step 3: Run the pre-commit to validate the configurations => ` pre-commit run --all-files --show-diff-on-failure --color=always`
-- [ ] Step 4: Commit and Push your changes; wait for the template rendering and lint jobs to complete
-- [ ] Step 5: Merge into `master` to trigger deployment.
 
 ### Local setup
 
